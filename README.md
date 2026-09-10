@@ -78,7 +78,8 @@ npm run dev
 ## Organisation du code
 
 ```
-public/landing.html          Landing page d'origine, servie telle quelle
+src/app/page.tsx             Landing page Next.js (/)
+public/landing.html          Copie statique de secours
 src/app/                     Routes Next.js
   app/                       Application authentifiée (/app)
   api/projects/[id]/         Pipeline d'ingestion et d'analyse
