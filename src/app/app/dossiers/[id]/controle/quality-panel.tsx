@@ -83,7 +83,7 @@ export function QualityPanel({
       <div className="max-w-[640px]">
         <h2 className="text-[17px] font-bold">Controler la conformite</h2>
         <p className="mt-2 text-[13.5px] leading-relaxed text-ink-58">
-          BIDERA verifie la couverture des exigences et la tracabilite par le
+          MateriaBTP verifie la couverture des exigences et la tracabilite par le
           calcul, puis relit le texte pour reperer ce qui ferait perdre des
           points : passages interchangeables, affirmations non etayees,
           desalignement avec les criteres.

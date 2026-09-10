@@ -17,7 +17,7 @@ const GENERALIST_POINTS = [
   "Rien ne vérifie la réponse avant le dépôt",
 ] as const;
 
-const BIDERA_POINTS = [
+const MateriaBTP_POINTS = [
   "Le DCE complet est analysé et structuré",
   "Les exigences sont reliées à leur page d’origine",
   "Votre base entreprise alimente la rédaction",
@@ -50,7 +50,7 @@ function PipeStep({
   );
 }
 
-/** BIDERA n'est pas un chatbot : la chaîne de traitement, puis la comparaison. */
+/** MateriaBTP n'est pas un chatbot : la chaîne de traitement, puis la comparaison. */
 export function NotChatbotSection() {
   return (
     <section className="sec">
@@ -58,10 +58,10 @@ export function NotChatbotSection() {
         <div className="sec-head rv">
           <p className="kicker">La différence</p>
           <h2 className="h2">
-            BIDERA n’est pas un chatbot qui écrit du texte.
+            MateriaBTP n’est pas un chatbot qui écrit du texte.
           </h2>
           <p className="lede">
-            BIDERA structure votre réponse autour du DCE, des exigences du
+            MateriaBTP structure votre réponse autour du DCE, des exigences du
             marché et des connaissances réelles de votre entreprise. C’est
             un workflow complet, pas une conversation.
           </p>
@@ -70,7 +70,7 @@ export function NotChatbotSection() {
         {/* La fleche reste un element libre entre deux <li>, comme dans la page
            source : cela lui evite le style de pastille reserve aux etapes,
            tout en profitant du meme espacement flex. */}
-        <ul className="pipe rv" aria-label="Enchaînement du workflow BIDERA">
+        <ul className="pipe rv" aria-label="Enchaînement du workflow MateriaBTP">
           {PIPE.map((step, i) => (
             <PipeStep key={step} isLast={i === PIPE.length - 1} showArrowBefore={i > 0}>
               {step}
@@ -98,11 +98,11 @@ export function NotChatbotSection() {
 
           <div className="vs-col on rv-item">
             <div className="vs-h">
-              <b>BIDERA</b>
+              <b>MateriaBTP</b>
               <span>Un workflow de réponse aux appels d’offres</span>
             </div>
             <ul className="vs-l">
-              {BIDERA_POINTS.map((p) => (
+              {MateriaBTP_POINTS.map((p) => (
                 <li key={p}>
                   <svg className="p" viewBox="0 0 24 24" fill="none" strokeWidth="1.8">
                     <path d="m5 12 5 5L19 7" />

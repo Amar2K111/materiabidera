@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Script from "next/script";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import { CALENDLY_DEMO_URL } from "@/lib/calendly";
 
 export function DemoModal() {
@@ -84,20 +85,19 @@ export function DemoModal() {
           <aside className="demo-modal__intro">
             <div>
               <div className="demo-modal__brand">
-                <i aria-hidden="true" />
-                BIDERA
+                <BrandLogo height={24} />
               </div>
               <h2 id="demo-modal-title">
                 Votre prochain <em>appel d’offres</em> en 30 minutes
               </h2>
               <p>
-                Découvrez comment BIDERA structure votre réponse, de l’analyse
+                Découvrez comment MateriaBTP structure votre réponse, de l’analyse
                 du DCE au mémoire technique vérifié.
               </p>
             </div>
             <ul className="demo-modal__points">
               <li>Analyse en direct d’un de vos DCE en cours</li>
-              <li>Parcours BIDERA de bout en bout sur votre cas</li>
+              <li>Parcours MateriaBTP de bout en bout sur votre cas</li>
               <li>
                 Réponses claires sur l’adéquation, la sécurité et l’adoption
               </li>

@@ -9,7 +9,7 @@ export function FinalCtaSection() {
             <div>
               <h2>Votre prochain DCE mérite mieux qu’un copier-coller.</h2>
               <p>
-                Analysez-le avec BIDERA et transformez-le en une réponse
+                Analysez-le avec MateriaBTP et transformez-le en une réponse
                 structurée, personnalisée et vérifiée.
               </p>
               <div className="btn-row">

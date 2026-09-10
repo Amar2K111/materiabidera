@@ -11,7 +11,7 @@ export function StrategyStep() {
             Les critères du marché deviennent vos axes de réponse.
           </h2>
           <p className="lede">
-            Avant d’écrire la moindre ligne, BIDERA transforme la grille de
+            Avant d’écrire la moindre ligne, MateriaBTP transforme la grille de
             jugement de l’acheteur en une stratégie : ce qu’il faut
             démontrer, avec quel niveau de détail, et sur quels éléments de
             votre entreprise s’appuyer.
@@ -21,7 +21,7 @@ export function StrategyStep() {
         <figure>
           <MockupFrame
             flat
-            ariaLabel="Stratégie de réponse dans BIDERA : critères de jugement du marché traduits en axes de réponse et en chapitres du mémoire."
+            ariaLabel="Stratégie de réponse dans MateriaBTP : critères de jugement du marché traduits en axes de réponse et en chapitres du mémoire."
             crumb={<b>Stratégie de réponse</b>}
             right={
               <span className="tag blue">

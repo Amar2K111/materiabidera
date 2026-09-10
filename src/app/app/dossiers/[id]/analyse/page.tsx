@@ -67,7 +67,7 @@ export default async function ProjectAnalysisPage({
       <div className="max-w-[640px]">
         <h2 className="text-[17px] font-bold">Analyser le dossier</h2>
         <p className="mt-2 text-[13.5px] leading-relaxed text-ink-58">
-          BIDERA va lire les {documents.length} piece
+          MateriaBTP va lire les {documents.length} piece
           {documents.length > 1 ? "s" : ""} deposee
           {documents.length > 1 ? "s" : ""}, en extraire les exigences
           opposables au candidat et signaler les points de vigilance. Chaque
@@ -83,7 +83,7 @@ export default async function ProjectAnalysisPage({
   return (
     <div className="space-y-8">
       <Notice>
-        Analyse indicative produite par BIDERA a partir des pieces deposees, le{" "}
+        Analyse indicative produite par MateriaBTP a partir des pieces deposees, le{" "}
         {formatDateTime(analysis.generated_at)}. Verifiez chaque element avant
         de vous en servir : vous restez decideur.
       </Notice>

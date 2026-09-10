@@ -56,7 +56,7 @@ export function CompanyBaseStep() {
           <h2 className="h2">Votre entreprise ne repart plus de zéro.</h2>
           <p className="lede">
             Centralisez ce que vous réutilisez à chaque réponse. Plus votre
-            base entreprise est structurée, plus BIDERA peut produire des
+            base entreprise est structurée, plus MateriaBTP peut produire des
             réponses spécifiques et pertinentes.
           </p>
         </div>
@@ -74,7 +74,7 @@ export function CompanyBaseStep() {
         <figure className="rv" style={{ marginTop: 36 }}>
           <MockupFrame
             flat
-            ariaLabel="Base entreprise dans BIDERA : documents internes rattachés à une exigence du marché avec leur source."
+            ariaLabel="Base entreprise dans MateriaBTP : documents internes rattachés à une exigence du marché avec leur source."
             crumb={<b>Base entreprise</b>}
             right={<span className="tag">Rattachée au chapitre 3</span>}
           >
@@ -143,7 +143,7 @@ export function CompanyBaseStep() {
         </figure>
 
         <p className="pull rv" style={{ marginTop: 36 }}>
-          Quand une information n’existe pas dans votre base, BIDERA vous la
+          Quand une information n’existe pas dans votre base, MateriaBTP vous la
           demande au lieu de l’inventer.
         </p>
       </div>

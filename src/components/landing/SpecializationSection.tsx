@@ -21,7 +21,7 @@ export function SpecializationSection() {
           <p className="kicker">Spécialisation</p>
           <h2 className="h2">Pensé pour les entreprises du BTP.</h2>
           <p className="lede">
-            BIDERA connaît le vocabulaire et la structure d’une réponse à un
+            MateriaBTP connaît le vocabulaire et la structure d’une réponse à un
             marché de travaux. Ce n’est pas un outil générique auquel on aurait
             ajouté un habillage bâtiment.
           </p>
@@ -37,7 +37,7 @@ export function SpecializationSection() {
         </div>
 
         <p className="note rv" style={{ marginTop: 28, maxWidth: "74ch" }}>
-          BIDERA ne prétend pas connaître automatiquement tous les marchés ni
+          MateriaBTP ne prétend pas connaître automatiquement tous les marchés ni
           toutes les règles juridiques applicables. Il travaille sur les
           documents que vous lui donnez.
         </p>

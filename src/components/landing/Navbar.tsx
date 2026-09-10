@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import { CalendlyDemoLink } from "./CalendlyDemoLink";
 
 const LINKS = [
@@ -38,8 +39,7 @@ export function Navbar({
     <header className={`nav${stuck ? " is-stuck" : ""}`} id="nav">
       <div className="wrap nav-in">
         <div className="brand">
-          <i className="brand-mark" aria-hidden="true" />
-          BIDERA
+          <BrandLogo height={26} priority />
         </div>
         <nav className="nav-links" aria-label="Navigation principale">
           {LINKS.map((l) => (

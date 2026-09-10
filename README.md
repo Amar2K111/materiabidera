@@ -1,4 +1,4 @@
-# BIDERA
+# MateriaBTP
 
 Plateforme d'aide à la réponse aux appels d'offres pour les entreprises du BTP.
 
@@ -127,7 +127,7 @@ Documentation : [Vercel + Git](https://vercel.com/docs/git)
 
 ```
 src/app/page.tsx             Landing page Next.js (/)
-public/landing.html          Copie statique de secours
+src/components/landing/      Composants et styles de la landing
 src/app/                     Routes Next.js
   app/                       Application authentifiée (/app)
   api/projects/[id]/         Pipeline d'ingestion et d'analyse

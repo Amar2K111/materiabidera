@@ -87,7 +87,7 @@ export function ChecklistPanel({
         <p className="mt-2 max-w-[80ch] text-[13px] leading-relaxed text-ink-70">
           {checklist.ready
             ? "Tous les points verifies automatiquement sont satisfaits et vous avez confirme les autres. La responsabilite du depot reste la votre."
-            : "Les points marques d'un cadenas sont verifies par BIDERA a partir de vos donnees. Les autres relevent de votre propre verification."}
+            : "Les points marques d'un cadenas sont verifies par MateriaBTP a partir de vos donnees. Les autres relevent de votre propre verification."}
         </p>
       </div>
 

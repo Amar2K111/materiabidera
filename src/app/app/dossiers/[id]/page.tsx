@@ -163,7 +163,7 @@ function NextStep({
     return (
       <Notice title="Lancez l'analyse du dossier">
         <p className="mt-1">
-          BIDERA va lire les pieces deposees, en extraire les exigences
+          MateriaBTP va lire les pieces deposees, en extraire les exigences
           opposables au candidat et signaler les points de vigilance, chaque
           element etant rattache a sa source.
         </p>

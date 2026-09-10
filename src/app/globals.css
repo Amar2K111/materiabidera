@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 /* ============================================================================
-   DESIGN SYSTEM BIDERA
-   Les valeurs proviennent directement de la landing page (public/landing.html).
+   DESIGN SYSTEM MateriaBTP
+   Tokens alignes sur l'identite visuelle de la landing page.
    Une seule identite visuelle : blanc dominant, encre noire, bleu d'action,
    bordures fines, ombres tres legeres. Les couleurs de statut sont reservees
    a l'information produit, jamais au decor.

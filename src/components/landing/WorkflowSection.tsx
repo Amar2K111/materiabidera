@@ -4,7 +4,7 @@ const STEPS = [
   {
     n: "01",
     title: "Analysez votre DCE",
-    text: "Importez les documents du marché. BIDERA les structure et identifie les informations importantes.",
+    text: "Importez les documents du marché. MateriaBTP les structure et identifie les informations importantes.",
   },
   {
     n: "02",
@@ -34,7 +34,7 @@ const STEPS = [
   {
     n: "07",
     title: "Contrôlez votre réponse",
-    text: "BIDERA vérifie la couverture des exigences et signale les points faibles.",
+    text: "MateriaBTP vérifie la couverture des exigences et signale les points faibles.",
   },
   {
     n: "08",

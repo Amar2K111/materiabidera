@@ -101,7 +101,7 @@ const CARDS = [
   {
     n: "04",
     title: "Une exigence oubliée peut fragiliser toute la réponse",
-    text: "Un élément manquant, partiel ou non vérifié pèse plus lourd que la qualité du reste. BIDERA les fait remonter avant la remise.",
+    text: "Un élément manquant, partiel ou non vérifié pèse plus lourd que la qualité du reste. MateriaBTP les fait remonter avant la remise.",
   },
 ] as const;
 

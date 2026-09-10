@@ -1,3 +1,4 @@
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import { Notice } from "@/components/ui/notice";
 
 /**
@@ -7,10 +8,7 @@ import { Notice } from "@/components/ui/notice";
 export function SetupRequired() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-[620px] flex-col justify-center px-6 py-16">
-      <div className="flex items-center gap-2.5 font-extrabold tracking-[-0.06em]">
-        <i className="block h-3.5 w-3.5 rounded-[3px] bg-brand" />
-        <span className="text-[20px]">BIDERA</span>
-      </div>
+      <BrandLogo height={24} />
 
       <h1 className="mt-8 text-[28px] font-extrabold tracking-[-0.035em]">
         Configuration requise

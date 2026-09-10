@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import { isSupabaseConfigured } from "@/lib/env";
 import { SetupRequired } from "@/components/app/setup-required";
 
@@ -15,12 +16,8 @@ export default function AuthLayout({
   return (
     <div className="flex min-h-dvh flex-col">
       <header className="flex h-[74px] flex-none items-center px-6">
-        <Link
-          href="/"
-          className="flex items-center gap-2.5 text-[20px] font-extrabold tracking-[-0.06em]"
-        >
-          <i className="block h-3.5 w-3.5 rounded-[3px] bg-brand" />
-          BIDERA
+        <Link href="/" className="flex items-center">
+          <BrandLogo height={24} />
         </Link>
       </header>
 

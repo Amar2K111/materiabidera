@@ -24,7 +24,7 @@ export function MemoryStep() {
             Un mémoire construit à partir du marché et de votre entreprise.
           </h2>
           <p className="lede">
-            BIDERA génère le mémoire chapitre par chapitre, en s’appuyant
+            MateriaBTP génère le mémoire chapitre par chapitre, en s’appuyant
             sur les exigences du DCE et sur les éléments réels de votre base
             entreprise. Chaque passage indique ses sources.
           </p>
@@ -32,7 +32,7 @@ export function MemoryStep() {
 
         <figure className="rv" style={{ marginTop: 44 }}>
           <MockupFrame
-            ariaLabel="Rédaction du mémoire technique dans BIDERA : plan par chapitres, texte généré, sources citées issues du CCTP et de la base entreprise."
+            ariaLabel="Rédaction du mémoire technique dans MateriaBTP : plan par chapitres, texte généré, sources citées issues du CCTP et de la base entreprise."
             crumb={
               <>
                 Mémoire / <b>Chapitre 3, organisation du chantier</b>
@@ -112,7 +112,7 @@ export function MemoryStep() {
         </figure>
 
         <p className="note rv" style={{ marginTop: 26, maxWidth: "74ch" }}>
-          BIDERA prépare le mémoire, il ne le signe pas. La relecture, les
+          MateriaBTP prépare le mémoire, il ne le signe pas. La relecture, les
           arbitrages et la validation finale restent le travail de vos
           équipes.
         </p>

@@ -1,8 +1,8 @@
 {
-  "name": "bidera",
+  "name": "materiabtp",
   "version": "1.0.0",
   "private": true,
-  "description": "BIDERA — plateforme IA d'aide a la reponse aux appels d'offres BTP",
+  "description": "MateriaBTP — plateforme IA d'aide a la reponse aux appels d'offres BTP",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

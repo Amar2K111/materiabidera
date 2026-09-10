@@ -9,7 +9,7 @@ export function DceAnalysisStep() {
           <p className="kicker">Étape 1, analyse du DCE</p>
           <h2 className="h2">487 pages. Une seule vue.</h2>
           <p className="lede">
-            RC, CCTP, CCAP, DPGF et annexes sont analysés ensemble. BIDERA en
+            RC, CCTP, CCAP, DPGF et annexes sont analysés ensemble. MateriaBTP en
             ressort les informations qui comptent : exigences, critères de
             jugement, échéances et points de vigilance.
           </p>
@@ -22,7 +22,7 @@ export function DceAnalysisStep() {
         <figure>
           <MockupFrame
             flat
-            ariaLabel="Analyse d’un DCE dans BIDERA : 24 documents, 487 pages, 86 exigences, 12 points de vigilance, pièces détectées et critères de notation."
+            ariaLabel="Analyse d’un DCE dans MateriaBTP : 24 documents, 487 pages, 86 exigences, 12 points de vigilance, pièces détectées et critères de notation."
             crumb={<b>Analyse du dossier</b>}
             right={
               <span className="tag ok">

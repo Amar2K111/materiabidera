@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import { LogOut } from "lucide-react";
 import { isSupabaseConfigured } from "@/lib/env";
 import { getAppContext } from "@/lib/data/context";
@@ -36,12 +37,8 @@ export default async function AppLayout({
       <header className="sticky top-0 z-50 flex h-14 items-center justify-between gap-4 border-b border-line bg-white/90 px-4 backdrop-blur-md">
         <div className="flex min-w-0 items-center gap-3">
           <MobileNav />
-          <Link
-            href="/app"
-            className="flex flex-none items-center gap-2 font-extrabold tracking-[-0.06em]"
-          >
-            <i className="block h-3 w-3 rounded-[3px] bg-brand" />
-            <span className="text-[16px]">BIDERA</span>
+          <Link href="/app" className="flex flex-none items-center">
+            <BrandLogo height={22} />
           </Link>
           <span className="truncate text-[13px] font-semibold text-ink-58">
             {ctx.organization.name}

@@ -3,7 +3,7 @@ import { HeroVisual } from "./HeroVisual";
 import { MockupFrame } from "./MockupFrame";
 
 /**
- * Section d'ouverture, avec la maquette du tableau de bord BIDERA.
+ * Section d'ouverture, avec la maquette du tableau de bord MateriaBTP.
  *
  * La maquette reste une representation marketing statique : uniquement des
  * ecrans reellement presents dans le logiciel, jamais les donnees d'un
@@ -23,7 +23,7 @@ export function Hero() {
           <h1>Transformez vos appels d’offres en réponses gagnantes</h1>
 
           <p className="hero-lead">
-            BIDERA analyse vos DCE, valorise votre savoir-faire et vous
+            MateriaBTP analyse vos DCE, valorise votre savoir-faire et vous
             accompagne jusqu’au mémoire technique vérifié. Une seule plateforme,
             un processus maîtrisé.
           </p>
@@ -47,7 +47,7 @@ export function Hero() {
 
         <HeroVisual>
           <MockupFrame
-            ariaLabel="Tableau de bord BIDERA d’un appel d’offres BTP : 24 documents, 487 pages, 86 exigences, 12 points de vigilance, 18 jours restants, score Go/No-Go de 82 sur 100 avec recommandation GO, progression du mémoire technique, alertes et sources documentaires."
+            ariaLabel="Tableau de bord MateriaBTP d’un appel d’offres BTP : 24 documents, 487 pages, 86 exigences, 12 points de vigilance, 18 jours restants, score Go/No-Go de 82 sur 100 avec recommandation GO, progression du mémoire technique, alertes et sources documentaires."
             crumb={
               <>
                 Dossiers / <b>Réhabilitation d’un groupe scolaire</b>

@@ -1,7 +1,6 @@
 /* =============================================================================
-   BIDERA — styles de la landing page
-   Ported quasi verbatim depuis l'ancienne page HTML statique (public/landing.html,
-   elle-meme desormais supprimee). Chaque regle est prefixee par .landing pour
+   MateriaBTP — styles de la landing page
+   Styles de la landing page. Chaque regle est prefixee par .landing pour
    ne jamais fuir vers le reste de l'application (dashboard, auth).
    ========================================================================== */
 

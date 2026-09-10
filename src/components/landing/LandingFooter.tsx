@@ -1,3 +1,5 @@
+import { BrandLogo } from "@/components/brand/BrandLogo";
+
 export function LandingFooter() {
   const year = new Date().getFullYear();
 
@@ -7,8 +9,7 @@ export function LandingFooter() {
         <div className="foot-grid">
           <div>
             <div className="brand">
-              <i className="brand-mark" aria-hidden="true" />
-              BIDERA
+              <BrandLogo height={26} />
             </div>
             <p className="foot-tag">
               L’IA des appels d’offres BTP, du DCE au mémoire technique exporté.
@@ -42,7 +43,7 @@ export function LandingFooter() {
           </div>
         </div>
         <div className="foot-bot">
-          <span>© {year} BIDERA. Tous droits réservés.</span>
+          <span>© {year} MateriaBTP. Tous droits réservés.</span>
           <span>[EMAIL] · [ADRESSE] · [SIREN] · [MENTIONS LÉGALES]</span>
         </div>
       </div>

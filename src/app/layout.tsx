@@ -10,7 +10,7 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "BIDERA",
+  title: "MateriaBTP",
   description:
     "Plateforme IA d'aide a la reponse aux appels d'offres pour les entreprises du BTP.",
   robots: { index: false, follow: false },

@@ -57,7 +57,7 @@ export function ChecklistExportStep() {
         <figure>
           <MockupFrame
             flat
-            ariaLabel="Checklist avant dépôt dans BIDERA, avec les éléments couverts, partiels et à vérifier, puis les boutons d’export Word et PDF."
+            ariaLabel="Checklist avant dépôt dans MateriaBTP, avec les éléments couverts, partiels et à vérifier, puis les boutons d’export Word et PDF."
             crumb={<b>Checklist avant dépôt</b>}
             right={<span className="tag">Remise dans 11 j</span>}
             foot={

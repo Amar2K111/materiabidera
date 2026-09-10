@@ -106,7 +106,7 @@ export function DecisionPanel({
       <div className="max-w-[640px]">
         <h2 className="text-[17px] font-bold">Evaluer l&apos;opportunite</h2>
         <p className="mt-2 text-[13.5px] leading-relaxed text-ink-58">
-          BIDERA confronte les exigences du dossier a ce que contient votre base
+          MateriaBTP confronte les exigences du dossier a ce que contient votre base
           entreprise, puis note huit facteurs. Chaque note est justifiee et
           rattachee a ses sources. La decision finale reste la votre.
         </p>
@@ -175,7 +175,7 @@ export function DecisionPanel({
           {decision.user_decision &&
           decision.user_decision !== decision.recommendation ? (
             <p className="mt-1 text-[12px] text-ink-42">
-              BIDERA recommandait :{" "}
+              MateriaBTP recommandait :{" "}
               {RECOMMENDATION_LABELS[decision.recommendation].label}
             </p>
           ) : null}
@@ -183,7 +183,7 @@ export function DecisionPanel({
       </div>
 
       <Notice>
-        Analyse indicative generee par BIDERA a partir des documents disponibles
+        Analyse indicative generee par MateriaBTP a partir des documents disponibles
         et de votre base entreprise, le {formatDateTime(decision.generated_at)}.
         Le score est calcule par l&apos;application a partir des notes ci-dessous
         et de ponderations fixes. Il ne remplace pas votre jugement.
@@ -266,7 +266,7 @@ export function DecisionPanel({
       <section className="border-t border-line pt-6">
         <h2 className="text-[15px] font-bold">Votre decision</h2>
         <p className="mt-1.5 mb-4 max-w-[70ch] text-[13px] text-ink-58">
-          BIDERA propose, vous tranchez. Votre choix prime sur la recommandation
+          MateriaBTP propose, vous tranchez. Votre choix prime sur la recommandation
           et fixe le statut du dossier.
         </p>
 

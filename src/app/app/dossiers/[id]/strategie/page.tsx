@@ -57,7 +57,7 @@ export default async function StrategyPage({
       <div className="max-w-[640px]">
         <h2 className="text-[17px] font-bold">Construire la strategie</h2>
         <p className="mt-2 text-[13.5px] leading-relaxed text-ink-58">
-          Avant de rediger, BIDERA determine ou porter l&apos;effort : quels axes
+          Avant de rediger, MateriaBTP determine ou porter l&apos;effort : quels axes
           pesent le plus dans la notation de ce marche, et quels elements de
           votre base entreprise servent reellement cette reponse.
         </p>
@@ -76,7 +76,7 @@ export default async function StrategyPage({
   return (
     <div className="space-y-8">
       <Notice>
-        Strategie proposee par BIDERA a partir des criteres de jugement, des
+        Strategie proposee par MateriaBTP a partir des criteres de jugement, des
         exigences relevees et de votre base entreprise, le{" "}
         {formatDateTime(strategy.generated_at)}. Elle vous appartient : ajustez
         les axes avant de lancer la redaction.

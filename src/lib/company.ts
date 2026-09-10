@@ -54,7 +54,7 @@ export const COLLECTIONS: CollectionDef[] = [
     purpose:
       "Vos chantiers realises. Ce sont eux qui prouvent votre experience face a une consultation.",
     emptyDescription:
-      "Ajoutez vos chantiers realises. BIDERA s'en sert pour reperer ceux qui ressemblent au marche analyse, et pour les proposer dans votre memoire technique.",
+      "Ajoutez vos chantiers realises. MateriaBTP s'en sert pour reperer ceux qui ressemblent au marche analyse, et pour les proposer dans votre memoire technique.",
     addLabel: "Ajouter une reference",
     titleField: "name",
     summaryFields: ["client", "year", "amount", "work_type"],

@@ -9,9 +9,8 @@ export const config = {
   matcher: [
     /*
      * Toutes les routes sauf les fichiers statiques et les images.
-     * La landing page (public/landing.html) est volontairement exclue :
-     * elle reste accessible sans session.
+     * La landing (/) reste publique : seuls /app et /onboarding exigent une session.
      */
-    "/((?!_next/static|_next/image|favicon\\.ico|landing\\.html|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|woff2?)$).*)",
+    "/((?!_next/static|_next/image|favicon\\.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|woff2?)$).*)",
   ],
 };

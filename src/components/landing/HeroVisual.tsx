@@ -14,7 +14,7 @@ export function HeroVisual({ children }: { children: ReactNode }) {
   return (
     <figure
       className="hero-visual rv"
-      aria-label="Professionnelle utilisant BIDERA sur tablette pour préparer une réponse à un appel d’offres BTP"
+      aria-label="Professionnelle utilisant MateriaBTP sur tablette pour préparer une réponse à un appel d’offres BTP"
     >
       <div className="hero-tablet-wrap">
         <div className="hero-tablet">
@@ -26,7 +26,7 @@ export function HeroVisual({ children }: { children: ReactNode }) {
             src={USER_PHOTO}
             loading="eager"
             decoding="async"
-            alt="Responsable d’entreprise BTP travaillant sur son ordinateur avec BIDERA"
+            alt="Responsable d’entreprise BTP travaillant sur son ordinateur avec MateriaBTP"
           />
         </div>
 

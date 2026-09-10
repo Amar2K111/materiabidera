@@ -1,18 +1,18 @@
 export const FAQ_ITEMS = [
   {
-    q: "BIDERA fonctionne-t-il pour toutes les entreprises ?",
-    a: "Non, et c’est volontaire. BIDERA est conçu spécifiquement pour les entreprises du BTP qui répondent aux appels d’offres : entreprises générales, entreprises spécialisées, travaux publics, PME du bâtiment. Le vocabulaire, la structure du mémoire technique et les contraintes de chantier sont ceux de ce métier.",
+    q: "MateriaBTP fonctionne-t-il pour toutes les entreprises ?",
+    a: "Non, et c’est volontaire. MateriaBTP est conçu spécifiquement pour les entreprises du BTP qui répondent aux appels d’offres : entreprises générales, entreprises spécialisées, travaux publics, PME du bâtiment. Le vocabulaire, la structure du mémoire technique et les contraintes de chantier sont ceux de ce métier.",
   },
   {
     q: "Quels documents puis-je analyser ?",
     a: "Les pièces habituelles d’un dossier de consultation : règlement de consultation, CCTP, CCAP, DPGF, annexes et pièces complémentaires. Les formats exactement pris en charge sont vérifiés avec vous sur votre propre dossier pendant la démonstration.",
   },
   {
-    q: "BIDERA rédige-t-il entièrement le mémoire technique ?",
-    a: "BIDERA structure le mémoire et en génère les chapitres à partir du DCE et de votre base entreprise. Vous gardez le contrôle final : chaque passage se relit, se modifie et se valide avant l’export. Le document que vous déposez reste le vôtre.",
+    q: "MateriaBTP rédige-t-il entièrement le mémoire technique ?",
+    a: "MateriaBTP structure le mémoire et en génère les chapitres à partir du DCE et de votre base entreprise. Vous gardez le contrôle final : chaque passage se relit, se modifie et se valide avant l’export. Le document que vous déposez reste le vôtre.",
   },
   {
-    q: "Comment BIDERA évite-t-il les réponses génériques ?",
+    q: "Comment MateriaBTP évite-t-il les réponses génériques ?",
     a: "La rédaction s’appuie sur deux sources et pas sur des formules toutes faites : les exigences et critères extraits du DCE, et les éléments réels de votre base entreprise, comme vos références, vos méthodes, vos moyens et vos CV. Le contrôle signale ensuite les passages qui restent trop généraux.",
   },
   {
@@ -28,8 +28,8 @@ export const FAQ_ITEMS = [
     a: "Oui, en Word et en PDF. L’export reprend la structure du mémoire pour que la mise en forme finale se fasse dans vos outils habituels, selon votre charte.",
   },
   {
-    q: "Est-ce que BIDERA remplace un collaborateur ?",
-    a: "Non. BIDERA assiste les équipes pour accélérer, structurer et sécuriser leur travail. La stratégie, les arbitrages et la validation finale restent humains.",
+    q: "Est-ce que MateriaBTP remplace un collaborateur ?",
+    a: "Non. MateriaBTP assiste les équipes pour accélérer, structurer et sécuriser leur travail. La stratégie, les arbitrages et la validation finale restent humains.",
   },
   {
     q: "Nos documents servent-ils à entraîner l’IA ?",

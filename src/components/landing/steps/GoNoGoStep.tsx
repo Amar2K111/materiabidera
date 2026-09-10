@@ -13,7 +13,7 @@ export function GoNoGoStep() {
           </h2>
           <p className="lede">
             Adéquation technique, capacités disponibles, critères de
-            notation, contraintes, risques et délais : BIDERA réunit les
+            notation, contraintes, risques et délais : MateriaBTP réunit les
             facteurs de la décision et les rend explicables, un par un.
           </p>
           <p className="note" style={{ marginTop: 24 }}>
@@ -25,7 +25,7 @@ export function GoNoGoStep() {
         <figure>
           <MockupFrame
             flat
-            ariaLabel="Analyse Go/No-Go dans BIDERA : score de 82 sur 100, recommandation GO, et détail des six facteurs de décision."
+            ariaLabel="Analyse Go/No-Go dans MateriaBTP : score de 82 sur 100, recommandation GO, et détail des six facteurs de décision."
             crumb={<b>Go / No-Go</b>}
             right={
               <span className="tag ok">

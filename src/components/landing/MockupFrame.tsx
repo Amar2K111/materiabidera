@@ -1,9 +1,10 @@
 import type { ReactNode } from "react";
+import { BrandName } from "@/components/brand/BrandLogo";
 
 /**
  * Cadre commun des mockups produit ("Réhabilitation d'un groupe scolaire" etc.).
  *
- * Factorise la barre superieure (marque BIDERA, fil d'ariane, tags de droite)
+ * Factorise la barre superieure (marque MateriaBTP, fil d'ariane, tags de droite)
  * et le pied optionnel, repetes a l'identique dans chaque section de la page
  * marketing. Le corps reste libre : chaque mockup a un contenu different
  * (barre laterale ou non, tableaux, listes).
@@ -33,8 +34,7 @@ export function MockupFrame({
       <div className="ui-top">
         <div className="ui-top-l">
           <span className="ui-brand">
-            <i />
-            BIDERA
+            <BrandName className="text-[13px]" />
           </span>
           <span className="ui-crumb">{crumb}</span>
         </div>

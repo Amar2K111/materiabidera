@@ -12,7 +12,7 @@ export function QualityStep() {
             Avant de déposer votre offre, contrôlez ce qui manque.
           </h2>
           <p className="lede">
-            BIDERA compare votre réponse aux exigences du marché et signale
+            MateriaBTP compare votre réponse aux exigences du marché et signale
             ce qui est absent, partiel, trop générique ou non vérifié.
             C’est l’étape que les outils de rédaction n’ont pas.
           </p>
@@ -20,7 +20,7 @@ export function QualityStep() {
 
         <figure className="rv" style={{ marginTop: 44 }}>
           <MockupFrame
-            ariaLabel="Contrôle de la réponse dans BIDERA : 96 pour cent des exigences couvertes, 3 points à revoir, 2 informations à vérifier et 1 critère insuffisamment développé."
+            ariaLabel="Contrôle de la réponse dans MateriaBTP : 96 pour cent des exigences couvertes, 3 points à revoir, 2 informations à vérifier et 1 critère insuffisamment développé."
             crumb={<b>Contrôle de la réponse</b>}
             right={<span className="tag">Lot 3</span>}
           >

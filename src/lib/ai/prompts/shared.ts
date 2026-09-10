@@ -1,7 +1,7 @@
 /**
  * Elements communs a tous les prompts (section 33).
  *
- * Chaque prompt de BIDERA declare un role, un objectif, ses sources, ses
+ * Chaque prompt de MateriaBTP declare un role, un objectif, ses sources, ses
  * regles, son format de sortie, et l'interdiction d'inventer.
  */
 

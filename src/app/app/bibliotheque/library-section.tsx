@@ -188,7 +188,7 @@ export function LibrarySection({
         <EmptyState
           icon={<Library className="h-5 w-5" strokeWidth={1.8} />}
           title="Aucun document importe"
-          description="Importez vos anciens memoires techniques et vos documents d'entreprise. BIDERA pourra s'y appuyer comme sources tracables lors de la redaction."
+          description="Importez vos anciens memoires techniques et vos documents d'entreprise. MateriaBTP pourra s'y appuyer comme sources tracables lors de la redaction."
           action={
             <Button onClick={() => setShowUploader(true)}>
               Importer des documents
