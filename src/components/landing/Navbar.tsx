@@ -38,9 +38,14 @@ export function Navbar({
   return (
     <header className={`nav${stuck ? " is-stuck" : ""}`} id="nav">
       <div className="wrap nav-in">
-        <div className="brand">
+        <Link
+          href="/#top"
+          className="brand"
+          aria-label="MateriaBTP — retour en haut de page"
+          onClick={() => setOpen(false)}
+        >
           <BrandLogo height={26} priority />
-        </div>
+        </Link>
         <nav className="nav-links" aria-label="Navigation principale">
           {LINKS.map((l) => (
             <a key={l.href} href={l.href}>

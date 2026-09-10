@@ -62,7 +62,7 @@ const faqSchema = {
 
 export default function HomePage() {
   return (
-    <div className="landing">
+    <div className="landing" id="top">
       <LandingPage />
       <Script
         id="materiabtp-software-schema"

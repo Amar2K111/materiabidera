@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { BrandLogo } from "@/components/brand/BrandLogo";
 
 export function LandingFooter() {
@@ -8,9 +9,13 @@ export function LandingFooter() {
       <div className="wrap">
         <div className="foot-grid">
           <div>
-            <div className="brand">
+            <Link
+              href="/#top"
+              className="brand"
+              aria-label="MateriaBTP — retour en haut de page"
+            >
               <BrandLogo height={26} />
-            </div>
+            </Link>
             <p className="foot-tag">
               L’IA des appels d’offres BTP, du DCE au mémoire technique exporté.
             </p>

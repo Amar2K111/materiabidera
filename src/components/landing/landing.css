@@ -65,7 +65,8 @@
   font-weight: 450;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  overflow-x: hidden;
+  overflow-x: clip;
+  padding-top: var(--nav-h);
 }
 
 .landing *,
@@ -295,9 +296,11 @@
    NAVBAR
    ----------------------------------------------------------------------- */
 .landing .nav {
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 60;
+  left: 0;
+  right: 0;
+  z-index: 100;
   background: rgba(255, 255, 255, 0.87);
   backdrop-filter: saturate(180%) blur(14px);
   -webkit-backdrop-filter: saturate(180%) blur(14px);
@@ -321,6 +324,12 @@
   font-weight: 800;
   font-size: 20px;
   letter-spacing: -0.06em;
+  text-decoration: none;
+  color: inherit;
+  flex: none;
+}
+.landing a.brand:hover {
+  opacity: 0.92;
 }
 .landing .brand-mark {
   width: 14px;
