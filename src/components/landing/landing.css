@@ -573,7 +573,7 @@
   width: 100%;
   height: clamp(140px, 18vh, 220px);
   object-fit: cover;
-  object-position: center 25%;
+  object-position: 55% center;
   display: block;
 }
 .landing .hero-user-steps {

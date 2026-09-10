@@ -26,7 +26,7 @@ export function HeroVisual({ children }: { children: ReactNode }) {
             src={USER_PHOTO}
             loading="eager"
             decoding="async"
-            alt="Responsable d’entreprise BTP travaillant sur son ordinateur avec MateriaBTP"
+            alt="Responsable d’entreprise BTP travaillant sur son poste avec MateriaBTP"
           />
         </div>
 

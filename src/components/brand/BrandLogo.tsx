@@ -2,6 +2,8 @@ import Image from "next/image";
 
 const LOGO_WIDTH = 878;
 const LOGO_HEIGHT = 150;
+const ICON_WIDTH = 1024;
+const ICON_HEIGHT = 682;
 
 type BrandLogoProps = {
   height?: number;
@@ -9,7 +11,15 @@ type BrandLogoProps = {
   priority?: boolean;
 };
 
-/** Logo MateriaBTP (image officielle). */
+type BrandMarkProps = {
+  size?: number;
+  className?: string;
+  priority?: boolean;
+  /** false quand l'icone accompagne deja le nom visible */
+  decorative?: boolean;
+};
+
+/** Logo MateriaBTP complet (navbar, footer, pages auth). */
 export function BrandLogo({
   height = 28,
   className,
@@ -26,6 +36,29 @@ export function BrandLogo({
       className={className}
       priority={priority}
       style={{ width: "auto", height }}
+    />
+  );
+}
+
+/** Pictogramme MateriaBTP (favicon, header compact, mockups). */
+export function BrandMark({
+  size = 24,
+  className,
+  priority = false,
+  decorative = false,
+}: BrandMarkProps) {
+  const width = Math.round((size * ICON_WIDTH) / ICON_HEIGHT);
+
+  return (
+    <Image
+      src="/images/materiabtp-icon.png"
+      alt={decorative ? "" : "MateriaBTP"}
+      width={width}
+      height={size}
+      className={className}
+      priority={priority}
+      aria-hidden={decorative}
+      style={{ width: "auto", height: size }}
     />
   );
 }

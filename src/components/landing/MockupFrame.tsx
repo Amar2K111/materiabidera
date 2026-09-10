@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { BrandName } from "@/components/brand/BrandLogo";
+import { BrandMark, BrandName } from "@/components/brand/BrandLogo";
 
 /**
  * Cadre commun des mockups produit ("Réhabilitation d'un groupe scolaire" etc.).
@@ -34,6 +34,7 @@ export function MockupFrame({
       <div className="ui-top">
         <div className="ui-top-l">
           <span className="ui-brand">
+            <BrandMark size={14} decorative />
             <BrandName className="text-[13px]" />
           </span>
           <span className="ui-crumb">{crumb}</span>
