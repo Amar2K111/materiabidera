@@ -75,6 +75,54 @@ npm run dev
 
 ---
 
+## Déploiement Vercel (auto à chaque push sur `main`)
+
+Configuration **une seule fois**, puis chaque `git push` sur `main` redéploie
+automatiquement en production.
+
+### 1. Importer le dépôt GitHub
+
+1. Ouvrez [vercel.com/new](https://vercel.com/new) et connectez-vous avec GitHub.
+2. Importez le dépôt **Amar2K111/materiabidera**.
+3. Vercel détecte **Next.js** — laissez les réglages par défaut :
+   - Build : `npm run build`
+   - Branche production : `main`
+
+Lien direct d'import :
+[Importer materiabidera sur Vercel](https://vercel.com/new/import?s=https%3A%2F%2Fgithub.com%2FAmar2K111%2Fmateriabidera)
+
+### 2. Variables d'environnement (obligatoire)
+
+Dans **Project Settings → Environment Variables**, ajoutez les mêmes valeurs
+que votre `.env.local` :
+
+| Variable | Environnement |
+| --- | --- |
+| `NEXT_PUBLIC_SUPABASE_URL` | Production, Preview, Development |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Production, Preview, Development |
+| `SUPABASE_SERVICE_ROLE_KEY` | Production, Preview, Development |
+| `AI_PROVIDER` | Production, Preview, Development |
+| `GEMINI_API_KEY` ou `ANTHROPIC_API_KEY` | Production, Preview, Development |
+| `NEXT_PUBLIC_SITE_URL` | Production → URL Vercel (`https://xxx.vercel.app`) |
+
+Ne commitez jamais `.env.local` : les secrets restent dans Vercel.
+
+### 3. Supabase (auth en production)
+
+Dans Supabase → **Authentication → URL Configuration**, ajoutez l'URL Vercel :
+
+- **Site URL** : `https://votre-projet.vercel.app`
+- **Redirect URLs** : `https://votre-projet.vercel.app/auth/callback`
+
+### 4. Vérifier le déploiement auto
+
+Après le premier déploiement, faites un petit push sur `main` : un nouveau
+déploiement doit apparaître dans l'onglet **Deployments** de Vercel (~1 min).
+
+Documentation : [Vercel + Git](https://vercel.com/docs/git)
+
+---
+
 ## Organisation du code
 
 ```
