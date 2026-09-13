@@ -85,7 +85,7 @@ export function DemoModal() {
           <aside className="demo-modal__intro">
             <div>
               <div className="demo-modal__brand">
-                <BrandLogo height={28} variant="on-dark" />
+                <BrandLogo height={28} priority />
               </div>
               <h2 id="demo-modal-title">
                 Votre prochain <em>appel d’offres</em> en 30 minutes

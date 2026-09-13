@@ -2417,19 +2417,14 @@ html:has(.landing) {
   transform: none;
 }
 .landing .demo-modal__intro {
-  background: radial-gradient(
-    circle at 70% 20%,
-    var(--blue-mid) 0%,
-    var(--blue) 55%,
-    var(--blue-deep) 100%
-  );
-  color: #fff;
+  background: linear-gradient(180deg, var(--blue-wash) 0%, #fff 72%);
+  color: var(--ink);
   padding: clamp(28px, 4vw, 40px) clamp(24px, 3.5vw, 36px);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   gap: 24px;
-  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  border-right: 1px solid var(--line-soft);
 }
 .landing .demo-modal__brand {
   display: flex;
@@ -2458,16 +2453,16 @@ html:has(.landing) {
   font-weight: 800;
   max-width: 12em;
   margin-top: 8px;
-  color: #fff !important;
+  color: var(--ink) !important;
 }
 .landing .demo-modal__intro h2 em {
   font-style: normal;
-  color: var(--blue-sky) !important;
+  color: var(--blue) !important;
 }
 .landing .demo-modal__intro p {
   font-size: 14.5px;
   line-height: 1.55;
-  color: rgba(255, 255, 255, 0.68);
+  color: var(--ink-58) !important;
   max-width: 30ch;
 }
 .landing .demo-modal__points {
@@ -2479,10 +2474,10 @@ html:has(.landing) {
 }
 .landing .demo-modal__points li {
   position: relative;
-  padding-left: 18px;
+  padding-left: 22px;
   font-size: 14px;
   line-height: 1.5;
-  color: rgba(255, 255, 255, 0.82);
+  color: var(--ink) !important;
   font-weight: 500;
 }
 .landing .demo-modal__points li::before {
@@ -2494,14 +2489,14 @@ html:has(.landing) {
   height: auto;
   border-radius: 0;
   background: none;
-  color: var(--blue-sky);
+  color: var(--blue);
   font-size: 14px;
   font-weight: 800;
   line-height: 1;
 }
 .landing .demo-modal__meta {
   font-size: 12.5px;
-  color: rgba(255, 255, 255, 0.45);
+  color: var(--ink-42) !important;
   font-weight: 600;
 }
 .landing .demo-modal__main {

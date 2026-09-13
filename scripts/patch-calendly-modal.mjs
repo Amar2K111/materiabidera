@@ -11,13 +11,13 @@ const INDEX = path.join(ROOT, "index.html");
 
 const MODAL_HTML = `<!-- MATERIABTP:CALENDLY-MODAL:START -->
 <link rel="stylesheet" href="https://assets.calendly.com/assets/external/widget.css"/>
-<link rel="stylesheet" href="./materiabtp-assets/materia-calendly-modal.css?v=2"/>
+<link rel="stylesheet" href="./materiabtp-assets/materia-calendly-modal.css?v=3"/>
 <div id="demo-modal" class="demo-modal" aria-hidden="true">
 <div class="demo-modal__backdrop"></div>
 <div class="demo-modal__panel" role="dialog" aria-modal="true" aria-labelledby="demo-modal-title">
 <aside class="demo-modal__intro">
 <div>
-<div class="demo-modal__brand"><img src="./materiabtp-assets/images/logo-materiabtp-wordmark-on-dark.png" alt="MateriaBTP" width="163" height="28"/></div>
+<div class="demo-modal__brand"><img src="./materiabtp-assets/images/logo-materiabtp-wordmark.png" alt="MateriaBTP" width="163" height="28"/></div>
 <h2 id="demo-modal-title">Votre prochain <em>appel d'offres</em> en 30 minutes</h2>
 <p>Découvrez comment MateriaBTP structure votre réponse, de l'analyse du DCE au mémoire technique vérifié.</p>
 </div>
