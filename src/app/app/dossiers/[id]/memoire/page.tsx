@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BookText } from "lucide-react";
 import { getProject } from "@/lib/data/projects";
@@ -7,17 +6,20 @@ import { listMemorySections } from "@/lib/data/memory";
 import { getAppContext } from "@/lib/data/context";
 import { isAiConfigured } from "@/lib/ai";
 import { OperationButton } from "@/components/app/operation-button";
-import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Notice } from "@/components/ui/notice";
 import { MemoryEditor } from "./memory-editor";
 
 export default async function MemoryPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const { id } = await params;
+  const { chapitre } = await searchParams;
   const [ctx, project, analysis, sections] = await Promise.all([
     getAppContext(),
     getProject(id),
@@ -46,9 +48,7 @@ export default async function MemoryPage({
         title="Le dossier doit d'abord etre analyse"
         description="Le plan du memoire est construit a partir du reglement de consultation, des criteres de jugement et du cadre de memoire impose lorsqu'il en existe un."
         action={
-          <Link href={`/app/dossiers/${project.id}/analyse`}>
-            <Button>Analyser le dossier</Button>
-          </Link>
+          <ButtonLink href={`/app/dossiers/${project.id}/analyse`}>Analyser le dossier</ButtonLink>
         }
       />
     );
@@ -81,6 +81,7 @@ export default async function MemoryPage({
       projectId={project.id}
       organizationId={ctx.organization.id}
       sections={sections}
+      initialSectionId={typeof chapitre === "string" ? chapitre : null}
     />
   );
 }

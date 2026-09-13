@@ -2,73 +2,93 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Check, LayoutGrid } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 
 /**
  * Colonne vertebrale d'un dossier (section 5).
  *
- * Un onglet dont la brique n'est pas encore en service reste visible mais
- * inactif : l'utilisateur voit le parcours complet sans jamais tomber sur une
- * page vide ou une fonction simulee.
+ * Chaque etape affiche son etat reel : a faire, terminee, ou a surveiller.
+ * L'utilisateur voit ou il en est et ce qui reste, sans ouvrir chaque page.
  */
 export const PROJECT_SECTIONS = [
-  { segment: "", label: "Vue d'ensemble", enabled: true },
-  { segment: "documents", label: "DCE", enabled: true },
-  { segment: "analyse", label: "Analyse", enabled: true },
-  { segment: "go-no-go", label: "Go / No-Go", enabled: true },
-  { segment: "exigences", label: "Exigences", enabled: true },
-  { segment: "strategie", label: "Stratégie", enabled: true },
-  { segment: "memoire", label: "Mémoire technique", enabled: true },
-  { segment: "controle", label: "Contrôle", enabled: true },
-  { segment: "checklist", label: "Checklist", enabled: true },
-  { segment: "export", label: "Export Word / PDF", enabled: true },
+  { segment: "", label: "Synthèse" },
+  { segment: "documents", label: "DCE" },
+  { segment: "analyse", label: "Analyse" },
+  { segment: "go-no-go", label: "Go / No-Go" },
+  { segment: "exigences", label: "Exigences" },
+  { segment: "strategie", label: "Stratégie" },
+  { segment: "memoire", label: "Mémoire" },
+  { segment: "controle", label: "Contrôle" },
+  { segment: "checklist", label: "Checklist" },
+  { segment: "export", label: "Export" },
 ] as const;
 
-export function ProjectNav({ projectId }: { projectId: string }) {
+export type StepSegment = (typeof PROJECT_SECTIONS)[number]["segment"];
+
+export type StepState = {
+  state: "todo" | "done" | "warn";
+  /** Compteur discret affiche a cote du libelle, par exemple "16/19". */
+  count?: string;
+  /** Explication au survol. */
+  hint?: string;
+};
+
+export function ProjectNav({
+  projectId,
+  steps,
+}: {
+  projectId: string;
+  steps: Partial<Record<StepSegment, StepState>>;
+}) {
   const pathname = usePathname();
   const base = `/app/dossiers/${projectId}`;
 
   return (
-    <nav
-      className="-mx-4 overflow-x-auto border-b border-line px-4 sm:mx-0 sm:px-0"
-      aria-label="Sections du dossier"
-    >
-      <ul className="flex min-w-max gap-1">
-        {PROJECT_SECTIONS.map(({ segment, label, enabled }) => {
+    <nav className="app-ui__steps" aria-label="Étapes du dossier">
+      <ol className="app-ui__steps-list">
+        {PROJECT_SECTIONS.map(({ segment, label }, index) => {
           const href = segment ? `${base}/${segment}` : base;
           const active = pathname === href;
-
-          if (!enabled) {
-            return (
-              <li key={label}>
-                <span
-                  className="block cursor-not-allowed px-3 py-2.5 text-[13px] font-semibold text-ink-42/60"
-                  title="Cette etape n'est pas encore en service"
-                >
-                  {label}
-                </span>
-              </li>
-            );
-          }
+          const step = steps[segment];
 
           return (
             <li key={label}>
               <Link
                 href={href}
                 aria-current={active ? "page" : undefined}
-                className={cn(
-                  "-mb-px block border-b-2 px-3 py-2.5 text-[13px] font-semibold transition-colors",
-                  active
-                    ? "border-brand text-brand"
-                    : "border-transparent text-ink-58 hover:text-ink",
-                )}
+                title={step?.hint}
+                className={cn("app-ui__step", active && "is-active")}
               >
+                {segment === "" ? (
+                  <LayoutGrid className="h-4 w-4" strokeWidth={1.8} aria-hidden />
+                ) : (
+                  <span
+                    className={cn(
+                      "app-ui__step-dot",
+                      step?.state === "done" && "is-done",
+                      step?.state === "warn" && "is-warn",
+                    )}
+                    aria-hidden
+                  >
+                    {step?.state === "done" ? (
+                      <Check />
+                    ) : step?.state === "warn" ? (
+                      "!"
+                    ) : (
+                      index
+                    )}
+                  </span>
+                )}
                 {label}
+                {step?.count ? (
+                  <span className="app-ui__step-count">{step.count}</span>
+                ) : null}
               </Link>
             </li>
           );
         })}
-      </ul>
+      </ol>
     </nav>
   );
 }

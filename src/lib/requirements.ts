@@ -102,6 +102,17 @@ export const PRIORITY_LABELS: Record<"HIGH" | "MEDIUM" | "LOW", string> = {
   LOW: "Basse",
 };
 
+/** Une meme page citee par plusieurs extraits n'est affichee qu'une fois. */
+export function dedupeCited(sources: CitedSource[]): CitedSource[] {
+  const seen = new Set<string>();
+  return sources.filter((s) => {
+    const key = `${s.documentName}|${s.pageNumber ?? s.label}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
 /** Libelle de source affichable, du type "RC.pdf, page 18". */
 export function sourceLabel(source: RequirementSource): string {
   const name = source.project_documents?.file_name ?? "Document";

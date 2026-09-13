@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { BrandLogo, BrandMark } from "@/components/brand/BrandLogo";
-import { LogOut } from "lucide-react";
+import { LogOut, Plus } from "lucide-react";
 import { getAppContext } from "@/lib/data/context";
 import { SidebarNav } from "@/components/app/sidebar";
 import { MobileNav } from "@/components/app/mobile-nav";
@@ -17,7 +17,8 @@ export default async function AppLayout({
 }) {
   const ctx = await getAppContext();
 
-  const initials = (ctx.fullName || ctx.organization.name || "?")
+  // Les initiales designent l'entreprise affichee a cote, pas le compte.
+  const initials = (ctx.organization.name || ctx.fullName || "?")
     .split(/\s+/)
     .slice(0, 2)
     .map((w) => w[0])
@@ -32,34 +33,39 @@ export default async function AppLayout({
           <BrandLogo height={28} priority />
         </Link>
 
+        <Link href="/app/dossiers/nouveau" className="app-ui__sidebar-cta">
+          <Plus strokeWidth={2.2} aria-hidden />
+          Nouveau dossier
+        </Link>
+
         <div className="app-ui__sidebar-nav">
-          <p className="app-ui__nav-label">Navigation</p>
           <SidebarNav />
         </div>
 
         <div className="app-ui__sidebar-foot">
-          <p className="app-ui__sidebar-org">{ctx.organization.name}</p>
-          <div className="app-ui__sidebar-user">
-            <span
-              className="app-ui__avatar"
-              title={ctx.email ?? undefined}
-              aria-hidden
-            >
-              {initials}
-            </span>
-            {!ctx.isGuest ? (
-              <form action="/auth/signout" method="post">
-                <button
-                  type="submit"
-                  className="app-ui__sidebar-logout"
-                  aria-label="Se deconnecter"
-                  title="Se deconnecter"
-                >
-                  <LogOut className="h-4 w-4" strokeWidth={1.8} />
-                </button>
-              </form>
+          <span className="app-ui__avatar" aria-hidden>
+            {initials}
+          </span>
+          <div className="app-ui__sidebar-id">
+            <p className="app-ui__sidebar-org">{ctx.organization.name}</p>
+            {ctx.email ? (
+              <p className="app-ui__sidebar-email" title={ctx.email}>
+                {ctx.email}
+              </p>
             ) : null}
           </div>
+          {!ctx.isGuest ? (
+            <form action="/auth/signout" method="post">
+              <button
+                type="submit"
+                className="app-ui__sidebar-logout"
+                aria-label="Se déconnecter"
+                title="Se déconnecter"
+              >
+                <LogOut className="h-4 w-4" strokeWidth={1.8} />
+              </button>
+            </form>
+          ) : null}
         </div>
       </aside>
 
@@ -82,8 +88,8 @@ export default async function AppLayout({
                 <button
                   type="submit"
                   className="flex h-8 w-8 items-center justify-center rounded-[8px] text-ink-42 transition-colors hover:bg-paper hover:text-ink"
-                  aria-label="Se deconnecter"
-                  title="Se deconnecter"
+                  aria-label="Se déconnecter"
+                  title="Se déconnecter"
                 >
                   <LogOut className="h-4 w-4" strokeWidth={1.8} />
                 </button>

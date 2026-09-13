@@ -1,11 +1,10 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FileDown } from "lucide-react";
 import { getProject } from "@/lib/data/projects";
 import { listMemorySections } from "@/lib/data/memory";
 import { listExports } from "@/lib/data/quality";
 import { getChecklist } from "@/lib/services/checklist";
-import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ExportPanel } from "./export-panel";
 
@@ -33,9 +32,7 @@ export default async function ExportPage({
         title="Aucun chapitre redige"
         description="L'export produit le memoire technique au format Word et PDF, avec couverture, sommaire, titres hierarchises et pagination."
         action={
-          <Link href={`/app/dossiers/${project.id}/memoire`}>
-            <Button>Rediger le memoire</Button>
-          </Link>
+          <ButtonLink href={`/app/dossiers/${project.id}/memoire`}>Rediger le memoire</ButtonLink>
         }
       />
     );

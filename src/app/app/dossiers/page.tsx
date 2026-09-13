@@ -3,7 +3,7 @@ import { FolderPlus } from "lucide-react";
 import { listProjects } from "@/lib/data/projects";
 import { PROJECT_STATUS, deadlineLabel, formatDate } from "@/lib/projects";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 
@@ -16,9 +16,7 @@ export default async function DossiersPage() {
         title="Dossiers"
         subtitle="Chaque appel d'offres auquel vous repondez, du depot du DCE jusqu'a l'export de votre reponse."
         action={
-          <Link href="/app/dossiers/nouveau">
-            <Button className="h-11">+ Nouveau dossier</Button>
-          </Link>
+          <ButtonLink href="/app/dossiers/nouveau" className="h-11">+ Nouveau dossier</ButtonLink>
         }
       />
 
@@ -28,9 +26,7 @@ export default async function DossiersPage() {
           title="Aucun dossier pour le moment"
           description="Creez un dossier pour deposer un DCE, identifier les exigences, evaluer l'opportunite et construire votre memoire technique."
           action={
-            <Link href="/app/dossiers/nouveau">
-              <Button>Creer un dossier</Button>
-            </Link>
+            <ButtonLink href="/app/dossiers/nouveau">Creer un dossier</ButtonLink>
           }
         />
       ) : (

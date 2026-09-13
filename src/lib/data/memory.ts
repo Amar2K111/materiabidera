@@ -1,5 +1,6 @@
 import "server-only";
 import { createClient } from "@/lib/supabase/server";
+import { stripCitationCodes } from "@/lib/citations";
 
 export type MemorySource = {
   id: string;
@@ -37,5 +38,21 @@ export async function listMemorySections(
     .eq("project_id", projectId)
     .order("position", { ascending: true });
 
-  return (data ?? []) as unknown as MemorySection[];
+  const sections = (data ?? []) as unknown as MemorySection[];
+  for (const section of sections) {
+    section.content = stripCitationCodes(section.content);
+    section.memory_sources = dedupeSources(section.memory_sources ?? []);
+  }
+  return sections;
+}
+
+/** Plusieurs extraits pointent souvent vers la meme page : une seule entree. */
+function dedupeSources(sources: MemorySource[]): MemorySource[] {
+  const seen = new Set<string>();
+  return sources.filter((s) => {
+    const key = `${s.origin}|${s.label}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 }

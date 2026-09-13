@@ -113,7 +113,7 @@ export const DOCUMENT_KIND_LABELS: Record<DocumentKind, string> = {
  * l'utilisateur peut corriger la valeur a tout moment.
  */
 export function guessKindFromName(fileName: string): DocumentKind {
-  const n = deaccent(fileName).toLowerCase();
+  const n = normalizeFileName(fileName);
 
   if (/\bcctp\b|cahier.{0,20}clauses.{0,20}techniques/.test(n)) return "CCTP";
   if (/\bccap\b|cahier.{0,20}clauses.{0,20}administratives/.test(n)) {
@@ -131,4 +131,50 @@ export function guessKindFromName(fileName: string): DocumentKind {
   }
 
   return "UNKNOWN";
+}
+
+/**
+ * Nom de fichier comparable : sans accents, en minuscules, et avec "_", "-"
+ * et "." traites comme des espaces, pour que "01_RC_v2.pdf" reconnaisse "rc".
+ */
+function normalizeFileName(fileName: string): string {
+  return deaccent(fileName)
+    .toLowerCase()
+    .replace(/[_\-.]+/g, " ");
+}
+
+export type CompanyDocumentKind =
+  | "REFERENCE"
+  | "MEMOIRE"
+  | "METHODE"
+  | "CV"
+  | "CERTIFICATION"
+  | "QSE"
+  | "MATERIEL"
+  | "AUTRE";
+
+/**
+ * Pre-classement d'un document de la bibliotheque d'apres son nom.
+ *
+ * Meme principe que pour le DCE : une proposition deterministe, que
+ * l'utilisateur corrige a tout moment depuis la bibliotheque.
+ */
+export function guessCompanyKindFromName(fileName: string): CompanyDocumentKind {
+  const n = normalizeFileName(fileName);
+
+  if (/memoire|\bmt\b|offre technique/.test(n)) return "MEMOIRE";
+  if (/\bcv\b|curriculum/.test(n)) return "CV";
+  if (/reference|attestation de bonne execution|\babe\b/.test(n)) {
+    return "REFERENCE";
+  }
+  if (/qualibat|qualifelec|certificat|certification|iso \d|mase|\brge\b|assurance|decennale|kbis/.test(n)) {
+    return "CERTIFICATION";
+  }
+  if (/\bqse\b|securite|environnement|qualite|\bppsps\b|\bpaq\b|\bsoged\b|dechets/.test(n)) {
+    return "QSE";
+  }
+  if (/methode|methodologie|procedure|mode operatoire/.test(n)) return "METHODE";
+  if (/materiel|engin|equipement|parc/.test(n)) return "MATERIEL";
+
+  return "AUTRE";
 }

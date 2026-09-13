@@ -15,6 +15,8 @@ import {
 } from "@/lib/decision";
 import { formatDate } from "@/lib/projects";
 import { buildProjectContext, resolveSources } from "./project-context";
+import { advanceProjectStatus } from "./project-status";
+import { stripCitationCodes } from "@/lib/citations";
 
 export type GoNoGoOutcome = {
   score: number;
@@ -110,7 +112,7 @@ export async function runGoNoGo(input: {
           project_id: input.projectId,
           score,
           recommendation,
-          summary: value.summary,
+          summary: stripCitationCodes(value.summary),
           provider: provider.id,
           model: provider.model,
           generated_at: new Date().toISOString(),
@@ -136,7 +138,7 @@ export async function runGoNoGo(input: {
             label: factor.label,
             score: produced?.score ?? 0,
             justification:
-              produced?.justification ??
+              stripCitationCodes(produced?.justification ?? null) ??
               "Ce facteur n'a pas pu etre evalue a partir des elements disponibles.",
             confidence: produced?.confidence ?? "LOW",
             sources: resolveSources(
@@ -151,10 +153,11 @@ export async function runGoNoGo(input: {
 
     // Le statut suit la recommandation. L'utilisateur peut ensuite trancher
     // autrement depuis l'interface : son choix prime.
-    await admin
-      .from("projects")
-      .update({ status: recommendation === "NO_GO" ? "NO_GO" : "GO" })
-      .eq("id", input.projectId);
+    await advanceProjectStatus(
+      admin,
+      input.projectId,
+      recommendation === "NO_GO" ? "NO_GO" : "GO",
+    );
 
     await finishRun(admin, run, {
       status: "SUCCEEDED",

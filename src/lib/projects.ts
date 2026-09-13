@@ -25,7 +25,27 @@ export const PROJECT_STATUS: Record<
   WRITING: { label: "Redaction", tone: "brand" },
   REVIEW: { label: "Controle", tone: "warn" },
   READY: { label: "Pret a deposer", tone: "ok" },
-  EXPORTED: { label: "Depose", tone: "neutral" },
+  EXPORTED: { label: "Exporté", tone: "ok" },
+};
+
+/**
+ * Prochaine action utile pour un dossier, selon son avancement (section 35).
+ * Le segment designe la page du dossier ou cette action se realise.
+ */
+export const NEXT_STEP: Record<
+  ProjectStatus,
+  { label: string; segment: string }
+> = {
+  DRAFT: { label: "Analyser le DCE", segment: "analyse" },
+  ANALYZING: { label: "Suivre l'analyse", segment: "analyse" },
+  ANALYZED: { label: "Évaluer l'opportunité", segment: "go-no-go" },
+  GO: { label: "Construire la stratégie", segment: "strategie" },
+  NO_GO: { label: "Revoir la décision", segment: "go-no-go" },
+  STRATEGY_READY: { label: "Rédiger le mémoire", segment: "memoire" },
+  WRITING: { label: "Terminer la rédaction", segment: "memoire" },
+  REVIEW: { label: "Traiter le contrôle qualité", segment: "controle" },
+  READY: { label: "Exporter la réponse", segment: "export" },
+  EXPORTED: { label: "Relire la réponse exportée", segment: "export" },
 };
 
 /** Jours restants avant la date limite. Negatif si la date est passee. */

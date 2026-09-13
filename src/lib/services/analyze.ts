@@ -1,4 +1,5 @@
 import "server-only";
+import { stripCitationCodes } from "@/lib/citations";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { AiError, getAiProvider } from "@/lib/ai";
@@ -77,6 +78,13 @@ export async function analyzeProject(input: {
 
   const byId = new Map(units.map((u) => [u.id, u]));
 
+  const { data: before } = await admin
+    .from("projects")
+    .select("status")
+    .eq("id", input.projectId)
+    .single();
+  const previousStatus = (before?.status as string | undefined) ?? "DRAFT";
+
   await admin
     .from("projects")
     .update({ status: "ANALYZING" })
@@ -111,10 +119,13 @@ export async function analyzeProject(input: {
       pagesUsed: units.length,
     };
   } catch (error) {
-    // Le dossier ne doit pas rester bloque sur "analyse en cours".
+    // Le dossier ne doit pas rester bloque sur "analyse en cours" : il
+    // retrouve le statut qu'il avait avant la tentative.
     await admin
       .from("projects")
-      .update({ status: "DRAFT" })
+      .update({
+        status: previousStatus === "ANALYZING" ? "DRAFT" : previousStatus,
+      })
       .eq("id", input.projectId);
     throw error;
   }
@@ -216,13 +227,13 @@ async function runOverview(args: {
     const criteria = value.awardCriteria.map((c) => ({
       label: c.label,
       weight: c.weight,
-      detail: c.detail,
+      detail: stripCitationCodes(c.detail),
       sources: resolveSources(c.sourceIds, byId),
     }));
 
     const vigilance = value.vigilancePoints.map((p) => ({
       title: p.title,
-      detail: p.detail,
+      detail: stripCitationCodes(p.detail),
       severity: p.severity,
       sources: resolveSources(p.sourceIds, byId),
     }));
@@ -337,11 +348,11 @@ async function runRequirements(args: {
       collected.map((r, position) => ({
         organization_id: input.organizationId,
         project_id: input.projectId,
-        text: r.text,
+        text: stripCitationCodes(r.text),
         category: r.category,
         priority: r.priority,
         status: "TO_HANDLE",
-        expected_answer: r.expectedAnswer,
+        expected_answer: stripCitationCodes(r.expectedAnswer ?? null),
         is_manual: false,
         position,
       })),

@@ -1,5 +1,6 @@
 import "server-only";
 import { createClient } from "@/lib/supabase/server";
+import { stripCitationCodes } from "@/lib/citations";
 
 export type QualitySubscore = {
   key: string;
@@ -54,6 +55,10 @@ export async function getQualityCheck(
 
   const check = data as unknown as QualityCheck;
   check.quality_issues.sort((a, b) => a.position - b.position);
+  check.summary = stripCitationCodes(check.summary);
+  for (const issue of check.quality_issues) {
+    issue.detail = stripCitationCodes(issue.detail);
+  }
   return check;
 }
 

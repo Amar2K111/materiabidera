@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CheckCircle2, Loader2, TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -35,11 +35,15 @@ type IngestResponse = {
 export function AnalysisRunner({
   projectId,
   label = "Lancer l'analyse",
+  autoStart = false,
 }: {
   projectId: string;
   label?: string;
+  /** Demarre des l'affichage, par exemple juste apres le depot du DCE. */
+  autoStart?: boolean;
 }) {
   const router = useRouter();
+  const started = useRef(false);
   const [steps, setSteps] = useState<Step[]>([]);
   const [running, setRunning] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -68,7 +72,7 @@ export function AnalysisRunner({
       if (guard > 200) break;
 
       const key = `ingest-${guard}`;
-      push({ key, label: "Lecture d'un document...", state: "running" });
+      push({ key, label: "Lecture d'un document…", state: "running" });
 
       let payload: IngestResponse;
       try {
@@ -80,7 +84,7 @@ export function AnalysisRunner({
       } catch {
         settle(key, "failed");
         setError(
-          "La lecture des documents a ete interrompue. Merci de relancer.",
+          "La lecture des documents a été interrompue. Merci de relancer.",
         );
         setRunning(false);
         return;
@@ -100,7 +104,7 @@ export function AnalysisRunner({
         settle(
           key,
           "done",
-          `${done.fileName} : archive ouverte, ${done.addedDocuments ?? 0} piece(s) ajoutee(s)`,
+          `${done.fileName} : archive ouverte, ${done.addedDocuments ?? 0} pièce(s) ajoutée(s)`,
         );
       } else {
         settle(
@@ -119,7 +123,7 @@ export function AnalysisRunner({
     const analyseKey = "analyse";
     push({
       key: analyseKey,
-      label: "Analyse du dossier de consultation...",
+      label: "Analyse du dossier de consultation (exigences, critères, vigilance)…",
       state: "running",
     });
 
@@ -154,11 +158,34 @@ export function AnalysisRunner({
     router.refresh();
   }
 
+  useEffect(() => {
+    if (!autoStart || started.current) return;
+    started.current = true;
+    // L'adresse est nettoyee : un rechargement ne relance pas l'analyse.
+    window.history.replaceState(null, "", window.location.pathname);
+    void run();
+    // run ne change pas d'identite utile : un seul demarrage automatique.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoStart]);
+
   return (
     <div>
       <Button type="button" onClick={run} disabled={running} className="h-11">
-        {running ? "Analyse en cours..." : label}
+        {running ? (
+          <>
+            <Loader2 className="h-4 w-4 animate-spin" strokeWidth={1.9} />
+            Analyse en cours…
+          </>
+        ) : (
+          label
+        )}
       </Button>
+      {running ? (
+        <p className="mt-3 text-[12.5px] text-ink-42">
+          Restez sur cette page pendant l&apos;analyse : elle prend en général
+          une à trois minutes selon le volume du DCE.
+        </p>
+      ) : null}
 
       {error ? (
         <div className="mt-5">

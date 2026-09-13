@@ -75,7 +75,12 @@ REGLES PROPRES A CETTE TACHE
 - Lorsqu'il te manque une information pour traiter un point attendu, tu ne la
   remplaces pas par une formulation vague. Tu ecris le reste du chapitre, et tu
   listes ce point dans "toConfirm" pour que l'entreprise le complete.
-- "sourceIds" ne contient que les identifiants effectivement utilises.
+- "sourceIds" ne contient que les identifiants effectivement utilises. Le
+  champ "content" n'en contient aucun : c'est le texte remis a l'acheteur.
+- Tu respectes le volume indique : entre 90 % et 110 % du nombre de mots
+  demande. Tu atteins ce volume en approfondissant ce que les sources
+  permettent de dire sur ce marche (phasage, moyens, procedures, controles),
+  jamais en delayant ni en inventant.
 - Tu ecris en francais professionnel, en paragraphes. Pas de titre, pas de
   liste a puces sauf si le contenu l'exige vraiment. Le titre du chapitre est
   ajoute par l'application.

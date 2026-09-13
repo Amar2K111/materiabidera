@@ -9,6 +9,7 @@ import {
   type SectionAction,
 } from "@/lib/ai/prompts/memory-section";
 import { buildProjectContext } from "./project-context";
+import { stripCitationCodes } from "@/lib/citations";
 
 export type SectionOutcome = {
   sectionId: string;
@@ -191,15 +192,39 @@ export async function writeSection(input: {
       }));
     });
 
-    await admin.from("memory_sources").delete().eq("section_id", input.sectionId);
-    if (rows.length > 0) await admin.from("memory_sources").insert(rows);
+    const seenSources = new Set<string>();
+    const uniqueRows = rows.filter((row) => {
+      const key = `${row.origin}|${row.company_record_id ?? ""}|${row.label}`;
+      if (seenSources.has(key)) return false;
+      seenSources.add(key);
+      return true;
+    });
 
-    const words = value.content.trim().split(/\s+/).length;
+    await admin.from("memory_sources").delete().eq("section_id", input.sectionId);
+    if (uniqueRows.length > 0) {
+      await admin.from("memory_sources").insert(uniqueRows);
+    }
+
+    // Le texte est remis tel quel a l'acheteur : aucun identifiant interne.
+    const content = stripCitationCodes(value.content).trim();
+    const words = content.split(/\s+/).length;
+    const toConfirm = value.toConfirm.map((t) => stripCitationCodes(t));
+
+    // Les exigences rattachees a ce chapitre sont desormais traitees. Une
+    // exigence que l'utilisateur a marquee "manquante" garde son statut.
+    if (requirementIds.length > 0) {
+      await admin
+        .from("requirements")
+        .update({ status: "COVERED" })
+        .in("id", requirementIds)
+        .eq("project_id", input.projectId)
+        .eq("status", "TO_HANDLE");
+    }
 
     await admin
       .from("memory_sections")
       .update({
-        content: value.content,
+        content,
         status: "GENERATED",
         provider: provider.id,
         model: provider.model,
@@ -228,8 +253,8 @@ export async function writeSection(input: {
       status: "SUCCEEDED",
       meta: {
         words,
-        sources: rows.length,
-        toConfirm: value.toConfirm.length,
+        sources: uniqueRows.length,
+        toConfirm: toConfirm.length,
         outputTokens: usage.outputTokens ?? 0,
       },
     });
@@ -237,8 +262,8 @@ export async function writeSection(input: {
     return {
       sectionId: input.sectionId,
       words,
-      sources: rows.length,
-      toConfirm: value.toConfirm,
+      sources: uniqueRows.length,
+      toConfirm,
     };
   } catch (error) {
     await finishRun(admin, run, {

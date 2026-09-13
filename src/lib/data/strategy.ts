@@ -1,6 +1,7 @@
 import "server-only";
 import { createClient } from "@/lib/supabase/server";
-import type { CitedSource } from "@/lib/requirements";
+import { dedupeCited, type CitedSource } from "@/lib/requirements";
+import { stripCitationCodes } from "@/lib/citations";
 
 export type StrategyPriority = {
   rank: number;
@@ -39,5 +40,18 @@ export async function getStrategy(
     .eq("project_id", projectId)
     .maybeSingle();
 
-  return (data as TenderStrategy) ?? null;
+  if (!data) return null;
+  const strategy = data as TenderStrategy;
+  for (const p of strategy.priorities ?? []) {
+    p.rationale = stripCitationCodes(p.rationale);
+    p.sources = dedupeCited(p.sources ?? []);
+  }
+  for (const r of strategy.recommendations ?? []) {
+    r.detail = stripCitationCodes(r.detail);
+    r.sources = dedupeCited(r.sources ?? []);
+  }
+  for (const m of strategy.company_matches ?? []) {
+    m.why = stripCitationCodes(m.why);
+  }
+  return strategy;
 }

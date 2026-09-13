@@ -1,4 +1,5 @@
 import type { DceAnalysis, Requirement } from "@/lib/requirements";
+import type { ProjectStatus } from "@/lib/projects";
 
 export const CAPTURE_PROJECT = {
   name: "Rehabilitation d'un groupe scolaire",
@@ -151,39 +152,55 @@ export const CAPTURE_COMPANY_COUNTS: Record<string, number> = {
   company_methods: 5,
 };
 
+export type CaptureHeroProject = {
+  name: string;
+  buyer: string;
+  lot: string;
+  status: ProjectStatus;
+  score: number;
+  recommendation: "GO" | "VIGILANCE" | "NO_GO";
+  memoryProgress: number;
+  dueText: string;
+  dueTone: "neutral" | "warn" | "risk";
+  nextLabel: string;
+};
+
+/** Donnees marketing hero — entreprise BTP credible, sans brouillons test. */
 export const CAPTURE_HERO = {
   orgName: "Roux TP",
   initials: "RT",
   metrics: [
-    { label: "Dossiers actifs", value: "4" },
-    { label: "Dossiers a traiter", value: "2" },
-    { label: "Memoires en cours", value: "3" },
-    { label: "Echeances proches", value: "1", tone: "is-warn" as const },
+    { label: "Dossiers actifs", value: "3" },
+    { label: "À analyser", value: "1" },
+    { label: "Mémoires en rédaction", value: "2" },
+    { label: "Échéances sous 7 jours", value: "1", tone: "is-warn" as const },
   ],
   projects: [
     {
-      name: "Rehabilitation d'un groupe scolaire",
-      buyer: "Ville de Lyon",
-      lot: "Lot 2 — Cloisons / plafonds",
-      status: { label: "Memoire en cours", tone: "is-ok" as const },
-      score: 78,
-      decision: { label: "GO", tone: "is-ok" as const },
-      memoryProgress: 62,
-      deadline: "18 avr. 2026",
-      due: { text: "J-12", tone: "warn" as const },
+      name: "Réfection couverture — École élémentaire Jean-Moulin",
+      buyer: "Ville de Tours — Direction du Patrimoine Bâti",
+      lot: "Lot unique — Couverture ardoise",
+      status: "EXPORTED" as ProjectStatus,
+      score: 92,
+      recommendation: "GO" as const,
+      memoryProgress: 100,
+      dueText: "33 jours restants",
+      dueTone: "neutral" as const,
+      nextLabel: "Relire la réponse exportée",
     },
     {
-      name: "Extension mairie annexe",
-      buyer: "Mairie de Grenoble",
-      lot: "Lot unique — Gros oeuvre",
-      status: { label: "Analyse DCE", tone: "is-brand" as const },
-      score: 65,
-      decision: { label: "Sous reserve", tone: "is-warn" as const },
-      memoryProgress: 18,
-      deadline: "2 mai 2026",
-      due: { text: "J-26", tone: "neutral" as const },
+      name: "Réhabilitation d'un groupe scolaire",
+      buyer: "Ville de Lyon",
+      lot: "Lot 2 — Cloisons / plafonds",
+      status: "WRITING" as ProjectStatus,
+      score: 78,
+      recommendation: "GO" as const,
+      memoryProgress: 62,
+      dueText: "12 jours restants",
+      dueTone: "warn" as const,
+      nextLabel: "Terminer la rédaction",
     },
-  ],
+  ] satisfies CaptureHeroProject[],
 };
 
 export const CAPTURE_MEMORY = {

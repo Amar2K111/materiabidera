@@ -1,22 +1,30 @@
-import Link from "next/link";
+import { ArrowRight, FolderPlus } from "lucide-react";
 import {
   LayoutDashboard,
-  FolderKanban,
+  FolderOpen,
   Building2,
   Library,
   Settings,
 } from "lucide-react";
 import { BrandLogo } from "@/components/brand/BrandLogo";
+import { Badge } from "@/components/ui/badge";
 import { CAPTURE_HERO } from "@/lib/marketing/capture-mock-data";
+import { PROJECT_STATUS } from "@/lib/projects";
 import { cn } from "@/lib/utils/cn";
 
 const NAV = [
-  { label: "Tableau de bord", icon: LayoutDashboard, active: true, accent: "is-accent-blue" },
-  { label: "Dossiers", icon: FolderKanban, active: false, accent: "is-accent-amber" },
-  { label: "Base entreprise", icon: Building2, active: false, accent: "is-accent-purple" },
-  { label: "Bibliotheque", icon: Library, active: false, accent: "is-accent-teal" },
-  { label: "Parametres", icon: Settings, active: false, accent: "is-accent-blue" },
+  { label: "Tableau de bord", icon: LayoutDashboard, active: true },
+  { label: "Dossiers", icon: FolderOpen, active: false },
+  { label: "Base entreprise", icon: Building2, active: false },
+  { label: "Bibliothèque", icon: Library, active: false },
+  { label: "Paramètres", icon: Settings, active: false },
 ] as const;
+
+const RECOMMENDATION = {
+  GO: { label: "GO", tone: "ok" as const },
+  VIGILANCE: { label: "Sous réserve", tone: "warn" as const },
+  NO_GO: { label: "NO-GO", tone: "risk" as const },
+};
 
 export function CaptureHeroDashboardView() {
   const { orgName, initials, metrics, projects } = CAPTURE_HERO;
@@ -24,20 +32,19 @@ export function CaptureHeroDashboardView() {
   return (
     <div className="capture-hero-scene app-ui app-ui__shell">
       <aside className="app-ui__sidebar">
-        <Link href="/app" className="app-ui__sidebar-brand" tabIndex={-1}>
-          <BrandLogo height={24} variant="on-dark" />
-        </Link>
+        <span className="app-ui__sidebar-brand" tabIndex={-1}>
+          <BrandLogo height={28} />
+        </span>
 
         <div className="app-ui__sidebar-nav">
-          <p className="app-ui__nav-label">Application</p>
+          <p className="app-ui__nav-label">Navigation</p>
           <nav className="app-ui__nav" aria-label="Navigation">
-            {NAV.map(({ label, icon: Icon, active, accent }) => (
+            {NAV.map(({ label, icon: Icon, active }) => (
               <span
                 key={label}
                 className={cn(
                   "app-ui__nav-link",
-                  active && "is-active",
-                  active && accent,
+                  active && "is-active is-accent-blue",
                 )}
               >
                 <Icon />
@@ -60,22 +67,26 @@ export function CaptureHeroDashboardView() {
       <div className="app-ui__main-col">
         <main className="app-ui__main-wrap capture-hero-scene__main">
           <header className="capture-hero-scene__header">
-            <div>
+            <div className="min-w-0">
               <h1 className="app-ui__page-title capture-hero-scene__title">
                 Tableau de bord
               </h1>
               <p className="app-ui__page-lead capture-hero-scene__lead">
-                Voici l&apos;etat de vos reponses aux appels d&apos;offres BTP.
+                De l&apos;analyse du DCE au mémoire technique vérifié — une vue
+                claire sur chaque dossier en cours.
               </p>
             </div>
-            <span className="capture-hero-scene__cta">+ Nouveau dossier</span>
+            <span className="capture-hero-scene__cta">
+              <FolderPlus className="h-4 w-4" strokeWidth={1.9} />
+              Nouveau dossier
+            </span>
           </header>
 
           <div className="app-ui__metrics app-ui__metrics--4 capture-hero-scene__metrics">
             {metrics.map((m) => (
               <div
                 key={m.label}
-                className={`app-ui__metric${m.tone ? ` ${m.tone}` : ""}`}
+                className={cn("app-ui__metric", m.tone)}
               >
                 <b>{m.value}</b>
                 <span>{m.label}</span>
@@ -85,69 +96,89 @@ export function CaptureHeroDashboardView() {
 
           <section className="capture-hero-scene__section">
             <div className="capture-hero-scene__section-head">
-              <h2>Dossiers recents</h2>
-              <span>Tout voir</span>
+              <h2>Dossiers récents</h2>
+              <span className="inline-flex items-center gap-1">
+                Tous les dossiers
+                <ArrowRight className="h-3.5 w-3.5" strokeWidth={2} />
+              </span>
             </div>
             <ul className="app-ui__card-grid capture-hero-scene__cards">
-              {projects.map((project) => (
-                <li key={project.name}>
-                  <div className="app-ui__project-card">
-                    <div className="flex items-start justify-between gap-2">
-                      <h3 className="text-[13px] font-semibold leading-snug tracking-[-0.015em]">
-                        {project.name}
-                      </h3>
-                      <span className={`app-ui__tag ${project.status.tone}`}>
-                        {project.status.label}
-                      </span>
-                    </div>
-                    <p className="mt-1 text-[11.5px] text-ink-58">
-                      {[project.buyer, project.lot].join(" | ")}
-                    </p>
-                    <div className="mt-3 flex items-center gap-4 border-t border-line-soft pt-2.5">
-                      <div>
-                        <p className="text-[10px] font-bold text-ink-42">Go / No-Go</p>
-                        <p className="mt-0.5 flex items-baseline gap-1">
-                          <span
-                            className={cn(
-                              "tabular text-[14px] font-extrabold",
-                              project.decision.tone === "is-ok" && "text-ok",
-                              project.decision.tone === "is-warn" && "text-warn",
-                            )}
-                          >
-                            {project.score}
-                          </span>
-                          <span className="text-[10px] font-bold text-ink-42">
-                            {project.decision.label}
-                          </span>
-                        </p>
+              {projects.map((project) => {
+                const status = PROJECT_STATUS[project.status];
+                const decision = RECOMMENDATION[project.recommendation];
+
+                return (
+                  <li key={project.name}>
+                    <div className="app-ui__project-card">
+                      <div className="flex items-start justify-between gap-3">
+                        <h3 className="line-clamp-2 text-[13px] font-semibold leading-snug tracking-[-0.015em]">
+                          {project.name}
+                        </h3>
+                        <Badge tone={status.tone} className="mt-0.5 flex-none">
+                          {status.label}
+                        </Badge>
                       </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-[10px] font-bold text-ink-42">Memoire</p>
-                        <div className="mt-1 flex items-center gap-2">
-                          <span className="app-ui__bar h-1 flex-1">
-                            <i style={{ width: `${project.memoryProgress}%` }} />
-                          </span>
-                          <span className="tabular text-[10.5px] font-bold">
-                            {project.memoryProgress} %
-                          </span>
+
+                      <p className="mt-1 line-clamp-1 text-[11.5px] text-ink-58">
+                        {[project.buyer, project.lot].join(" · ")}
+                      </p>
+
+                      <div className="mt-3 grid grid-cols-2 gap-3 border-t border-line-soft pt-2.5">
+                        <div>
+                          <p className="text-[10.5px] font-medium text-ink-42">
+                            Go / No-Go
+                          </p>
+                          <p className="mt-1 flex items-baseline gap-1">
+                            <span
+                              className={cn(
+                                "tabular text-[15px] font-bold leading-none",
+                                decision.tone === "ok" && "text-ok",
+                                decision.tone === "warn" && "text-warn",
+                              )}
+                            >
+                              {project.score}
+                            </span>
+                            <span className="text-[10.5px] font-semibold text-ink-58">
+                              {decision.label}
+                            </span>
+                          </p>
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-[10.5px] font-medium text-ink-42">
+                            Mémoire
+                          </p>
+                          <div className="mt-1.5 flex items-center gap-2">
+                            <span className="app-ui__bar h-1 flex-1">
+                              <i
+                                style={{ width: `${project.memoryProgress}%` }}
+                              />
+                            </span>
+                            <span className="tabular flex-none text-[11px] font-semibold">
+                              {project.memoryProgress} %
+                            </span>
+                          </div>
                         </div>
                       </div>
+
+                      <div className="mt-2.5 flex items-center justify-between gap-2">
+                        <span
+                          className={cn(
+                            "text-[11px]",
+                            project.dueTone === "warn" && "font-semibold text-warn",
+                            project.dueTone === "neutral" && "text-ink-58",
+                          )}
+                        >
+                          {project.dueText}
+                        </span>
+                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-brand">
+                          {project.nextLabel}
+                          <ArrowRight className="h-3 w-3" strokeWidth={2} />
+                        </span>
+                      </div>
                     </div>
-                    <div className="mt-2.5 flex items-center justify-between gap-2">
-                      <span className="text-[11px] text-ink-42">{project.deadline}</span>
-                      <span
-                        className={cn(
-                          "text-[11px] font-semibold",
-                          project.due.tone === "warn" && "font-bold text-warn",
-                          project.due.tone === "neutral" && "text-ink-58",
-                        )}
-                      >
-                        {project.due.text}
-                      </span>
-                    </div>
-                  </div>
-                </li>
-              ))}
+                  </li>
+                );
+              })}
             </ul>
           </section>
         </main>

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
-  FolderKanban,
+  FolderOpen,
   Building2,
   Library,
   Settings,
@@ -16,31 +16,26 @@ const NAV = [
     href: "/app",
     label: "Tableau de bord",
     icon: LayoutDashboard,
-    accent: "is-accent-blue",
   },
   {
     href: "/app/dossiers",
-    label: "Dossiers AO",
-    icon: FolderKanban,
-    accent: "is-accent-blue",
+    label: "Dossiers",
+    icon: FolderOpen,
   },
   {
     href: "/app/base-entreprise",
     label: "Base entreprise",
     icon: Building2,
-    accent: "is-accent-purple",
   },
   {
     href: "/app/bibliotheque",
     label: "Bibliothèque",
     icon: Library,
-    accent: "is-accent-teal",
   },
   {
     href: "/app/parametres",
     label: "Paramètres",
     icon: Settings,
-    accent: "is-accent-blue",
   },
 ] as const;
 
@@ -49,7 +44,7 @@ export function SidebarNav() {
 
   return (
     <nav className="app-ui__nav" aria-label="Navigation principale">
-      {NAV.map(({ href, label, icon: Icon, accent }) => {
+      {NAV.map(({ href, label, icon: Icon }) => {
         const active =
           href === "/app" ? pathname === href : pathname.startsWith(href);
 
@@ -58,11 +53,7 @@ export function SidebarNav() {
             key={href}
             href={href}
             aria-current={active ? "page" : undefined}
-            className={cn(
-              "app-ui__nav-link",
-              active && "is-active",
-              active && accent,
-            )}
+            className={cn("app-ui__nav-link", active && "is-active")}
           >
             <Icon />
             {label}

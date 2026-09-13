@@ -1,5 +1,49 @@
-import { FileText } from "lucide-react";
-import type { CitedSource } from "@/lib/requirements";
+import { Building2, ChevronDown, FileText } from "lucide-react";
+import { dedupeCited, type CitedSource } from "@/lib/requirements";
+import { cn } from "@/lib/utils/cn";
+
+/** Au-dela, la liste est repliee pour ne pas noyer le contenu. */
+const INLINE_LIMIT = 3;
+
+/**
+ * Nom lisible d'une piece : "01_RC_Reglement_de_consultation.pdf" devient
+ * "RC Reglement de consultation". Le nom complet reste disponible au survol.
+ */
+export function readableDocumentName(name: string): string {
+  return name
+    .replace(/\.[a-z0-9]{2,5}$/i, "")
+    .replace(/^\d+[\s_.-]+/, "")
+    .replace(/[_]+/g, " ")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
+function isCompanySource(source: CitedSource) {
+  return source.pageNumber === null && source.label === "base entreprise";
+}
+
+export function SourceChip({ source }: { source: CitedSource }) {
+  const company = isCompanySource(source);
+  const name = company
+    ? source.documentName
+    : readableDocumentName(source.documentName);
+  const where = source.pageNumber
+    ? `p. ${source.pageNumber}`
+    : company
+      ? null
+      : source.label || null;
+
+  return (
+    <span
+      className={cn("app-ui__source-chip", company && "is-company")}
+      title={company ? `${source.documentName} — base entreprise` : source.documentName}
+    >
+      {company ? <Building2 aria-hidden /> : <FileText aria-hidden />}
+      <span>{name}</span>
+      {where ? <em>{where}</em> : null}
+    </span>
+  );
+}
 
 /**
  * Affichage des sources (section 20).
@@ -8,29 +52,45 @@ import type { CitedSource } from "@/lib/requirements";
  * comme acquise : c'est ce qui distingue une analyse verifiable d'une
  * affirmation.
  */
-export function Sources({ sources }: { sources: CitedSource[] }) {
-  if (sources.length === 0) {
+export function Sources({
+  sources,
+  className,
+}: {
+  sources: CitedSource[];
+  className?: string;
+}) {
+  const unique = dedupeCited(sources);
+
+  if (unique.length === 0) {
     return (
-      <p className="mt-2 text-[12px] text-ink-42">
-        Aucune source rattachee. Information a verifier.
+      <p className={cn("mt-2 text-[12px] text-ink-42", className)}>
+        Aucune source rattachée. Information à vérifier.
       </p>
     );
   }
 
-  return (
-    <ul className="mt-2 flex flex-wrap gap-1.5">
-      {sources.map((s, i) => (
-        <li
-          key={`${s.documentId}-${s.pageNumber ?? i}`}
-          className="inline-flex items-center gap-1.5 rounded-[6px] border border-line bg-paper px-2 py-1 text-[11.5px] font-semibold text-ink-58"
-        >
-          <FileText className="h-3 w-3 flex-none" strokeWidth={1.8} />
-          {s.documentName}
-          <span className="text-ink-42">
-            {s.pageNumber ? `page ${s.pageNumber}` : s.label}
-          </span>
+  const chips = (
+    <ul className="flex flex-wrap gap-1.5">
+      {unique.map((s, i) => (
+        <li key={`${s.documentName}-${s.pageNumber ?? s.label}-${i}`} className="max-w-full">
+          <SourceChip source={s} />
         </li>
       ))}
     </ul>
+  );
+
+  if (unique.length <= INLINE_LIMIT) {
+    return <div className={cn("mt-2.5", className)}>{chips}</div>;
+  }
+
+  return (
+    <details className={cn("app-ui__sources", className)}>
+      <summary>
+        <FileText aria-hidden />
+        {unique.length} sources
+        <ChevronDown className="app-ui__sources-chevron" aria-hidden />
+      </summary>
+      <div className="mt-2">{chips}</div>
+    </details>
   );
 }

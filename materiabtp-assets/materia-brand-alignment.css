@@ -205,3 +205,72 @@ button,
 .bg-lazuli-200 .bg-white .text-stone-800 {
   color: var(--mb-primary) !important;
 }
+
+/* Hero Tenderbolt — 2 colonnes, image a droite au milieu vertical */
+.hero-tenderbolt {
+  position: relative;
+  overflow: visible;
+}
+
+.hero-tenderbolt__visual {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 0;
+}
+
+@media (min-width: 640px) {
+  .hero-tenderbolt .hero-banner-media:not(.hero-banner-media--mobile) {
+    width: min(48vw, 640px);
+    margin-top: -0.5rem;
+    margin-left: -1vw;
+  }
+}
+
+/* Hero centre — legacy */
+.hero-centered {
+  position: relative;
+}
+
+.hero-centered__shape {
+  pointer-events: none;
+  position: absolute;
+  background-color: #f5f5f4;
+  background-size: 100% 100%;
+  mask-image: url("./images/shape.svg");
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-image: url("./images/shape.svg");
+  -webkit-mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+}
+
+.hero-centered__shape--a {
+  height: 90rem;
+  aspect-ratio: 3.07;
+  left: 50%;
+  top: 0;
+  transform: translate(-70%, -58%) rotate(180deg);
+}
+
+.hero-centered__shape--b {
+  height: 40rem;
+  aspect-ratio: 3.07;
+  left: 50%;
+  top: 100%;
+  transform: translate(-95%, -50%);
+}
+
+.hero-centered .hero-banner-media__stage {
+  max-height: min(52vh, 480px);
+}
+
+.hero-centered .hero-banner-media__stage::after {
+  height: 30%;
+}
+
+.hero-centered__trust {
+  width: 100%;
+  max-width: 80rem;
+}

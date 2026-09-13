@@ -103,9 +103,9 @@ REGLES PROPRES A CETTE TACHE
 - Une base entreprise vide ou incomplete conduit a des notes basses et a une
   confiance LOW sur les facteurs concernes. Tu ne compenses pas en supposant
   que l'entreprise dispose de ce qui n'est pas renseigne.
-- Chaque justification cite les identifiants sur lesquels elle s'appuie. Si
-  aucun ne s'applique, tu laisses "sourceIds" vide et tu mets une confiance
-  LOW.
+- Chaque justification s'appuie sur des elements dont les identifiants sont
+  reportes dans "sourceIds", jamais dans le texte. Si aucun ne s'applique, tu
+  laisses "sourceIds" vide et tu mets une confiance LOW.
 - Le resume expose la decision en quelques phrases : ce qui joue en faveur de
   la candidature, ce qui joue contre, et ce qu'il faudrait verifier.
 - Tu ne calcules aucun score global : c'est l'application qui s'en charge.

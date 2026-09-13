@@ -2,28 +2,30 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Download, Library, Loader2, Trash2 } from "lucide-react";
+import { Download, FileText, Library, Loader2, Plus, Trash2, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import type { CompanyDocument } from "@/lib/data/company";
-import { formatBytes } from "@/lib/documents";
+import { formatBytes, guessCompanyKindFromName } from "@/lib/documents";
 import { formatDateTime } from "@/lib/projects";
 import { DocumentUploader } from "@/components/app/document-uploader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ConfirmButton } from "@/components/ui/confirm-button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Notice } from "@/components/ui/notice";
 import { cn } from "@/lib/utils/cn";
+import { openInTab, reserveTab } from "@/lib/utils/browser-file";
 
 type Kind = CompanyDocument["kind"];
 
 const KIND_LABELS: Record<Kind, string> = {
-  REFERENCE: "References",
-  MEMOIRE: "Memoires",
-  METHODE: "Methodes",
+  REFERENCE: "Références",
+  MEMOIRE: "Mémoires",
+  METHODE: "Méthodes",
   CV: "CV",
   CERTIFICATION: "Certifications",
   QSE: "QSE",
-  MATERIEL: "Materiel",
+  MATERIEL: "Matériel",
   AUTRE: "Autres",
 };
 
@@ -66,9 +68,12 @@ export function LibrarySection({
         const response = await fetch("/api/company/ingest", { method: "POST" });
         const payload = await response.json();
         if (!response.ok) throw new Error(payload.message);
+        router.refresh();
         if (!payload.processed || payload.remaining === 0) break;
       } catch {
-        setError("La lecture des documents a ete interrompue.");
+        setError(
+          "La lecture des documents a été interrompue. Relancez-la dans un instant.",
+        );
         break;
       }
     }
@@ -86,7 +91,7 @@ export function LibrarySection({
       .eq("id", doc.id);
 
     if (updateError) {
-      setError("La categorie n'a pas pu etre modifiee.");
+      setError("La catégorie n'a pas pu être modifiée.");
       return;
     }
     router.refresh();
@@ -101,7 +106,7 @@ export function LibrarySection({
       .remove([doc.storage_path]);
 
     if (storageError) {
-      setError("Le document n'a pas pu etre supprime.");
+      setError("Le document n'a pas pu être supprimé.");
       return;
     }
 
@@ -111,20 +116,25 @@ export function LibrarySection({
 
   async function download(doc: CompanyDocument) {
     setError(null);
+    // L'onglet est ouvert pendant le clic, sinon le navigateur le bloque.
+    const tab = reserveTab();
     const supabase = createClient();
+    // Lien signe de courte duree : le bucket reste prive.
     const { data, error: signError } = await supabase.storage
       .from("entreprise")
       .createSignedUrl(doc.storage_path, 60);
 
     if (signError || !data) {
-      setError("Le document n'a pas pu etre ouvert.");
+      tab?.close();
+      setError("Le document n'a pas pu être ouvert.");
       return;
     }
-    window.open(data.signedUrl, "_blank", "noopener,noreferrer");
+    openInTab(tab, data.signedUrl);
   }
 
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap gap-1.5">
           <Chip
@@ -145,50 +155,76 @@ export function LibrarySection({
         {documents.length > 0 ? (
           <Button
             type="button"
-            variant="ghost"
+            variant={showUploader ? "ghost" : "primary"}
             onClick={() => setShowUploader((v) => !v)}
           >
-            {showUploader ? "Masquer le depot" : "Importer des documents"}
+            {showUploader ? (
+              <>
+                <X className="h-4 w-4" strokeWidth={1.9} />
+                Fermer l&apos;import
+              </>
+            ) : (
+              <>
+                <Plus className="h-4 w-4" strokeWidth={1.9} />
+                Importer des documents
+              </>
+            )}
           </Button>
         ) : null}
       </div>
 
       {error ? <Notice tone="risk">{error}</Notice> : null}
 
-      {pending > 0 ? (
-        <Notice title={`${pending} document(s) en attente de lecture`}>
-          <p className="mt-1">
-            Un document doit etre lu pour pouvoir servir de source citable. La
-            lecture se fait piece par piece.
+      {pending > 0 || reading ? (
+        <Notice
+          tone={reading ? "info" : "warn"}
+          title={
+            reading
+              ? "Lecture des documents en cours…"
+              : `${pending} document${pending > 1 ? "s" : ""} en attente de lecture`
+          }
+        >
+          <p>
+            Un document doit être lu pour pouvoir servir de source citable. La
+            lecture se fait pièce par pièce.
           </p>
-          <Button className="mt-4" onClick={readPending} disabled={reading}>
-            {reading ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" strokeWidth={1.8} />
-                Lecture en cours...
-              </>
-            ) : (
-              "Lire les documents en attente"
-            )}
-          </Button>
+          {!reading ? (
+            <Button className="mt-3" size="sm" onClick={readPending}>
+              Lire les documents en attente
+            </Button>
+          ) : (
+            <p className="mt-2 inline-flex items-center gap-2 text-[13px] font-medium text-brand">
+              <Loader2 className="h-4 w-4 animate-spin" strokeWidth={1.8} />
+              {pending} restant{pending > 1 ? "s" : ""}
+            </p>
+          )}
         </Notice>
       ) : null}
 
       {showUploader ? (
         <DocumentUploader
           organizationId={organizationId}
-          onUploaded={() => router.refresh()}
+          onUploaded={() => {
+            router.refresh();
+            // Les documents importes sont lus aussitot : ils deviennent des
+            // sources utilisables sans action supplementaire.
+            void readPending();
+          }}
           title="Importez vos documents d'entreprise"
-          description="Anciens memoires techniques, fiches de reference, CV, certifications, procedures QSE. Formats acceptes : PDF, DOCX et XLSX."
-          target={{ bucket: "entreprise", table: "company_documents" }}
+          description="Anciens mémoires techniques, fiches de référence, CV, certifications, procédures QSE. Formats acceptés : PDF, DOCX et XLSX."
+          target={{
+            bucket: "entreprise",
+            table: "company_documents",
+            kindOf: guessCompanyKindFromName,
+          }}
         />
       ) : null}
 
       {documents.length === 0 && !showUploader ? (
         <EmptyState
           icon={<Library className="h-5 w-5" strokeWidth={1.8} />}
-          title="Aucun document importe"
-          description="Importez vos anciens memoires techniques et vos documents d'entreprise. MateriaBTP pourra s'y appuyer comme sources tracables lors de la redaction."
+          title="Aucun document importé"
+          description="Importez vos anciens mémoires techniques et vos documents d'entreprise. MateriaBTP pourra s'y appuyer comme sources traçables lors de la rédaction."
           action={
             <Button onClick={() => setShowUploader(true)}>
               Importer des documents
@@ -198,33 +234,44 @@ export function LibrarySection({
       ) : null}
 
       {visible.length > 0 ? (
-        <ul className="space-y-2.5">
+        <ul className="divide-y divide-line-soft overflow-hidden rounded-[12px] border border-line bg-white shadow-card">
           {visible.map((doc) => (
             <li
               key={doc.id}
-              className="flex flex-wrap items-center gap-4 rounded-[10px] border border-line bg-white p-4 shadow-card"
+              className="flex flex-wrap items-center gap-x-4 gap-y-3 px-4 py-3.5 sm:flex-nowrap"
             >
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-[13.5px] font-bold">
-                  {doc.file_name}
-                </p>
-                <p className="mt-0.5 text-[12px] text-ink-42">
-                  {doc.size_bytes ? `${formatBytes(doc.size_bytes)} | ` : ""}
-                  {doc.page_count ? `${doc.page_count} page(s) | ` : ""}
-                  {formatDateTime(doc.created_at)}
-                </p>
-                {doc.status === "FAILED" && doc.failure_reason ? (
-                  <p className="mt-1 text-[12px] text-risk">
-                    {doc.failure_reason}
+              <div className="flex min-w-0 flex-1 items-center gap-3">
+                <span className="flex h-9 w-9 flex-none items-center justify-center rounded-[8px] bg-brand-wash text-brand">
+                  <FileText className="h-4 w-4" strokeWidth={1.8} />
+                </span>
+                <div className="min-w-0">
+                  <p className="truncate text-[13.5px] font-semibold" title={doc.file_name}>
+                    {doc.file_name}
                   </p>
-                ) : null}
+                  <p className="mt-0.5 text-[12px] text-ink-42">
+                    {[
+                      doc.size_bytes ? formatBytes(doc.size_bytes) : null,
+                      doc.page_count
+                        ? `${doc.page_count} page${doc.page_count > 1 ? "s" : ""}`
+                        : null,
+                      formatDateTime(doc.created_at),
+                    ]
+                      .filter(Boolean)
+                      .join(" · ")}
+                  </p>
+                  {doc.status === "FAILED" && doc.failure_reason ? (
+                    <p className="mt-1 text-[12px] font-medium text-risk">
+                      {doc.failure_reason}
+                    </p>
+                  ) : null}
+                </div>
               </div>
 
               <select
                 value={doc.kind}
                 onChange={(e) => changeKind(doc, e.target.value as Kind)}
-                aria-label={`Categorie de ${doc.file_name}`}
-                className="h-8 rounded-[6px] border border-line bg-white px-2 text-[12.5px] font-semibold focus:border-brand focus:outline-none"
+                aria-label={`Catégorie de ${doc.file_name}`}
+                className="h-8 rounded-[8px] border border-line bg-white px-2 text-[12.5px] font-medium focus:border-brand focus:outline-none"
               >
                 {KINDS.map((k) => (
                   <option key={k} value={k}>
@@ -235,23 +282,22 @@ export function LibrarySection({
 
               <StatusBadge status={doc.status} />
 
-              <div className="flex flex-none gap-1">
+              <div className="ml-auto flex flex-none items-center gap-1">
                 <button
                   type="button"
                   onClick={() => download(doc)}
                   aria-label={`Ouvrir ${doc.file_name}`}
+                  title="Ouvrir"
                   className="flex h-8 w-8 items-center justify-center rounded-[7px] text-ink-42 transition-colors hover:bg-paper hover:text-ink"
                 >
                   <Download className="h-4 w-4" strokeWidth={1.8} />
                 </button>
-                <button
-                  type="button"
-                  onClick={() => remove(doc)}
-                  aria-label={`Supprimer ${doc.file_name}`}
-                  className="flex h-8 w-8 items-center justify-center rounded-[7px] text-ink-42 transition-colors hover:bg-risk-wash hover:text-risk"
+                <ConfirmButton
+                  label={`Supprimer ${doc.file_name}`}
+                  onConfirm={() => remove(doc)}
                 >
                   <Trash2 className="h-4 w-4" strokeWidth={1.8} />
-                </button>
+                </ConfirmButton>
               </div>
             </li>
           ))}
@@ -263,9 +309,9 @@ export function LibrarySection({
 
 function StatusBadge({ status }: { status: CompanyDocument["status"] }) {
   if (status === "EXTRACTED") return <Badge tone="ok">Source disponible</Badge>;
-  if (status === "EXTRACTING") return <Badge tone="brand">Lecture</Badge>;
+  if (status === "EXTRACTING") return <Badge tone="brand">Lecture…</Badge>;
   if (status === "FAILED") return <Badge tone="risk">Illisible</Badge>;
-  return <Badge tone="neutral">A lire</Badge>;
+  return <Badge tone="neutral">À lire</Badge>;
 }
 
 function Chip({
@@ -283,10 +329,10 @@ function Chip({
       onClick={onClick}
       aria-pressed={active}
       className={cn(
-        "rounded-full border px-3 py-1.5 text-[12.5px] font-semibold transition-colors",
+        "h-9 rounded-full border px-3.5 text-[13px] font-medium transition-colors",
         active
           ? "border-brand bg-brand-wash text-brand"
-          : "border-line text-ink-58 hover:border-ink",
+          : "border-line bg-white text-ink-58 hover:border-ink-42",
       )}
     >
       {label}

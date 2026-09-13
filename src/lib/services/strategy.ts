@@ -8,6 +8,8 @@ import {
   strategyPrompt,
 } from "@/lib/ai/prompts/strategy";
 import { buildProjectContext, resolveSources } from "./project-context";
+import { advanceProjectStatus } from "./project-status";
+import { stripCitationCodes } from "@/lib/citations";
 
 export type StrategyOutcome = {
   priorities: number;
@@ -60,13 +62,13 @@ export async function runStrategy(input: {
     const priorities = value.priorities.map((p, index) => ({
       rank: index + 1,
       title: p.title,
-      rationale: p.rationale,
+      rationale: stripCitationCodes(p.rationale),
       sources: resolveSources(p.sourceIds, context.sourcesById),
     }));
 
     const recommendations = value.recommendations.map((r) => ({
       title: r.title,
-      detail: r.detail,
+      detail: stripCitationCodes(r.detail),
       sources: resolveSources(r.sourceIds, context.sourcesById),
     }));
 
@@ -81,7 +83,7 @@ export async function runStrategy(input: {
           table: item.table,
           recordId: item.recordId,
           label: item.label,
-          why: m.why,
+          why: stripCitationCodes(m.why),
         },
       ];
     });
@@ -100,19 +102,8 @@ export async function runStrategy(input: {
       { onConflict: "project_id" },
     );
 
-    // Le dossier avance d'une etape, sauf s'il a ete ecarte.
-    const { data: project } = await admin
-      .from("projects")
-      .select("status")
-      .eq("id", input.projectId)
-      .single();
-
-    if (project?.status !== "NO_GO") {
-      await admin
-        .from("projects")
-        .update({ status: "STRATEGY_READY" })
-        .eq("id", input.projectId);
-    }
+    // Le dossier avance d'une etape, sauf s'il a ete ecarte ou deja plus loin.
+    await advanceProjectStatus(admin, input.projectId, "STRATEGY_READY");
 
     await finishRun(admin, run, {
       status: "SUCCEEDED",

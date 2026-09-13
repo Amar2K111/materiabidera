@@ -1,5 +1,6 @@
 import "server-only";
 import { createClient } from "@/lib/supabase/server";
+import { stripCitationCodes } from "@/lib/citations";
 import type { DceAnalysis, Requirement } from "@/lib/requirements";
 
 export async function getDceAnalysis(
@@ -12,7 +13,11 @@ export async function getDceAnalysis(
     .eq("project_id", projectId)
     .maybeSingle();
 
-  return (data as DceAnalysis) ?? null;
+  if (!data) return null;
+  const analysis = data as DceAnalysis;
+  for (const c of analysis.award_criteria ?? []) c.detail = stripCitationCodes(c.detail);
+  for (const v of analysis.vigilance_points ?? []) v.detail = stripCitationCodes(v.detail);
+  return analysis;
 }
 
 export async function listRequirements(
@@ -30,5 +35,10 @@ export async function listRequirements(
     .eq("project_id", projectId)
     .order("position", { ascending: true });
 
-  return (data ?? []) as unknown as Requirement[];
+  const requirements = (data ?? []) as unknown as Requirement[];
+  for (const r of requirements) {
+    r.text = stripCitationCodes(r.text);
+    r.expected_answer = stripCitationCodes(r.expected_answer);
+  }
+  return requirements;
 }

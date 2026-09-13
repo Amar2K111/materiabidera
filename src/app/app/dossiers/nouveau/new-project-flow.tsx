@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonLink } from "@/components/ui/button";
 import { FieldHint, Input, Label } from "@/components/ui/field";
 import { Notice } from "@/components/ui/notice";
 import { DceUploader } from "@/components/app/dce-uploader";
@@ -162,11 +162,9 @@ export function NewProjectFlow({
           </div>
 
           <div className="mt-8 flex items-center gap-3">
-            <Link href="/app/dossiers">
-              <Button type="button" variant="ghost" className="h-11">
+            <ButtonLink href="/app/dossiers" variant="ghost" className="h-11">
                 Annuler
-              </Button>
-            </Link>
+              </ButtonLink>
             <Button
               type="submit"
               className="h-11 flex-1"
@@ -198,21 +196,45 @@ export function NewProjectFlow({
           </div>
 
           <div className="mt-8 flex flex-wrap items-center gap-3 border-t border-line pt-6">
-            <Button
-              type="button"
-              className="h-11"
-              onClick={() => {
-                router.push(`/app/dossiers/${projectId}`);
-                router.refresh();
-              }}
-            >
-              Ouvrir le dossier
-            </Button>
-            {uploadedCount === 0 ? (
-              <span className="text-[13px] text-ink-42">
-                Vous pouvez aussi deposer les pieces plus tard.
-              </span>
-            ) : null}
+            {uploadedCount > 0 ? (
+              <>
+                <Button
+                  type="button"
+                  className="h-11"
+                  onClick={() => {
+                    router.push(`/app/dossiers/${projectId}/analyse?lancer=1`);
+                  }}
+                >
+                  Analyser le DCE
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="h-11"
+                  onClick={() => {
+                    router.push(`/app/dossiers/${projectId}`);
+                  }}
+                >
+                  Ouvrir le dossier
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="h-11"
+                  onClick={() => {
+                    router.push(`/app/dossiers/${projectId}`);
+                  }}
+                >
+                  Ouvrir le dossier
+                </Button>
+                <span className="text-[13px] text-ink-42">
+                  Vous pourrez aussi déposer les pièces plus tard.
+                </span>
+              </>
+            )}
           </div>
         </div>
       ) : null}

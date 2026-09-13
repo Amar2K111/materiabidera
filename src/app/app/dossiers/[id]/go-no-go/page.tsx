@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Scale } from "lucide-react";
 import { getProject } from "@/lib/data/projects";
@@ -7,7 +6,7 @@ import { getGoNoGo } from "@/lib/data/decision";
 import { getCompanyCounts } from "@/lib/data/company";
 import { isAiConfigured } from "@/lib/ai";
 import { FACTOR_WEIGHTS } from "@/lib/decision";
-import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Notice } from "@/components/ui/notice";
 import { DecisionPanel } from "./decision-panel";
@@ -46,9 +45,7 @@ export default async function GoNoGoPage({
         title="Le dossier doit d'abord etre analyse"
         description="L'evaluation Go/No-Go s'appuie sur les exigences et les points de vigilance releves dans le dossier de consultation, confrontes a votre base entreprise."
         action={
-          <Link href={`/app/dossiers/${project.id}/analyse`}>
-            <Button>Analyser le dossier</Button>
-          </Link>
+          <ButtonLink href={`/app/dossiers/${project.id}/analyse`}>Analyser le dossier</ButtonLink>
         }
       />
     );

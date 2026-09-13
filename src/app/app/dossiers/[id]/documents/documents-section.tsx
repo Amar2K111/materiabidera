@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Download, FileText, Trash2 } from "lucide-react";
+import { Download, FileText, Plus, Trash2, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import type { ProjectDocument } from "@/lib/data/projects";
 import {
@@ -13,9 +13,11 @@ import {
 import { formatDateTime } from "@/lib/projects";
 import { DceUploader } from "@/components/app/dce-uploader";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonLink } from "@/components/ui/button";
+import { ConfirmButton } from "@/components/ui/confirm-button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Notice } from "@/components/ui/notice";
+import { openInTab, reserveTab } from "@/lib/utils/browser-file";
 
 const KIND_OPTIONS = Object.keys(DOCUMENT_KIND_LABELS) as DocumentKind[];
 
@@ -23,15 +25,22 @@ export function DocumentsSection({
   organizationId,
   projectId,
   documents,
+  hasAnalysis,
 }: {
   organizationId: string;
   projectId: string;
   documents: ProjectDocument[];
+  hasAnalysis: boolean;
 }) {
   const router = useRouter();
   const [showUploader, setShowUploader] = useState(documents.length === 0);
   const [error, setError] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
+
+  const pending = documents.filter(
+    (d) => d.status === "UPLOADED" || d.status === "EXTRACTING",
+  ).length;
+  const pages = documents.reduce((sum, d) => sum + (d.page_count ?? 0), 0);
 
   async function changeKind(doc: ProjectDocument, kind: DocumentKind) {
     setError(null);
@@ -42,7 +51,7 @@ export function DocumentsSection({
       .eq("id", doc.id);
 
     if (updateError) {
-      setError("La nature du document n'a pas pu etre modifiee.");
+      setError("La nature du document n'a pas pu être modifiée.");
       return;
     }
     router.refresh();
@@ -60,7 +69,7 @@ export function DocumentsSection({
       .remove([doc.storage_path]);
 
     if (storageError) {
-      setError("Le document n'a pas pu etre supprime. Merci de reessayer.");
+      setError("Le document n'a pas pu être supprimé. Merci de réessayer.");
       setBusyId(null);
       return;
     }
@@ -72,6 +81,8 @@ export function DocumentsSection({
 
   async function download(doc: ProjectDocument) {
     setError(null);
+    // L'onglet est ouvert pendant le clic, sinon le navigateur le bloque.
+    const tab = reserveTab();
     const supabase = createClient();
     // Lien signe de courte duree : le bucket reste prive.
     const { data, error: signError } = await supabase.storage
@@ -79,37 +90,71 @@ export function DocumentsSection({
       .createSignedUrl(doc.storage_path, 60);
 
     if (signError || !data) {
-      setError("Le document n'a pas pu etre ouvert.");
+      tab?.close();
+      setError("Le document n'a pas pu être ouvert.");
       return;
     }
-    window.open(data.signedUrl, "_blank", "noopener,noreferrer");
+    openInTab(tab, data.signedUrl);
   }
 
+
   return (
-    <div className="space-y-8">
-      <div className="flex flex-wrap items-start justify-between gap-4">
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h2 className="text-[17px] font-bold">Pieces du DCE</h2>
-          <p className="mt-1.5 text-[13.5px] text-ink-58">
+          <h2 className="text-[18px] font-semibold tracking-[-0.02em]">
+            Pièces du DCE
+          </h2>
+          <p className="mt-1 text-[13.5px] text-ink-58">
             {documents.length === 0
-              ? "Aucune piece deposee pour le moment."
-              : `${documents.length} piece${documents.length > 1 ? "s" : ""} deposee${
-                  documents.length > 1 ? "s" : ""
-                }.`}
+              ? "Aucune pièce déposée pour le moment."
+              : `${documents.length} pièce${documents.length > 1 ? "s" : ""}${
+                  pages > 0 ? ` · ${pages} page${pages > 1 ? "s" : ""} lues` : ""
+                }`}
           </p>
         </div>
         {documents.length > 0 ? (
           <Button
             type="button"
-            variant="ghost"
+            variant={showUploader ? "ghost" : "primary"}
             onClick={() => setShowUploader((v) => !v)}
           >
-            {showUploader ? "Masquer le depot" : "Ajouter des pieces"}
+            {showUploader ? (
+              <>
+                <X className="h-4 w-4" strokeWidth={1.9} />
+                Fermer le dépôt
+              </>
+            ) : (
+              <>
+                <Plus className="h-4 w-4" strokeWidth={1.9} />
+                Ajouter des pièces
+              </>
+            )}
           </Button>
         ) : null}
       </div>
 
       {error ? <Notice tone="risk">{error}</Notice> : null}
+
+      {pending > 0 ? (
+        <Notice
+          tone="warn"
+          title={`${pending} pièce${pending > 1 ? "s" : ""} en attente de lecture`}
+        >
+          <p>
+            {hasAnalysis
+              ? "Relancez l'analyse pour que ces pièces soient lues et prises en compte dans les exigences."
+              : "Lancez l'analyse : les pièces seront lues une à une, puis le dossier sera analysé."}
+          </p>
+          <ButtonLink
+            href={`/app/dossiers/${projectId}/analyse`}
+            size="sm"
+            className="mt-3"
+          >
+            {hasAnalysis ? "Relancer l'analyse" : "Lancer l'analyse"}
+          </ButtonLink>
+        </Notice>
+      ) : null}
 
       {showUploader ? (
         <DceUploader
@@ -122,104 +167,86 @@ export function DocumentsSection({
       {documents.length === 0 && !showUploader ? (
         <EmptyState
           icon={<FileText className="h-5 w-5" strokeWidth={1.8} />}
-          title="Aucune piece deposee"
-          description="Deposez le reglement de consultation, le CCTP, le CCAP et les autres pieces du dossier de consultation pour permettre leur analyse."
+          title="Aucune pièce déposée"
+          description="Déposez le règlement de consultation, le CCTP, le CCAP et les autres pièces du dossier de consultation pour permettre leur analyse."
           action={
             <Button onClick={() => setShowUploader(true)}>
-              Deposer des pieces
+              Déposer des pièces
             </Button>
           }
         />
       ) : null}
 
       {documents.length > 0 ? (
-        <div className="overflow-x-auto rounded-[10px] border border-line">
-          <table className="min-w-[820px]">
-            <thead>
-              <tr className="border-b border-line bg-paper text-left">
-                <th className="px-4 py-2.5 text-[11.5px] font-bold text-ink-42">
-                  Fichier
-                </th>
-                <th className="px-4 py-2.5 text-[11.5px] font-bold text-ink-42">
-                  Nature
-                </th>
-                <th className="px-4 py-2.5 text-[11.5px] font-bold text-ink-42">
-                  Pages
-                </th>
-                <th className="px-4 py-2.5 text-[11.5px] font-bold text-ink-42">
-                  Etat
-                </th>
-                <th className="px-4 py-2.5 text-[11.5px] font-bold text-ink-42">
-                  <span className="sr-only">Actions</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {documents.map((doc) => (
-                <tr
-                  key={doc.id}
-                  className="border-b border-line-soft last:border-b-0"
-                >
-                  <td className="px-4 py-3">
-                    <p className="text-[13px] font-semibold">{doc.file_name}</p>
-                    <p className="mt-0.5 text-[12px] text-ink-42">
-                      {doc.size_bytes ? formatBytes(doc.size_bytes) : ""}
-                      {doc.size_bytes ? " | " : ""}
-                      {formatDateTime(doc.created_at)}
+        <ul className="divide-y divide-line-soft overflow-hidden rounded-[12px] border border-line bg-white shadow-card">
+          {documents.map((doc) => (
+            <li
+              key={doc.id}
+              className="flex flex-wrap items-center gap-x-4 gap-y-3 px-4 py-3.5 sm:flex-nowrap"
+            >
+              <div className="flex min-w-0 flex-1 items-center gap-3">
+                <span className="flex h-9 w-9 flex-none items-center justify-center rounded-[8px] bg-brand-wash text-brand">
+                  <FileText className="h-4 w-4" strokeWidth={1.8} />
+                </span>
+                <div className="min-w-0">
+                  <p className="truncate text-[13.5px] font-semibold" title={doc.file_name}>
+                    {doc.file_name}
+                  </p>
+                  <p className="mt-0.5 text-[12px] text-ink-42">
+                    {[
+                      doc.size_bytes ? formatBytes(doc.size_bytes) : null,
+                      doc.page_count
+                        ? `${doc.page_count} page${doc.page_count > 1 ? "s" : ""}`
+                        : null,
+                      formatDateTime(doc.created_at),
+                    ]
+                      .filter(Boolean)
+                      .join(" · ")}
+                  </p>
+                  {doc.status === "FAILED" && doc.failure_reason ? (
+                    <p className="mt-1 text-[12px] font-medium text-risk">
+                      {doc.failure_reason}
                     </p>
-                  </td>
+                  ) : null}
+                </div>
+              </div>
 
-                  <td className="px-4 py-3">
-                    <select
-                      value={doc.kind}
-                      onChange={(e) =>
-                        changeKind(doc, e.target.value as DocumentKind)
-                      }
-                      className="h-8 rounded-[6px] border border-line bg-white px-2 text-[12.5px] font-semibold focus:border-brand focus:outline-none"
-                      aria-label={`Nature de ${doc.file_name}`}
-                    >
-                      {KIND_OPTIONS.map((k) => (
-                        <option key={k} value={k}>
-                          {DOCUMENT_KIND_LABELS[k]}
-                        </option>
-                      ))}
-                    </select>
-                  </td>
+              <select
+                value={doc.kind}
+                onChange={(e) => changeKind(doc, e.target.value as DocumentKind)}
+                className="h-8 rounded-[8px] border border-line bg-white px-2 text-[12.5px] font-medium focus:border-brand focus:outline-none"
+                aria-label={`Nature de ${doc.file_name}`}
+              >
+                {KIND_OPTIONS.map((k) => (
+                  <option key={k} value={k}>
+                    {DOCUMENT_KIND_LABELS[k]}
+                  </option>
+                ))}
+              </select>
 
-                  <td className="px-4 py-3 text-[13px] text-ink-70">
-                    {doc.page_count ?? "—"}
-                  </td>
+              <DocumentStatusBadge doc={doc} />
 
-                  <td className="px-4 py-3">
-                    <DocumentStatusBadge doc={doc} />
-                  </td>
-
-                  <td className="px-4 py-3">
-                    <div className="flex justify-end gap-1">
-                      <button
-                        type="button"
-                        onClick={() => download(doc)}
-                        aria-label={`Ouvrir ${doc.file_name}`}
-                        className="flex h-8 w-8 items-center justify-center rounded-[7px] text-ink-42 transition-colors hover:bg-paper hover:text-ink"
-                      >
-                        <Download className="h-4 w-4" strokeWidth={1.8} />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => remove(doc)}
-                        disabled={busyId === doc.id}
-                        aria-label={`Supprimer ${doc.file_name}`}
-                        className="flex h-8 w-8 items-center justify-center rounded-[7px] text-ink-42 transition-colors hover:bg-risk-wash hover:text-risk disabled:opacity-40"
-                      >
-                        <Trash2 className="h-4 w-4" strokeWidth={1.8} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              <div className="ml-auto flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => download(doc)}
+                  aria-label={`Ouvrir ${doc.file_name}`}
+                  title="Ouvrir"
+                  className="flex h-8 w-8 items-center justify-center rounded-[7px] text-ink-42 transition-colors hover:bg-paper hover:text-ink"
+                >
+                  <Download className="h-4 w-4" strokeWidth={1.8} />
+                </button>
+                <ConfirmButton
+                  label={`Supprimer ${doc.file_name}`}
+                  onConfirm={() => remove(doc)}
+                  disabled={busyId === doc.id}
+                >
+                  <Trash2 className="h-4 w-4" strokeWidth={1.8} />
+                </ConfirmButton>
+              </div>
+            </li>
+          ))}
+        </ul>
       ) : null}
     </div>
   );
@@ -227,13 +254,7 @@ export function DocumentsSection({
 
 function DocumentStatusBadge({ doc }: { doc: ProjectDocument }) {
   if (doc.status === "EXTRACTED") return <Badge tone="ok">Texte extrait</Badge>;
-  if (doc.status === "EXTRACTING") return <Badge tone="brand">Extraction</Badge>;
-  if (doc.status === "FAILED") {
-    return (
-      <Badge tone="risk" title={doc.failure_reason ?? undefined}>
-        Echec de lecture
-      </Badge>
-    );
-  }
-  return <Badge tone="neutral">En attente d&apos;analyse</Badge>;
+  if (doc.status === "EXTRACTING") return <Badge tone="brand">Lecture…</Badge>;
+  if (doc.status === "FAILED") return <Badge tone="risk">Échec de lecture</Badge>;
+  return <Badge tone="neutral">En attente</Badge>;
 }

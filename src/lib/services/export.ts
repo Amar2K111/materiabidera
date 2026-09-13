@@ -1,6 +1,7 @@
 import "server-only";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { formatDate } from "@/lib/projects";
+import { stripCitationCodes } from "@/lib/citations";
 import { safeFileName } from "@/lib/documents";
 import { buildDocx, type ExportPayload } from "./export-docx";
 
@@ -82,10 +83,14 @@ export async function exportMemory(input: {
     sections: allSections.map((s) => ({
       number: (s.number as string) ?? null,
       title: s.title as string,
-      content: (s.content as string) ?? null,
-      sources: (
-        (s.memory_sources ?? []) as unknown as Array<{ label: string }>
-      ).map((source) => source.label),
+      content: stripCitationCodes((s.content as string) ?? null),
+      sources: [
+        ...new Set(
+          ((s.memory_sources ?? []) as unknown as Array<{ label: string }>).map(
+            (source) => source.label,
+          ),
+        ),
+      ],
     })),
   };
 
@@ -149,11 +154,13 @@ export async function exportMemory(input: {
   // Lien signe de courte duree : le bucket reste prive.
   const { data: signed } = await admin.storage
     .from("exports")
-    .createSignedUrl(path, LINK_TTL_SECONDS);
+    // "download" force l'enregistrement du fichier sous son nom lisible,
+    // sans ouvrir de nouvel onglet (que les navigateurs bloqueraient).
+    .createSignedUrl(path, LINK_TTL_SECONDS, { download: fileName });
 
   if (!signed) {
     throw new ExportError(
-      "Le document a ete enregistre mais le lien de telechargement n'a pas pu etre cree.",
+      "Le document a été enregistré mais le lien de téléchargement n'a pas pu être créé.",
     );
   }
 

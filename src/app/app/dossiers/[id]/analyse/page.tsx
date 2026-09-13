@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ScanSearch } from "lucide-react";
 import { getProject, listProjectDocuments } from "@/lib/data/projects";
@@ -8,17 +7,26 @@ import { formatDateTime } from "@/lib/projects";
 import { AnalysisRunner } from "@/components/app/analysis-runner";
 import { Sources } from "@/components/app/sources";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
+import { ButtonLink } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Notice } from "@/components/ui/notice";
+import { cn } from "@/lib/utils/cn";
+
+const SEVERITY = {
+  HIGH: { label: "Critique", tone: "risk" as const },
+  MEDIUM: { label: "À surveiller", tone: "warn" as const },
+  LOW: { label: "Pour information", tone: "neutral" as const },
+};
 
 export default async function ProjectAnalysisPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const { id } = await params;
+  const { lancer } = await searchParams;
   const [project, documents, analysis] = await Promise.all([
     getProject(id),
     listProjectDocuments(id),
@@ -27,22 +35,18 @@ export default async function ProjectAnalysisPage({
 
   if (!project) notFound();
 
-  const aiReady = isAiConfigured();
-
-  if (!aiReady) {
+  if (!isAiConfigured()) {
     return (
-      <Notice tone="warn" title="Moteur d'analyse non configure">
+      <Notice tone="warn" title="Moteur d'analyse non configuré">
         <p className="mt-1">
-          L&apos;analyse d&apos;un dossier de consultation necessite un moteur
-          d&apos;analyse. Tant qu&apos;aucune cle n&apos;est renseignee cote
-          serveur, aucune analyse ne peut etre lancee, et rien n&apos;est
-          simule.
+          L&apos;analyse d&apos;un dossier de consultation nécessite un moteur
+          d&apos;analyse. Tant qu&apos;aucune clé n&apos;est renseignée côté
+          serveur, aucune analyse ne peut être lancée, et rien n&apos;est
+          simulé.
         </p>
-        <Link href="/app/parametres">
-          <Button variant="ghost" className="mt-4">
-            Voir l&apos;etat des services
-          </Button>
-        </Link>
+        <ButtonLink href="/app/parametres" variant="ghost" className="mt-4">
+          Voir l&apos;état des services
+        </ButtonLink>
       </Notice>
     );
   }
@@ -51,165 +55,207 @@ export default async function ProjectAnalysisPage({
     return (
       <EmptyState
         icon={<ScanSearch className="h-5 w-5" strokeWidth={1.8} />}
-        title="Aucune piece a analyser"
-        description="Deposez d'abord les pieces du dossier de consultation. L'analyse lit leur contenu, en extrait les exigences et signale les points de vigilance."
+        title="Aucune pièce à analyser"
+        description="Déposez d'abord les pièces du dossier de consultation. L'analyse lit leur contenu, en extrait les exigences et signale les points de vigilance."
         action={
-          <Link href={`/app/dossiers/${project.id}/documents`}>
-            <Button>Deposer les pieces</Button>
-          </Link>
+          <ButtonLink href={`/app/dossiers/${project.id}/documents`}>
+            Déposer les pièces
+          </ButtonLink>
         }
       />
     );
   }
 
+  const pending = documents.filter(
+    (d) => d.status === "UPLOADED" || d.status === "EXTRACTING",
+  ).length;
+
   if (!analysis) {
     return (
-      <div className="max-w-[640px]">
-        <h2 className="text-[17px] font-bold">Analyser le dossier</h2>
-        <p className="mt-2 text-[13.5px] leading-relaxed text-ink-58">
-          MateriaBTP va lire les {documents.length} piece
-          {documents.length > 1 ? "s" : ""} deposee
-          {documents.length > 1 ? "s" : ""}, en extraire les exigences
-          opposables au candidat et signaler les points de vigilance. Chaque
-          element sera rattache a sa source.
+      <div className="rounded-[14px] border border-line bg-white p-6 shadow-card sm:p-8">
+        <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-brand-wash text-brand">
+          <ScanSearch className="h-5 w-5" strokeWidth={1.8} />
+        </div>
+        <h2 className="mt-4 text-[19px] font-semibold tracking-[-0.02em]">
+          Analyser le dossier de consultation
+        </h2>
+        <p className="mt-2 max-w-[68ch] text-[14px] leading-relaxed text-ink-58">
+          MateriaBTP va lire {documents.length > 1 ? `les ${documents.length} pièces déposées` : "la pièce déposée"},
+          en extraire les exigences opposables au candidat et signaler les
+          points de vigilance. Chaque élément sera rattaché à sa source.
         </p>
         <div className="mt-6">
-          <AnalysisRunner projectId={project.id} />
+          <AnalysisRunner projectId={project.id} autoStart={lancer === "1"} />
         </div>
       </div>
     );
   }
 
+  const keyInfo: Array<[string, string | null]> = [
+    ["Objet du marché", analysis.subject],
+    ["Acheteur", analysis.buyer],
+    ["Lot", analysis.lot],
+    ["Montant", analysis.amount],
+    ["Durée d'exécution", analysis.duration],
+    ["Date limite de remise", analysis.submission_date],
+    ["Variantes", analysis.variants],
+    ["Visite de site", analysis.site_visit],
+  ];
+
   return (
     <div className="space-y-8">
-      <Notice>
-        Analyse indicative produite par MateriaBTP a partir des pieces deposees, le{" "}
-        {formatDateTime(analysis.generated_at)}. Verifiez chaque element avant
-        de vous en servir : vous restez decideur.
-      </Notice>
+      {pending > 0 ? (
+        <Notice
+          tone="warn"
+          title={`${pending} pièce${pending > 1 ? "s" : ""} déposée${pending > 1 ? "s" : ""} après l'analyse`}
+        >
+          <p>
+            Relancez l&apos;analyse pour que les exigences en tiennent compte.
+            Les exigences que vous avez ajoutées vous-même sont conservées.
+          </p>
+          <div className="mt-3">
+            <AnalysisRunner
+              projectId={project.id}
+              label="Relancer l'analyse"
+              autoStart={lancer === "1"}
+            />
+          </div>
+        </Notice>
+      ) : null}
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Informations cles</CardTitle>
-        </CardHeader>
-        <CardBody className="grid gap-4 sm:grid-cols-2">
-          <Field label="Objet du marche" value={analysis.subject} />
-          <Field label="Acheteur" value={analysis.buyer} />
-          <Field label="Lot" value={analysis.lot} />
-          <Field label="Montant" value={analysis.amount} />
-          <Field label="Duree" value={analysis.duration} />
-          <Field label="Date limite de remise" value={analysis.submission_date} />
-          <Field label="Variantes" value={analysis.variants} />
-          <Field label="Visite de site" value={analysis.site_visit} />
-        </CardBody>
-      </Card>
+      <section className="rounded-[14px] border border-line bg-white shadow-card">
+        <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-line-soft px-5 py-3.5 sm:px-6">
+          <h2 className="text-[15px] font-semibold">Informations clés</h2>
+          <p className="text-[12px] text-ink-42">
+            Analyse indicative du {formatDateTime(analysis.generated_at)} ·
+            vérifiez chaque élément, vous restez décideur
+          </p>
+        </div>
+        <dl className="grid gap-x-8 gap-y-5 px-5 py-5 sm:grid-cols-2 sm:px-6 lg:grid-cols-4">
+          {keyInfo.map(([label, value]) => (
+            <Field
+              key={label}
+              label={label}
+              value={value}
+              wide={label === "Objet du marché"}
+            />
+          ))}
+        </dl>
+      </section>
 
-      <section>
-        <h2 className="mb-4 text-[15px] font-bold">Criteres d&apos;attribution</h2>
-        {analysis.award_criteria.length === 0 ? (
-          <Notice>
-            Aucun critere d&apos;attribution n&apos;a ete trouve dans les pieces
-            deposees. Verifiez que le reglement de consultation figure bien au
-            dossier.
-          </Notice>
-        ) : (
-          <ul className="space-y-3">
-            {analysis.award_criteria.map((c, i) => (
-              <li
-                key={`${c.label}-${i}`}
-                className="rounded-[10px] border border-line bg-white p-4 shadow-card"
-              >
-                <div className="flex flex-wrap items-baseline justify-between gap-3">
-                  <h3 className="text-[14px] font-bold">{c.label}</h3>
-                  <span className="tabular text-[15px] font-extrabold text-brand">
-                    {c.weight}
-                  </span>
-                </div>
-                {c.detail ? (
-                  <p className="mt-2 text-[13px] leading-relaxed text-ink-70">
-                    {c.detail}
+      <div className="grid gap-8 xl:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+        <section>
+          <h2 className="mb-3 text-[17px] font-semibold tracking-[-0.02em]">
+            Critères d&apos;attribution
+          </h2>
+          {analysis.award_criteria.length === 0 ? (
+            <Notice>
+              Aucun critère d&apos;attribution n&apos;a été trouvé dans les
+              pièces déposées. Vérifiez que le règlement de consultation figure
+              bien au dossier.
+            </Notice>
+          ) : (
+            <ul className="space-y-3">
+              {analysis.award_criteria.map((c, i) => (
+                <li
+                  key={`${c.label}-${i}`}
+                  className="rounded-[12px] border border-line bg-white p-4 shadow-card sm:p-5"
+                >
+                  <div className="flex items-baseline justify-between gap-3">
+                    <h3 className="text-[14px] font-semibold">{c.label}</h3>
+                    <span className="tabular text-[18px] font-bold text-brand">
+                      {c.weight}
+                    </span>
+                  </div>
+                  {c.detail ? (
+                    <p className="mt-1.5 text-[13px] leading-relaxed text-ink-70">
+                      {c.detail}
+                    </p>
+                  ) : null}
+                  <Sources sources={c.sources} />
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
+        <section>
+          <h2 className="mb-3 text-[17px] font-semibold tracking-[-0.02em]">
+            Points de vigilance
+          </h2>
+          {analysis.vigilance_points.length === 0 ? (
+            <Notice>
+              Aucun point de vigilance particulier n&apos;a été relevé dans les
+              pièces déposées.
+            </Notice>
+          ) : (
+            <ul className="space-y-3">
+              {analysis.vigilance_points.map((p, i) => (
+                <li
+                  key={`${p.title}-${i}`}
+                  className={cn(
+                    "rounded-[12px] border border-line border-l-[3px] bg-white p-4 shadow-card sm:p-5",
+                    p.severity === "HIGH" && "border-l-risk",
+                    p.severity === "MEDIUM" && "border-l-warn",
+                  )}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <h3 className="text-[14px] leading-snug font-semibold">
+                      {p.title}
+                    </h3>
+                    <Badge tone={SEVERITY[p.severity].tone} className="flex-none">
+                      {SEVERITY[p.severity].label}
+                    </Badge>
+                  </div>
+                  <p className="mt-1.5 text-[13px] leading-relaxed text-ink-70">
+                    {p.detail}
                   </p>
-                ) : null}
-                <Sources sources={c.sources} />
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+                  <Sources sources={p.sources} />
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      </div>
 
-      <section>
-        <h2 className="mb-4 text-[15px] font-bold">Points de vigilance</h2>
-        {analysis.vigilance_points.length === 0 ? (
-          <Notice>
-            Aucun point de vigilance particulier n&apos;a ete releve dans les
-            pieces deposees.
-          </Notice>
-        ) : (
-          <ul className="space-y-3">
-            {analysis.vigilance_points.map((p, i) => (
-              <li
-                key={`${p.title}-${i}`}
-                className="rounded-[10px] border border-line bg-white p-4 shadow-card"
-              >
-                <div className="flex flex-wrap items-start justify-between gap-3">
-                  <h3 className="text-[14px] font-bold">{p.title}</h3>
-                  <Badge
-                    tone={
-                      p.severity === "HIGH"
-                        ? "risk"
-                        : p.severity === "MEDIUM"
-                          ? "warn"
-                          : "neutral"
-                    }
-                  >
-                    {p.severity === "HIGH"
-                      ? "Critique"
-                      : p.severity === "MEDIUM"
-                        ? "A surveiller"
-                        : "Pour information"}
-                  </Badge>
-                </div>
-                <p className="mt-2 text-[13px] leading-relaxed text-ink-70">
-                  {p.detail}
-                </p>
-                <Sources sources={p.sources} />
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      <section className="border-t border-line pt-6">
-        <h2 className="text-[15px] font-bold">Relancer l&apos;analyse</h2>
-        <p className="mt-1.5 mb-4 max-w-[70ch] text-[13px] text-ink-58">
-          Utile apres l&apos;ajout de nouvelles pieces. Les exigences que vous
-          avez ajoutees vous-meme sont conservees.
-        </p>
-        <AnalysisRunner
-          projectId={project.id}
-          label="Relancer l'analyse"
-        />
-      </section>
+      {pending === 0 ? (
+        <section className="flex flex-wrap items-start justify-between gap-4 rounded-[14px] border border-line bg-white p-5 shadow-card">
+          <div>
+            <h2 className="text-[15px] font-semibold">Relancer l&apos;analyse</h2>
+            <p className="mt-1 max-w-[70ch] text-[13px] text-ink-58">
+              Utile après l&apos;ajout de nouvelles pièces. Les exigences que
+              vous avez ajoutées vous-même sont conservées.
+            </p>
+          </div>
+          <AnalysisRunner projectId={project.id} label="Relancer l'analyse" />
+        </section>
+      ) : null}
     </div>
   );
 }
 
-function Field({ label, value }: { label: string; value: string | null }) {
-  const missing =
-    !value || value.startsWith("Information non trouvee");
+function Field({
+  label,
+  value,
+  wide,
+}: {
+  label: string;
+  value: string | null;
+  wide?: boolean;
+}) {
+  const missing = !value || /^information non trouv/i.test(value);
 
   return (
-    <div>
-      <p className="text-[12px] font-bold text-ink-42">{label}</p>
-      <p
-        className={
-          missing
-            ? "mt-1 text-[13.5px] text-ink-42 italic"
-            : "mt-1 text-[13.5px] font-semibold"
-        }
+    <div className={cn(wide && "sm:col-span-2")}>
+      <dt className="text-[12px] font-medium text-ink-42">{label}</dt>
+      <dd
+        className={cn(
+          "mt-1 text-[13.5px] leading-relaxed",
+          missing ? "text-ink-42 italic" : "font-medium text-ink",
+        )}
       >
-        {value || "Information non trouvee dans les sources disponibles."}
-      </p>
+        {missing ? "Non trouvé dans les pièces" : value}
+      </dd>
     </div>
   );
 }

@@ -8,6 +8,8 @@ import {
   qualityPrompt,
 } from "@/lib/ai/prompts/quality";
 import { buildProjectContext } from "./project-context";
+import { advanceProjectStatus } from "./project-status";
+import { stripCitationCodes } from "@/lib/citations";
 
 export type Subscore = {
   key: string;
@@ -83,8 +85,23 @@ export async function runQualityCheck(input: {
       coveredIds.add(id);
     }
   }
+  // La matrice des exigences reflete ce que le memoire traite effectivement.
+  // Une exigence marquee "manquante" par l'utilisateur garde son statut.
+  const newlyCovered = allRequirements
+    .filter((r) => r.status === "TO_HANDLE" && coveredIds.has(r.id as string))
+    .map((r) => r.id as string);
+  if (newlyCovered.length > 0) {
+    await admin
+      .from("requirements")
+      .update({ status: "COVERED" })
+      .in("id", newlyCovered)
+      .eq("project_id", input.projectId);
+  }
+
   for (const r of allRequirements) {
     if (r.status === "COVERED") coveredIds.add(r.id as string);
+    // Une exigence "manquante" n'est pas couverte, quel que soit le chapitre.
+    if (r.status === "MISSING") coveredIds.delete(r.id as string);
   }
 
   const coverage =
@@ -201,7 +218,7 @@ export async function runQualityCheck(input: {
           project_id: input.projectId,
           score,
           subscores,
-          summary: value.summary,
+          summary: stripCitationCodes(value.summary),
           provider: provider.id,
           model: provider.model,
           generated_at: new Date().toISOString(),
@@ -246,7 +263,7 @@ export async function runQualityCheck(input: {
           kind: issue.kind,
           severity: issue.severity,
           title: issue.title,
-          detail: issue.detail,
+          detail: stripCitationCodes(issue.detail),
           section_id: issue.sectionRef
             ? (sectionRefById.get(issue.sectionRef) ?? null)
             : null,
@@ -260,10 +277,7 @@ export async function runQualityCheck(input: {
       blocking = rows.filter((r) => r.severity === "BLOCKING").length;
     }
 
-    await admin
-      .from("projects")
-      .update({ status: "REVIEW" })
-      .eq("id", input.projectId);
+    await advanceProjectStatus(admin, input.projectId, "REVIEW");
 
     await finishRun(admin, run, {
       status: "SUCCEEDED",

@@ -1,5 +1,9 @@
 import { notFound } from "next/navigation";
-import { getProject, listProjectDocuments } from "@/lib/data/projects";
+import {
+  getProject,
+  getProjectProgressSummary,
+  listProjectDocuments,
+} from "@/lib/data/projects";
 import { getDceAnalysis, listRequirements } from "@/lib/data/analysis";
 import { getGoNoGo } from "@/lib/data/decision";
 import { listMemorySections } from "@/lib/data/memory";
@@ -15,6 +19,7 @@ export default async function ProjectOverviewPage({
   const { id } = await params;
   const [
     project,
+    progress,
     documents,
     analysis,
     requirements,
@@ -23,6 +28,7 @@ export default async function ProjectOverviewPage({
     quality,
   ] = await Promise.all([
     getProject(id),
+    getProjectProgressSummary(id),
     listProjectDocuments(id),
     getDceAnalysis(id),
     listRequirements(id),
@@ -37,11 +43,15 @@ export default async function ProjectOverviewPage({
   const failed = documents.filter((d) => d.status === "FAILED");
   const pages = extracted.reduce((sum, d) => sum + (d.page_count ?? 0), 0);
   const days = daysUntil(project.deadline);
+  const vigilance = analysis?.vigilance_points.length ?? 0;
 
   const metrics = [
-    { label: "documents", value: String(documents.length) },
     {
-      label: "pages",
+      label: documents.length > 1 ? "pièces du DCE" : "pièce du DCE",
+      value: String(documents.length),
+    },
+    {
+      label: "pages lues",
       value: extracted.length > 0 ? String(pages) : "—",
     },
     {
@@ -50,15 +60,12 @@ export default async function ProjectOverviewPage({
     },
     {
       label: "points de vigilance",
-      value: analysis ? String(analysis.vigilance_points.length) : "—",
-      tone:
-        analysis && analysis.vigilance_points.length > 0
-          ? "is-warn"
-          : undefined,
+      value: analysis ? String(vigilance) : "—",
+      tone: vigilance > 0 ? "is-warn" : undefined,
     },
     {
-      label: "restants",
-      value: days === null ? "—" : `${Math.max(days, 0)} j`,
+      label: days !== null && days < 0 ? "date dépassée" : "jours restants",
+      value: days === null ? "—" : String(Math.max(days, 0)),
       tone: days !== null && days <= 7 ? "is-warn" : undefined,
     },
     {
@@ -71,6 +78,8 @@ export default async function ProjectOverviewPage({
   return (
     <ProjectOverviewPanels
       projectId={project.id}
+      status={project.status}
+      progress={progress}
       metrics={metrics}
       goNoGo={goNoGo}
       memorySections={memorySections}

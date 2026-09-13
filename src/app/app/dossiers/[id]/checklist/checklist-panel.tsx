@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Check, Lock } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
@@ -10,7 +9,7 @@ import type {
   ChecklistGroup,
   ChecklistState,
 } from "@/lib/services/checklist";
-import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button";
 import { Notice } from "@/components/ui/notice";
 import { cn } from "@/lib/utils/cn";
 
@@ -158,9 +157,7 @@ export function ChecklistPanel({
       })}
 
       <section className="border-t border-line pt-6">
-        <Link href={`/app/dossiers/${projectId}/export`}>
-          <Button className="h-11">Passer a l&apos;export</Button>
-        </Link>
+        <ButtonLink href={`/app/dossiers/${projectId}/export`} className="h-11">Passer a l&apos;export</ButtonLink>
       </section>
     </div>
   );

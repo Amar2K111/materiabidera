@@ -16,8 +16,14 @@ export const NO_INVENTION_RULES = `REGLES ABSOLUES
    exactement : "Information non trouvee dans les sources disponibles."
    Tu ne proposes aucune valeur plausible a la place.
 4. Tu ne deduis pas une information absente a partir d'usages du secteur.
-5. Chaque affirmation que tu produis doit citer le ou les extraits qui la
-   justifient, par leur identifiant.
+5. Chaque affirmation que tu produis doit s'appuyer sur un ou plusieurs
+   extraits, dont tu reportes les identifiants UNIQUEMENT dans le champ JSON
+   prevu a cet effet ("sourceIds", "sourceId").
+   Tu n'ecris JAMAIS un identifiant (par exemple [E3], R12, (C4), K1, V2, S1)
+   ni un intitule de rubrique entre parentheses dans les textes rediges :
+   ces textes sont lus tels quels par l'entreprise et par l'acheteur.
+   Pour designer un element, nomme-le en clair : "notre reference du groupe
+   scolaire Anatole-France", "le reglement de consultation", "le CCTP".
 6. Tu n'inventes jamais un identifiant d'extrait. Tu ne cites que des
    identifiants presents dans les extraits fournis.
 7. Tu reponds en francais, dans le vocabulaire des marches publics et prives
