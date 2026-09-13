@@ -8,7 +8,10 @@ import {
 } from "lucide-react";
 import { BrandLogo } from "@/components/brand/BrandLogo";
 import { Badge } from "@/components/ui/badge";
-import { CAPTURE_HERO } from "@/lib/marketing/capture-mock-data";
+import {
+  CAPTURE_HERO,
+  type CaptureHeroProject,
+} from "@/lib/marketing/capture-mock-data";
 import { PROJECT_STATUS } from "@/lib/projects";
 import { cn } from "@/lib/utils/cn";
 
@@ -20,10 +23,13 @@ const NAV = [
   { label: "Paramètres", icon: Settings, active: false },
 ] as const;
 
-const RECOMMENDATION = {
-  GO: { label: "GO", tone: "ok" as const },
-  VIGILANCE: { label: "Sous réserve", tone: "warn" as const },
-  NO_GO: { label: "NO-GO", tone: "risk" as const },
+const RECOMMENDATION: Record<
+  CaptureHeroProject["recommendation"],
+  { label: string; tone: "ok" | "warn" | "risk" }
+> = {
+  GO: { label: "GO", tone: "ok" },
+  VIGILANCE: { label: "Sous réserve", tone: "warn" },
+  NO_GO: { label: "NO-GO", tone: "risk" },
 };
 
 export function CaptureHeroDashboardView() {
