@@ -2439,6 +2439,11 @@ html:has(.landing) {
   font-size: 18px;
   letter-spacing: -0.06em;
 }
+.landing .demo-modal__brand img {
+  display: block;
+  height: 28px;
+  width: auto;
+}
 .landing .demo-modal__brand i {
   width: 14px;
   height: 14px;
@@ -2453,10 +2458,11 @@ html:has(.landing) {
   font-weight: 800;
   max-width: 12em;
   margin-top: 8px;
+  color: #fff !important;
 }
 .landing .demo-modal__intro h2 em {
   font-style: normal;
-  color: #6ea3ff;
+  color: var(--blue-sky) !important;
 }
 .landing .demo-modal__intro p {
   font-size: 14.5px;
@@ -2480,14 +2486,18 @@ html:has(.landing) {
   font-weight: 500;
 }
 .landing .demo-modal__points li::before {
-  content: "";
+  content: "✓";
   position: absolute;
   left: 0;
-  top: 0.55em;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--blue);
+  top: 0.05em;
+  width: auto;
+  height: auto;
+  border-radius: 0;
+  background: none;
+  color: var(--blue-sky);
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1;
 }
 .landing .demo-modal__meta {
   font-size: 12.5px;

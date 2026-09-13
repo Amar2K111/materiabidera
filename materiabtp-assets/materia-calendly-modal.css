@@ -3,6 +3,7 @@
   --mc-blue: #0035a9;
   --mc-blue-deep: #002a85;
   --mc-blue-mid: #3580d4;
+  --mc-blue-sky: #5ba3e8;
   --mc-blue-wash: #eef2fb;
   --mc-ink: #001830;
   --mc-ink-58: #5c6670;
@@ -84,7 +85,8 @@
 }
 
 .demo-modal__brand img {
-  height: 24px;
+  display: block;
+  height: 28px;
   width: auto;
 }
 
@@ -95,11 +97,12 @@
   font-weight: 800;
   max-width: 12em;
   margin-top: 8px;
+  color: #fff !important;
 }
 
 .demo-modal__intro h2 em {
   font-style: normal;
-  color: #6ea3ff;
+  color: var(--mc-blue-sky) !important;
 }
 
 .demo-modal__intro p {
@@ -128,14 +131,18 @@
 }
 
 .demo-modal__points li::before {
-  content: "";
+  content: "✓";
   position: absolute;
   left: 0;
-  top: 0.55em;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--mc-blue);
+  top: 0.05em;
+  width: auto;
+  height: auto;
+  border-radius: 0;
+  background: none;
+  color: var(--mc-blue-sky);
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1;
 }
 
 .demo-modal__meta {
@@ -184,6 +191,10 @@
 .demo-modal__steps span.is-on i {
   background: var(--mc-blue);
   box-shadow: 0 0 0 3px var(--mc-blue-wash);
+}
+
+.demo-modal__embed .calendly-inline-widget iframe {
+  color-scheme: light;
 }
 
 .demo-modal__steps i {

@@ -1,5 +1,5 @@
 export const CALENDLY_DEMO_URL =
-  "https://calendly.com/matertiabtp-demo/30min?month=2026-09&hide_gdpr_banner=1&primary_color=0035A9";
+  "https://calendly.com/matertiabtp-demo/30min?month=2026-09&hide_gdpr_banner=1&primary_color=0035A9&text_color=001830&background_color=ffffff";
 
 declare global {
   interface Window {
