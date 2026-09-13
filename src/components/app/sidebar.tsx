@@ -12,20 +12,44 @@ import {
 import { cn } from "@/lib/utils/cn";
 
 const NAV = [
-  { href: "/app", label: "Tableau de bord", icon: LayoutDashboard },
-  { href: "/app/dossiers", label: "Dossiers", icon: FolderKanban },
-  { href: "/app/base-entreprise", label: "Base entreprise", icon: Building2 },
-  { href: "/app/bibliotheque", label: "Bibliotheque", icon: Library },
-  { href: "/app/parametres", label: "Parametres", icon: Settings },
+  {
+    href: "/app",
+    label: "Tableau de bord",
+    icon: LayoutDashboard,
+    accent: "is-accent-blue",
+  },
+  {
+    href: "/app/dossiers",
+    label: "Dossiers AO",
+    icon: FolderKanban,
+    accent: "is-accent-blue",
+  },
+  {
+    href: "/app/base-entreprise",
+    label: "Base entreprise",
+    icon: Building2,
+    accent: "is-accent-purple",
+  },
+  {
+    href: "/app/bibliotheque",
+    label: "Bibliothèque",
+    icon: Library,
+    accent: "is-accent-teal",
+  },
+  {
+    href: "/app/parametres",
+    label: "Paramètres",
+    icon: Settings,
+    accent: "is-accent-blue",
+  },
 ] as const;
 
 export function SidebarNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="flex flex-col gap-0.5" aria-label="Navigation principale">
-      {NAV.map(({ href, label, icon: Icon }) => {
-        // "/app" ne doit pas rester actif sur les sous-sections.
+    <nav className="app-ui__nav" aria-label="Navigation principale">
+      {NAV.map(({ href, label, icon: Icon, accent }) => {
         const active =
           href === "/app" ? pathname === href : pathname.startsWith(href);
 
@@ -35,13 +59,12 @@ export function SidebarNav() {
             href={href}
             aria-current={active ? "page" : undefined}
             className={cn(
-              "flex items-center gap-2.5 rounded-[7px] px-2.5 py-2 text-[13px] font-semibold transition-colors",
-              active
-                ? "bg-brand-wash text-brand"
-                : "text-ink-58 hover:bg-paper hover:text-ink",
+              "app-ui__nav-link",
+              active && "is-active",
+              active && accent,
             )}
           >
-            <Icon className="h-4 w-4 flex-none" strokeWidth={1.8} />
+            <Icon />
             {label}
           </Link>
         );

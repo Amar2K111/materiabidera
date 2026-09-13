@@ -11,7 +11,7 @@ function FaqIllustration() {
       <rect width="640" height="800" fill="#fff" />
       <rect x="96" y="70" width="448" height="660" rx="8" fill="#fff" stroke="rgba(0,0,0,.18)" />
       <rect x="96" y="70" width="448" height="40" fill="rgba(0,0,0,.045)" />
-      <text x="122" y="96" fontFamily="Manrope, sans-serif" fontSize="15" fontWeight="700" fill="rgba(0,0,0,.62)">
+      <text x="122" y="96" fontFamily="Inter, sans-serif" fontSize="15" fontWeight="700" fill="rgba(0,0,0,.62)">
         Mémoire technique
       </text>
       <circle cx="118" cy="168" r="6" fill="#0F7A4A" />

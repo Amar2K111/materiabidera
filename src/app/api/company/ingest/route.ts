@@ -11,11 +11,11 @@ export async function POST() {
   const ctx = await getAppContext();
   // Sans session ou sans configuration serveur, on refuse proprement plutot
   // que de laisser remonter une erreur technique (section 26).
-  if (!ctx?.organization || !getServiceRoleKey()) {
+  if (ctx.isGuest || !getServiceRoleKey()) {
     return NextResponse.json(
       {
         message:
-          "Session expiree ou service indisponible. Reconnectez-vous puis reessayez.",
+          "Service indisponible en mode invite. Configurez Supabase pour activer l'ingestion.",
       },
       { status: 401 },
     );

@@ -1,4 +1,5 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenerativeAI, type ResponseSchema } from "@google/generative-ai";
+import { z } from "zod";
 import {
   AiError,
   type AiProvider,
@@ -9,20 +10,49 @@ import {
 
 const DEFAULT_MODEL = "gemini-2.5-pro";
 
+/**
+ * Gemini n'accepte qu'un sous-ensemble d'OpenAPI 3.0 pour responseSchema :
+ * ces cles JSON Schema n'y ont pas d'equivalent et sont retirees.
+ */
+function toGeminiSchema(node: unknown): unknown {
+  if (Array.isArray(node)) return node.map(toGeminiSchema);
+  if (node && typeof node === "object") {
+    const out: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(node)) {
+      if (
+        key === "$schema" ||
+        key === "additionalProperties" ||
+        key === "exclusiveMinimum" ||
+        key === "exclusiveMaximum"
+      ) {
+        continue;
+      }
+      out[key] = toGeminiSchema(value);
+    }
+    return out;
+  }
+  return node;
+}
+
 export function createGeminiProvider(
   apiKey: string,
   model = process.env.AI_MODEL || DEFAULT_MODEL,
 ): AiProvider {
   const genAI = new GoogleGenerativeAI(apiKey);
 
-  async function call(input: GenerateTextInput, json: boolean) {
+  async function call(
+    input: GenerateTextInput,
+    responseSchema?: ResponseSchema,
+  ) {
     try {
       const generativeModel = genAI.getGenerativeModel({
         model,
         systemInstruction: input.system,
         generationConfig: {
           maxOutputTokens: input.maxOutputTokens ?? 16000,
-          ...(json ? { responseMimeType: "application/json" } : {}),
+          ...(responseSchema
+            ? { responseMimeType: "application/json", responseSchema }
+            : {}),
         },
       });
 
@@ -56,16 +86,19 @@ export function createGeminiProvider(
     model,
 
     async generateText(input): Promise<AiResult<string>> {
-      const { text, usage } = await call(input, false);
+      const { text, usage } = await call(input);
       return { value: text, usage };
     },
 
     async generateObject<T>(
       input: GenerateObjectInput<T>,
     ): Promise<AiResult<T>> {
-      // Le mode JSON garantit un document bien forme, jamais sa conformite
-      // metier : la validation par schema reste indispensable.
-      const { text, usage } = await call(input, true);
+      // Le schema est impose au modele via responseSchema, puis la sortie
+      // est revalidee : rien n'est enregistre sans avoir ete verifie.
+      const responseSchema = toGeminiSchema(
+        z.toJSONSchema(input.schema, { target: "draft-2020-12" }),
+      ) as unknown as ResponseSchema;
+      const { text, usage } = await call(input, responseSchema);
 
       let parsed: unknown;
       try {

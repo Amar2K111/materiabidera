@@ -10,7 +10,7 @@ export const Input = React.forwardRef<
       ref={ref}
       className={cn(
         "h-10 w-full rounded-[8px] border border-line bg-white px-3 text-[14px]",
-        "placeholder:text-ink-42 focus:border-brand focus:outline-none",
+        "placeholder:text-ink-42 focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/15",
         "disabled:bg-paper disabled:text-ink-42",
         className,
       )}
@@ -28,7 +28,7 @@ export const Textarea = React.forwardRef<
       ref={ref}
       className={cn(
         "w-full rounded-[8px] border border-line bg-white px-3 py-2 text-[14px] leading-relaxed",
-        "placeholder:text-ink-42 focus:border-brand focus:outline-none",
+        "placeholder:text-ink-42 focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/15",
         className,
       )}
       {...props}

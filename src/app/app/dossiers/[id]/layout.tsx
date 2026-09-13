@@ -2,7 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getProject } from "@/lib/data/projects";
 import { PROJECT_STATUS, deadlineLabel, formatDate } from "@/lib/projects";
-import { Badge } from "@/components/ui/badge";
+import { AppFrame } from "@/components/app/app-frame";
+import { ProjectSidebar } from "@/components/app/project-sidebar";
 import { ProjectNav } from "@/components/app/project-nav";
 
 export default async function ProjectLayout({
@@ -15,63 +16,59 @@ export default async function ProjectLayout({
   const { id } = await params;
   const project = await getProject(id);
 
-  // RLS renvoie une ligne vide pour un dossier d'une autre organisation :
-  // le comportement est donc identique a un dossier inexistant.
   if (!project) notFound();
 
   const status = PROJECT_STATUS[project.status];
   const due = deadlineLabel(project.deadline);
+  const tagTone =
+    status.tone === "ok"
+      ? "is-ok"
+      : status.tone === "warn"
+        ? "is-warn"
+        : status.tone === "risk"
+          ? "is-risk"
+          : "";
 
   return (
-    <div>
-      <nav className="text-[13px] font-semibold text-ink-42">
-        <Link href="/app/dossiers" className="hover:text-ink">
-          Dossiers
-        </Link>
-        <span className="px-1.5">/</span>
-        <span className="text-ink">{project.name}</span>
-      </nav>
-
-      <header className="mt-4 flex flex-wrap items-start justify-between gap-4">
-        <div className="min-w-0">
-          <div className="flex flex-wrap items-center gap-2.5">
-            <h1 className="text-[24px] font-extrabold tracking-[-0.035em]">
-              {project.name}
-            </h1>
-            <Badge tone={status.tone}>{status.label}</Badge>
-            {project.is_demo ? <Badge tone="neutral">Dossier exemple</Badge> : null}
-          </div>
-
-          <p className="mt-2 text-[13.5px] text-ink-58">
-            {[project.reference, project.buyer, project.lot]
+    <AppFrame
+      crumb={
+        <>
+          <Link href="/app/dossiers">Dossiers</Link>
+          {" / "}
+          <b>{project.name}</b>
+        </>
+      }
+      right={
+        <>
+          {project.lot ? (
+            <span className="app-ui__tag is-neutral">{project.lot}</span>
+          ) : null}
+          <span className={`app-ui__tag ${tagTone}`}>{status.label}</span>
+          <span className="app-ui__tag is-brand">{due.text}</span>
+        </>
+      }
+      foot={
+        <>
+          <p>
+            {[project.reference, project.buyer, formatDate(project.deadline)]
               .filter(Boolean)
-              .join(" | ") || "Reference, acheteur et lot non renseignes"}
+              .join(" · ") || "Consultation BTP"}
           </p>
+          <Link href={`/app/dossiers/${project.id}/export`} className="text-[12px] font-bold text-brand">
+            Export Word / PDF
+          </Link>
+        </>
+      }
+    >
+      <div className="app-ui__body">
+        <ProjectSidebar projectId={project.id} />
+        <div className="app-ui__content">
+          <div className="mb-4 lg:hidden">
+            <ProjectNav projectId={project.id} />
+          </div>
+          {children}
         </div>
-
-        <div className="flex-none text-right">
-          <p className="text-[13px] font-semibold">
-            {formatDate(project.deadline)}
-          </p>
-          <p
-            className={
-              due.tone === "risk"
-                ? "mt-0.5 text-[12.5px] font-bold text-risk"
-                : due.tone === "warn"
-                  ? "mt-0.5 text-[12.5px] font-bold text-warn"
-                  : "mt-0.5 text-[12.5px] text-ink-42"
-            }
-          >
-            {due.text}
-          </p>
-        </div>
-      </header>
-
-      <div className="mt-6">
-        <ProjectNav projectId={project.id} />
       </div>
-
-      <div className="mt-8">{children}</div>
-    </div>
+    </AppFrame>
   );
 }

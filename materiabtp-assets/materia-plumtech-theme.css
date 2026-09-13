@@ -1,0 +1,1073 @@
+/* MateriaBTP — design PlumTech + palette logo (#0035A9 / #3580d4 / #5ba3e8) */
+
+:root {
+  --mb-ink: #000000;
+  --mb-ink-70: rgba(0, 0, 0, 0.7);
+  --mb-ink-58: rgba(0, 0, 0, 0.58);
+  --mb-ink-42: rgba(0, 0, 0, 0.42);
+  --mb-primary: #0035a9;
+  --mb-primary-deep: #002a85;
+  --mb-accent: #3580d4;
+  --mb-sky: #5ba3e8;
+  --mb-body: var(--mb-ink-70);
+  --mb-muted: var(--mb-ink-58);
+  --mb-subtle: var(--mb-ink-42);
+  --mb-surface: #eef2fb;
+  --mb-mist: #d4e3f6;
+  --mb-wash: #eef2fb;
+  --mb-primary-rgb: 0, 53, 169;
+
+  --color-primary: var(--mb-primary);
+  --color-foreground: var(--mb-ink);
+  --color-ember-0: var(--mb-wash);
+  --color-ember-50: var(--mb-accent);
+  --color-ember-100: var(--mb-primary);
+  --color-ember-200: var(--mb-primary-deep);
+  --color-dark-orange-100: var(--mb-accent);
+  --color-dark-orange-200: var(--mb-primary-deep);
+  --color-lazuli-0: var(--mb-wash);
+  --color-lazuli-100: var(--mb-mist);
+  --color-lazuli-200: var(--mb-accent);
+  --color-lazuli-300: var(--mb-primary);
+  --color-icon-blue: var(--mb-sky);
+}
+
+/* ------------------------------------------------------------------ Nav flottante blanche */
+header .pointer-events-auto.rounded-\[18px\] {
+  background: #fff !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  color: var(--mb-ink) !important;
+  box-shadow:
+    0 12px 40px rgba(var(--mb-primary-rgb), 0.14),
+    0 2px 10px rgba(var(--mb-primary-rgb), 0.08) !important;
+}
+
+header a,
+header button {
+  color: inherit;
+}
+
+header .text-stone-700,
+header .text-white\/80 {
+  color: var(--mb-ink-70) !important;
+}
+
+header a:hover,
+header button:hover {
+  color: var(--mb-accent) !important;
+}
+
+header .bg-stone-1100,
+header .border-stone-1000 {
+  background: var(--mb-surface) !important;
+  border-color: rgba(var(--mb-primary-rgb), 0.12) !important;
+  color: var(--mb-primary) !important;
+}
+
+header .bg-ember-100,
+header .bg-primary {
+  background: var(--mb-primary) !important;
+  color: #fff !important;
+  border-radius: 9999px !important;
+}
+
+header .bg-ember-100:hover,
+header .hover\:bg-ember-200:hover {
+  background: var(--mb-accent) !important;
+}
+
+/* ------------------------------------------------------------------ Pattern de fond unifié (toutes sections claires) */
+main > section:not(.gradient-hero):not(.cta-final-dark) {
+  position: relative;
+  isolation: isolate;
+}
+
+main > section:not(.gradient-hero):not(.cta-final-dark)::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 20%, rgba(var(--mb-primary-rgb), 0.06) 0%, transparent 72%),
+    radial-gradient(ellipse 65% 50% at 50% 85%, rgba(53, 128, 212, 0.05) 0%, transparent 68%);
+}
+
+main > section:not(.gradient-hero):not(.cta-final-dark) > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ------------------------------------------------------------------ Hero — fond blanc + même pattern */
+main > section.relative.bg-white.pt-header {
+  background: #fff !important;
+  color: var(--mb-ink) !important;
+}
+
+main > section.relative.bg-white.pt-header .text-stone-1200,
+main > section.relative.bg-white.pt-header .text-stone-900,
+main > section.relative.bg-white.pt-header h1,
+main > section.relative.bg-white.pt-header h1 span.text-stone-900 {
+  color: var(--mb-ink) !important;
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+}
+
+main > section.relative.bg-white.pt-header .text-stone-800,
+main > section.relative.bg-white.pt-header .text-stone-700,
+main > section.relative.bg-white.pt-header .text-stone-600,
+main > section.relative.bg-white.pt-header .hero-trust-caption {
+  color: var(--mb-ink-70) !important;
+}
+
+main > section.relative.bg-white.pt-header .text-primary,
+main > section.relative.bg-white.pt-header .text-ember-100 {
+  color: var(--mb-accent) !important;
+}
+
+main > section.relative.bg-white.pt-header .pointer-events-none.absolute.inset-0.-z-10 {
+  opacity: 0.18;
+}
+
+main > section.relative.bg-white.pt-header .bg-stone-100 {
+  background-color: var(--mb-wash) !important;
+}
+
+/* ------------------------------------------------------------------ Boutons CTA */
+.bg-ember-100,
+.bg-primary,
+.bg-lazuli-300 {
+  background-color: var(--mb-primary) !important;
+}
+
+.hover\:bg-ember-200:hover,
+.hover\:bg-lazuli-200:hover,
+.group-hover\:bg-ember-200:hover {
+  background-color: var(--mb-accent) !important;
+}
+
+button.bg-ember-100,
+a.bg-ember-100,
+button.bg-primary,
+a.bg-primary {
+  border-radius: 9999px !important;
+  box-shadow: 0 8px 28px rgba(var(--mb-primary-rgb), 0.16);
+  color: #fff !important;
+}
+
+a.bg-ember-100.text-white,
+button.bg-ember-100.text-white,
+a.bg-primary.text-white,
+button.bg-primary.text-white {
+  color: #fff !important;
+}
+
+.text-ember-100,
+.text-primary {
+  color: var(--mb-accent) !important;
+}
+
+/* ------------------------------------------------------------------ Sections alternées */
+.bg-stone-100,
+.bg-stone-200 {
+  background-color: var(--mb-surface) !important;
+}
+
+.bg-white {
+  background-color: #fff;
+}
+
+/* ------------------------------------------------------------------ Cartes & blocs */
+.rounded-\[18px\],
+.rounded-2xl,
+.rounded-3xl {
+  border-color: rgba(var(--mb-primary-rgb), 0.1);
+}
+
+.border-stone-400,
+.border-stone-500,
+.border-stone-600 {
+  border-color: rgba(var(--mb-primary-rgb), 0.1) !important;
+}
+
+.shadow-\[0_0_12px_rgba\(26\,23\,16\,0\.25\)\] {
+  box-shadow: 0 2px 16px rgba(var(--mb-primary-rgb), 0.06) !important;
+}
+
+/* ------------------------------------------------------------------ Bandeaux gradient-hero */
+.gradient-hero {
+  background: radial-gradient(
+    circle at 70% 20%,
+    var(--mb-accent) 0%,
+    var(--mb-primary) 55%,
+    var(--mb-primary-deep) 100%
+  ) !important;
+  color: #fff !important;
+}
+
+.gradient-hero h2,
+.gradient-hero h2 span,
+.gradient-hero .text-stone-1200,
+.gradient-hero .text-stone-900,
+.gradient-hero .text-stone-800,
+.gradient-hero .text-stone-700,
+.gradient-hero .text-stone-600,
+.gradient-hero .text-body-plum,
+.gradient-hero .text-muted-plum,
+.gradient-hero .text-ink-plum {
+  color: rgba(255, 255, 255, 0.92) !important;
+}
+
+.gradient-hero h2 span.text-stone-600 {
+  color: rgba(255, 255, 255, 0.82) !important;
+}
+
+.gradient-hero .max-w-3xl p.font-body {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Labels diagramme (directement sur le dégradé) */
+.gradient-hero .absolute p.text-stone-700 {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* Pills sécurité gradient-hero — fond blanc, texte bleu logo */
+.gradient-hero .rounded-full[class*="bg-icon-"],
+.gradient-hero span.rounded-full.bg-stone-1300,
+.gradient-hero .rounded-full.border-stone-1100.bg-stone-1300 {
+  background: #fff !important;
+  border: 1px solid rgba(255, 255, 255, 0.45) !important;
+}
+
+.gradient-hero span.rounded-full.bg-stone-1300 .font-body,
+.gradient-hero span.rounded-full.bg-stone-1300 .font-medium,
+.gradient-hero .rounded-full[class*="bg-icon-"] .font-medium,
+.gradient-hero .rounded-full[class*="bg-icon-"] .font-body {
+  color: var(--mb-primary) !important;
+}
+
+.gradient-hero span.rounded-full.bg-stone-1300 svg,
+.gradient-hero .rounded-full [class*="text-icon-"] {
+  color: var(--mb-accent) !important;
+}
+
+/* Cartes blanches internes — texte sombre conservé */
+.gradient-hero .bg-white .text-stone-1200,
+.gradient-hero .bg-white h3,
+.gradient-hero .rounded-\[22px\].bg-white .text-stone-1200 {
+  color: var(--mb-ink) !important;
+}
+
+.gradient-hero .bg-white .text-stone-800,
+.gradient-hero .bg-white p.font-body,
+.gradient-hero .rounded-\[22px\].bg-white p {
+  color: var(--mb-body) !important;
+}
+
+.gradient-hero .bg-white .text-meta,
+.gradient-hero .bg-white .font-body.text-meta {
+  color: var(--mb-body) !important;
+}
+
+/* ------------------------------------------------------------------ Labels section type mono */
+.font-mono.text-xs.uppercase,
+.text-meta.uppercase {
+  letter-spacing: 0.28em;
+  color: var(--mb-accent) !important;
+}
+
+/* ------------------------------------------------------------------ Footer sombre (legacy) */
+footer.bg-stone-1200:not(.footer-light),
+footer.border-stone-1000:not(.footer-light) {
+  background: var(--mb-primary-deep) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: var(--mb-mist) !important;
+}
+
+footer.bg-stone-1200:not(.footer-light) .text-stone-700,
+footer.bg-stone-1200:not(.footer-light) .text-stone-800 {
+  color: rgba(212, 227, 246, 0.72) !important;
+}
+
+footer.bg-stone-1200:not(.footer-light) a:hover {
+  color: #fff !important;
+}
+
+/* ------------------------------------------------------------------ Footer clair (inversé avec CTA) */
+footer.footer-light,
+footer.bg-surface-plum.footer-light {
+  background: var(--mb-surface) !important;
+  border-color: rgba(var(--mb-primary-rgb), 0.1) !important;
+  color: var(--mb-body) !important;
+}
+
+footer.footer-light h3,
+footer.footer-light .text-ink-plum {
+  color: var(--mb-ink) !important;
+}
+
+footer.footer-light p,
+footer.footer-light .text-muted-plum,
+footer.footer-light .text-body-plum,
+footer.footer-light a.text-muted-plum {
+  color: var(--mb-ink-58) !important;
+}
+
+footer.footer-light a.text-muted-plum:hover,
+footer.footer-light a:hover {
+  color: var(--mb-ink) !important;
+}
+
+footer.footer-light .border-navy-10,
+footer.footer-light .border-t {
+  border-color: rgba(var(--mb-primary-rgb), 0.1) !important;
+}
+
+footer.footer-light .bg-white {
+  background: #fff !important;
+  box-shadow: 0 2px 12px rgba(var(--mb-primary-rgb), 0.08);
+}
+
+footer.footer-light .text-primary {
+  color: var(--mb-primary) !important;
+}
+
+/* ------------------------------------------------------------------ CTA final sombre (inversé avec footer) */
+section.cta-final-dark {
+  background: var(--mb-primary-deep) !important;
+  color: #fff !important;
+}
+
+section.cta-final-dark .cta-final-dark__card {
+  background: rgba(0, 0, 0, 0.22) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+}
+
+section.cta-final-dark h2,
+section.cta-final-dark h2 span,
+section.cta-final-dark p,
+section.cta-final-dark .text-white {
+  color: #fff !important;
+}
+
+section.cta-final-dark h2 span.text-white\/85 {
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
+section.cta-final-dark p.text-white\/80 {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+section.cta-final-dark svg.text-lazuli-200 {
+  color: rgba(255, 255, 255, 0.12) !important;
+}
+
+section.cta-final-dark input,
+section.cta-final-dark input::placeholder {
+  color: #fff !important;
+}
+
+section.cta-final-dark input::placeholder {
+  color: rgba(255, 255, 255, 0.55) !important;
+}
+
+section.cta-final-dark form button[type="submit"] {
+  background: #fff !important;
+  color: var(--mb-primary) !important;
+}
+
+section.cta-final-dark form button[type="submit"]:hover {
+  background: rgba(255, 255, 255, 0.92) !important;
+}
+
+section.cta-final-dark button.bg-primary {
+  background: var(--mb-primary) !important;
+  color: #fff !important;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
+}
+
+/* ------------------------------------------------------------------ Mockup hero */
+.hero-banner-media__frame {
+  border-color: rgba(var(--mb-primary-rgb), 0.1) !important;
+  box-shadow:
+    0 30px 90px rgba(var(--mb-primary-rgb), 0.18),
+    0 2px 10px rgba(var(--mb-primary-rgb), 0.06) !important;
+}
+
+.hero-banner-media__dots span:nth-child(1) {
+  background: #fecaca;
+}
+.hero-banner-media__dots span:nth-child(2) {
+  background: #fde68a;
+}
+.hero-banner-media__dots span:nth-child(3) {
+  background: #bbf7d0;
+}
+
+.hero-trust-caption {
+  color: var(--mb-muted) !important;
+}
+
+/* ================================================================== Patterns off (hero legacy — pas les décors feature cards) */
+.hero-bg__grid,
+.gradient-shape-hero,
+.gradient-shape-hero-flipped {
+  display: none !important;
+}
+
+/* Anciens patterns organiques (pipes sand/lazuli/stone) */
+main > section .pointer-events-none.absolute.inset-0.-z-10 svg,
+main > section .pointer-events-none.select-none.absolute.inset-0 svg,
+main > section svg.text-sand-100,
+main > section svg.text-lazuli-200,
+main > section svg.text-stone-1100[viewBox="0 0 5747 1872"],
+section.bg-stone-1200 svg.pointer-events-none.absolute.overflow-visible,
+main svg.text-stone-1100.pointer-events-none {
+  display: none !important;
+}
+
+main > section.relative.bg-white.pt-header .pointer-events-none.absolute.inset-0.-z-10 {
+  display: none !important;
+}
+
+/* ================================================================== Utilitaires PlumTech */
+.bg-surface-plum {
+  background: var(--mb-surface) !important;
+}
+
+.text-ink-plum {
+  color: var(--mb-ink) !important;
+}
+
+.text-body-plum {
+  color: var(--mb-body) !important;
+}
+
+.text-muted-plum {
+  color: var(--mb-muted) !important;
+}
+
+.border-navy-10 {
+  border-color: rgba(var(--mb-primary-rgb), 0.1) !important;
+}
+
+.spot-card-plum {
+  background: #fff !important;
+  border: 1px solid rgba(var(--mb-primary-rgb), 0.1) !important;
+  box-shadow: 0 16px 50px rgba(var(--mb-primary-rgb), 0.14) !important;
+}
+
+/* ================================================================== Fini le noir — sections */
+section.bg-stone-1200.text-white,
+section.relative.isolate.overflow-clip.bg-stone-1200 {
+  background: var(--mb-surface) !important;
+  color: var(--mb-ink) !important;
+}
+
+section.bg-stone-1200.text-white .text-white,
+section.bg-stone-1200 .text-white {
+  color: var(--mb-ink) !important;
+}
+
+section.bg-stone-1200 .text-stone-1200,
+section.bg-stone-1200 .text-stone-900 {
+  color: var(--mb-ink) !important;
+}
+
+section.bg-stone-1200 .text-stone-800,
+section.bg-stone-1200 .text-stone-700,
+section.bg-stone-1200 p {
+  color: var(--mb-muted) !important;
+}
+
+/* ================================================================== Sections lazuli pleine largeur → surface */
+section.bg-lazuli-200,
+section.p-stack.bg-lazuli-200,
+section.bg-surface-plum {
+  background: var(--mb-surface) !important;
+  color: var(--mb-ink) !important;
+}
+
+section.bg-lazuli-200 .text-stone-1200,
+section.bg-surface-plum .text-stone-1200 {
+  color: var(--mb-ink) !important;
+}
+
+section.bg-lazuli-200 .text-stone-800,
+section.bg-surface-plum .text-stone-800 {
+  color: var(--mb-muted) !important;
+}
+
+/* ================================================================== Cartes sticky / feature (style PlumTech) */
+div.rounded-\[30px\].border-stone-1000.bg-stone-1100,
+div.rounded-\[30px\].border-navy-10.bg-white.spot-card-plum,
+div.border-stone-1000.bg-stone-1100,
+article.border-stone-1000.bg-stone-1100,
+article.border-navy-10.bg-white,
+article.spot-card-plum,
+.spot-card-plum,
+main .bg-stone-1100:not(header *):not(footer *):not(.hover\:bg-stone-1100) {
+  background: #fff !important;
+  border-color: rgba(var(--mb-primary-rgb), 0.1) !important;
+  color: var(--mb-ink) !important;
+}
+
+div.rounded-\[30px\].border-stone-1000.bg-stone-1100,
+div.rounded-\[30px\].border-navy-10.bg-white.spot-card-plum,
+article.border-stone-1000.bg-stone-1100,
+article.border-navy-10.bg-white,
+article.spot-card-plum,
+.spot-card-plum {
+  background: #fff !important;
+  border: 1px solid rgba(var(--mb-primary-rgb), 0.1) !important;
+  border-radius: 24px !important;
+  box-shadow: 0 16px 50px rgba(var(--mb-primary-rgb), 0.14) !important;
+  overflow: hidden;
+}
+
+/* Titres cartes — text-white hérité à corriger sur fond blanc (pas les boutons CTA) */
+article.spot-card-plum h3.text-white,
+div.rounded-\[30px\].spot-card-plum h3.text-white,
+div.rounded-\[30px\].spot-card-plum .font-display.text-white:not(a):not(button) {
+  color: var(--mb-ink) !important;
+}
+
+article.spot-card-plum a.bg-ember-100,
+article.spot-card-plum a.bg-ember-100.text-white,
+.spot-card-plum a.bg-ember-100.text-white {
+  color: #fff !important;
+}
+
+div.rounded-\[30px\].bg-stone-1100 .text-stone-1200,
+div.border-stone-1000.bg-stone-1100 .text-stone-1200,
+article.border-stone-1000.bg-stone-1100 .text-stone-1200,
+article.spot-card-plum .text-stone-1200,
+article.bg-white .text-stone-1200,
+main .bg-stone-1100 .text-stone-1200 {
+  color: var(--mb-ink) !important;
+  font-weight: 600;
+}
+
+div.rounded-\[30px\].bg-stone-1100 .text-stone-900,
+div.border-stone-1000.bg-stone-1100 .text-stone-900 {
+  color: var(--mb-ink) !important;
+}
+
+div.rounded-\[30px\].bg-stone-1100 .text-stone-800,
+div.rounded-\[30px\].bg-stone-1100 .text-stone-700,
+div.border-stone-1000.bg-stone-1100 .text-stone-800,
+div.border-stone-1000.bg-stone-1100 .text-stone-700,
+article.border-stone-1000.bg-stone-1100 .text-stone-800,
+article.border-stone-1000.bg-stone-1100 .text-stone-700,
+article.spot-card-plum .text-stone-800,
+article.spot-card-plum p,
+main .bg-stone-1100 .text-stone-800,
+main .bg-stone-1100 .text-stone-700,
+main .bg-stone-1100 p {
+  color: var(--mb-muted) !important;
+  line-height: 1.625;
+}
+
+/* Icônes dans cartes blanches */
+.rounded-\[10px\].bg-stone-1100 {
+  background: var(--mb-surface) !important;
+  border: 1px solid rgba(var(--mb-primary-rgb), 0.08) !important;
+}
+
+.rounded-\[10px\].bg-stone-1100 svg {
+  color: var(--mb-accent) !important;
+  stroke: var(--mb-accent) !important;
+}
+
+/* Section problèmes — fond sand → surface PlumTech */
+section.bg-sand-0 {
+  background: var(--mb-surface) !important;
+}
+
+article.border-stone-1000.bg-stone-1100 .text-meta,
+article .font-mono.text-xs.uppercase,
+article .text-caption.uppercase {
+  letter-spacing: 0.28em;
+  color: var(--mb-accent) !important;
+  text-transform: uppercase;
+}
+
+/* Panneau visuel feature cards — dégradés Tenderbolt-like */
+article .bg-lazuli-200,
+article div.bg-lazuli-200,
+div.bg-lazuli-200.max-h-\[60vh\] {
+  background: radial-gradient(
+    circle at 30% 20%,
+    var(--mb-accent) 0%,
+    var(--mb-primary) 60%,
+    var(--mb-primary-deep) 100%
+  ) !important;
+}
+
+article .bg-ember-50,
+article div.bg-ember-50,
+div.bg-ember-50.max-h-\[60vh\] {
+  background: radial-gradient(
+    circle at 30% 20%,
+    var(--mb-accent) 0%,
+    var(--mb-primary) 60%,
+    var(--mb-primary-deep) 100%
+  ) !important;
+}
+
+article.spot-card-plum .bg-lazuli-300,
+article.spot-card-plum .pointer-events-none.absolute.bg-ember-100 {
+  background-color: rgba(91, 163, 232, 0.55) !important;
+}
+
+article.spot-card-plum a.bg-ember-100,
+article.spot-card-plum button.bg-ember-100 {
+  background-color: var(--mb-primary) !important;
+}
+
+article.spot-card-plum .relative.isolate.flex.items-center.justify-center img[src*="features/cards"] {
+  position: relative;
+  z-index: 2;
+  filter: drop-shadow(0 28px 56px rgba(0, 24, 48, 0.28));
+}
+
+article.spot-card-plum .relative.isolate.flex.items-center.justify-center.overflow-hidden {
+  min-height: clamp(18rem, 52vh, 36rem);
+}
+
+/* Petites cartes spot */
+.rounded-xl.border-stone-1000.bg-stone-1100,
+.rounded-2xl.border-stone-500.bg-white,
+.rounded-2xl.border-stone-400 {
+  background: #fff !important;
+  border: 1px solid rgba(var(--mb-primary-rgb), 0.1) !important;
+  box-shadow: 0 2px 16px rgba(var(--mb-primary-rgb), 0.06) !important;
+  border-radius: 16px !important;
+}
+
+/* ================================================================== Boutons — plus de noir */
+.bg-stone-1200.text-white,
+button.bg-stone-1200,
+a.bg-stone-1200 {
+  background: var(--mb-primary) !important;
+  color: #fff !important;
+  border-radius: 9999px !important;
+  box-shadow: 0 8px 28px rgba(var(--mb-primary-rgb), 0.16);
+}
+
+.hover\:bg-stone-1000:hover,
+button.hover\:bg-stone-1000:hover {
+  background: var(--mb-accent) !important;
+}
+
+/* ================================================================== Wireframe / tech blocks */
+.bg-wireframe,
+.text-wireframe,
+.border-wireframe-line {
+  display: none !important;
+}
+
+.bg-stone-1300,
+.text-stone-1300 {
+  background: var(--mb-primary-deep) !important;
+  color: #fff !important;
+}
+
+/* ================================================================== Contraste lisible — textes sur fond clair */
+main .text-stone-1200:not(.gradient-hero *):not(h2):not(h3),
+main .text-stone-900:not(.gradient-hero *):not(h2 *),
+section.bg-surface-plum .text-stone-1200:not(h2):not(h3),
+section.bg-surface-plum h3 {
+  color: var(--mb-ink) !important;
+}
+
+/* Titres h2 — noir sur fonds clairs (aligné materiabtp.info) */
+section.bg-surface-plum h2,
+section.bg-lazuli-200 h2,
+section.bg-stone-1200 h2,
+section.bg-surface-plum h2.text-stone-1200,
+section.bg-surface-plum h2 span.text-stone-900,
+section.bg-lazuli-200 h2 span.text-stone-900,
+section.bg-stone-1200 h2 span.text-stone-900 {
+  color: var(--mb-ink) !important;
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+}
+
+main .text-stone-800:not(footer *):not(.gradient-hero *),
+section.bg-surface-plum .text-stone-800,
+section.bg-white .text-stone-800 {
+  color: var(--mb-body) !important;
+}
+
+main .text-stone-700:not(footer *):not(.gradient-hero *),
+section.bg-surface-plum .text-stone-700,
+section.bg-white .text-stone-700 {
+  color: var(--mb-muted) !important;
+}
+
+.text-body-plum:not(.gradient-hero *) {
+  color: var(--mb-body) !important;
+}
+
+.spot-card-plum .text-stone-700,
+.spot-card-plum .text-stone-800,
+.spot-card-plum .font-body,
+div.rounded-\[30px\].spot-card-plum p,
+article.spot-card-plum .text-stone-700,
+article.spot-card-plum .text-stone-800,
+article.spot-card-plum p {
+  color: var(--mb-body) !important;
+}
+
+.spot-card-plum .font-display,
+div.rounded-\[30px\].spot-card-plum .font-display {
+  color: var(--mb-ink) !important;
+  font-weight: 700;
+}
+
+.hero-trust-caption {
+  color: var(--mb-ink-58) !important;
+}
+
+article.spot-card-plum h3,
+article.spot-card-plum .font-display.text-stone-1200 {
+  color: var(--mb-ink) !important;
+}
+
+article.spot-card-plum li,
+article.spot-card-plum .text-meta-lg {
+  color: var(--mb-body) !important;
+}
+
+/* ================================================================== Typo MateriaBTP — noir / gris sur fonds clairs (aligné materiabtp.info) */
+main {
+  color: var(--mb-ink);
+}
+
+main h1,
+main h2,
+main h3,
+main h4,
+main .font-display:not(.gradient-hero *):not(.cta-final-dark *) {
+  color: var(--mb-ink);
+}
+
+main p:not(.gradient-hero *):not(.cta-final-dark *) {
+  color: var(--mb-ink-70);
+}
+
+main li:not(.gradient-hero *):not(.cta-final-dark *) {
+  color: var(--mb-ink-70);
+}
+
+.text-ink-plum {
+  color: var(--mb-ink) !important;
+}
+
+.text-body-plum:not(.gradient-hero *):not(.cta-final-dark *) {
+  color: var(--mb-ink-70) !important;
+}
+
+.text-muted-plum:not(.gradient-hero *):not(.cta-final-dark *) {
+  color: var(--mb-ink-58) !important;
+}
+
+footer.footer-light,
+footer.footer-light p,
+footer.footer-light .text-body-plum {
+  color: var(--mb-ink-58) !important;
+}
+
+footer.footer-light h3,
+footer.footer-light .text-ink-plum {
+  color: var(--mb-ink) !important;
+}
+
+footer.footer-light a.text-muted-plum,
+footer.footer-light .text-muted-plum {
+  color: var(--mb-ink-58) !important;
+}
+
+footer.footer-light a.text-muted-plum:hover,
+footer.footer-light a:hover {
+  color: var(--mb-ink) !important;
+}
+
+.spot-card-plum .font-display,
+div.rounded-\[30px\].spot-card-plum .font-display,
+.spot-card-plum .text-ink-plum {
+  color: var(--mb-ink) !important;
+}
+
+.spot-card-plum p,
+.spot-card-plum .text-body-plum,
+.spot-card-plum .font-body {
+  color: var(--mb-ink-70) !important;
+}
+
+main .text-primary,
+main .text-ember-100 {
+  color: var(--mb-primary) !important;
+}
+
+.font-mono.text-xs.uppercase,
+.text-meta.uppercase {
+  color: var(--mb-accent) !important;
+}
+
+/* Fonds sombres — blanc conservé (priorité sur typo bleue) */
+.gradient-hero,
+.gradient-hero h1,
+.gradient-hero h2,
+.gradient-hero h3,
+.gradient-hero p,
+.gradient-hero li,
+.gradient-hero span,
+section.cta-final-dark,
+section.cta-final-dark h2,
+section.cta-final-dark h2 span,
+section.cta-final-dark p {
+  color: #fff !important;
+}
+
+section.cta-final-dark h2 span.text-white\/85 {
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
+section.cta-final-dark p.text-white\/80 {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* Pills sécurité — priorité sur le blanc global des spans */
+.gradient-hero span.rounded-full[class*="bg-icon-"],
+.gradient-hero span.rounded-full.bg-stone-1300 {
+  color: var(--mb-accent) !important;
+}
+
+.gradient-hero span.rounded-full[class*="bg-icon-"] svg,
+.gradient-hero span.rounded-full.bg-stone-1300 svg {
+  color: var(--mb-accent) !important;
+  stroke: var(--mb-accent) !important;
+}
+
+.gradient-hero span.rounded-full.text-icon-blue,
+.gradient-hero span.rounded-full.text-icon-blue svg {
+  color: var(--mb-sky) !important;
+  stroke: var(--mb-sky) !important;
+}
+
+.gradient-hero span.rounded-full.text-icon-purple,
+.gradient-hero span.rounded-full.text-icon-purple svg {
+  color: var(--mb-primary) !important;
+  stroke: var(--mb-primary) !important;
+}
+
+.gradient-hero span.rounded-full[class*="bg-icon-"] .font-body,
+.gradient-hero span.rounded-full[class*="bg-icon-"] .font-medium,
+.gradient-hero span.rounded-full.bg-stone-1300 span {
+  color: var(--mb-primary) !important;
+}
+
+/* ================================================================== Cohérence palette logo — tokens legacy Tailwind */
+.bg-sand-0,
+.bg-sand-100,
+section.bg-sand-0 {
+  background: var(--mb-surface) !important;
+}
+
+.text-sand-100,
+.text-sand-0 {
+  color: var(--mb-muted) !important;
+}
+
+.border-sand-100,
+.border-sand-100\/40 {
+  border-color: rgba(var(--mb-primary-rgb), 0.12) !important;
+}
+
+.bg-stone-100,
+.bg-stone-200,
+.bg-stone-300 {
+  background: var(--mb-surface) !important;
+}
+
+.bg-stone-400,
+.bg-stone-500 {
+  background: var(--mb-mist) !important;
+}
+
+.bg-teal-0,
+.bg-emerald-0,
+.bg-amber-0,
+.bg-gold-0,
+.bg-purple-0,
+.bg-mustard-0 {
+  background: var(--mb-surface) !important;
+}
+
+.text-teal-100,
+.text-emerald-100,
+.text-amber-100,
+.text-gold-100,
+.text-purple-100,
+.text-mustard-100,
+.text-gold,
+.text-moss {
+  color: var(--mb-accent) !important;
+}
+
+.bg-teal-100,
+.bg-emerald-100,
+.bg-amber-100,
+.bg-coral,
+.bg-gold,
+.bg-moss {
+  background: var(--mb-primary) !important;
+  color: #fff !important;
+}
+
+/* Icônes feature — famille bleu logo uniquement */
+.text-icon-blue {
+  color: var(--mb-sky) !important;
+}
+.text-icon-amber,
+.text-icon-peach {
+  color: var(--mb-accent) !important;
+}
+.text-icon-purple {
+  color: var(--mb-primary) !important;
+}
+.text-icon-teal {
+  color: var(--mb-primary-deep) !important;
+}
+.text-icon-lime {
+  color: var(--mb-sky) !important;
+}
+
+[class*="bg-icon-blue/"],
+.bg-icon-blue\/10 {
+  background: color-mix(in srgb, var(--mb-sky) 12%, transparent) !important;
+}
+[class*="bg-icon-amber/"],
+.bg-icon-amber\/10 {
+  background: color-mix(in srgb, var(--mb-accent) 12%, transparent) !important;
+}
+[class*="bg-icon-purple/"],
+.bg-icon-purple\/10 {
+  background: color-mix(in srgb, var(--mb-primary) 10%, transparent) !important;
+}
+[class*="bg-icon-teal/"],
+.bg-icon-teal\/10 {
+  background: color-mix(in srgb, var(--mb-primary-deep) 10%, transparent) !important;
+}
+[class*="bg-icon-lime/"],
+.bg-icon-lime\/10 {
+  background: color-mix(in srgb, var(--mb-sky) 10%, transparent) !important;
+}
+[class*="bg-icon-peach/"],
+.bg-icon-peach\/10 {
+  background: color-mix(in srgb, var(--mb-accent) 10%, transparent) !important;
+}
+
+/* Calculateur ROI */
+#materia-roi-calc {
+  --mc-accent: var(--mb-accent) !important;
+  --mc-track: var(--mb-mist) !important;
+  --mc-accent-deep: var(--mb-primary-deep) !important;
+}
+
+#materia-roi-calc .mc-field {
+  background: var(--mb-surface) !important;
+}
+
+#materia-roi-calc .mc-label {
+  color: var(--mb-primary) !important;
+}
+
+#materia-roi-calc .mc-value {
+  color: var(--mb-primary-deep) !important;
+}
+
+#materia-roi-calc .mc-result {
+  background: var(--mb-surface) !important;
+  border: 1px solid rgba(var(--mb-primary-rgb), 0.08) !important;
+  color: var(--mb-primary-deep) !important;
+}
+
+#materia-roi-calc .mc-result::before {
+  display: none !important;
+}
+
+#materia-roi-calc .mc-result-num {
+  color: var(--mb-primary-deep) !important;
+}
+
+#materia-roi-calc .mc-result-label {
+  color: var(--mb-primary) !important;
+}
+
+/* Stats + FAQ — photos miroir (cadrage sur la personne) */
+img.stats-panel-img,
+img.faq-panel-img {
+  object-position: center center !important;
+}
+
+/* Cartes features — alternance texte/image (Tenderbolt) */
+@media (min-width: 48rem) {
+  article.spot-card-plum.md\:\[direction\:rtl\] {
+    direction: rtl !important;
+  }
+
+  article.spot-card-plum .md\:\[direction\:ltr\] {
+    direction: ltr !important;
+  }
+}
+
+/* Nav / UI — plus de gris stone sur fonds sombres */
+header .bg-stone-1100,
+header .hover\:bg-stone-1000:hover {
+  background: var(--mb-surface) !important;
+  color: var(--mb-primary) !important;
+}
+
+.border-stone-300,
+.border-stone-400,
+.border-stone-700,
+.border-stone-1000,
+.border-stone-1100 {
+  border-color: rgba(var(--mb-primary-rgb), 0.1) !important;
+}
+
+.text-stone-400,
+.text-stone-500,
+.text-stone-600 {
+  color: var(--mb-subtle) !important;
+}
+
+.text-stone-1100,
+.text-stone-1000 {
+  color: var(--mb-ink) !important;
+}
+
+[class*="bg-[#fafbf8]"],
+[class*="bg-[#f4f2ed]"],
+[class*="bg-[#eef2fb]"] {
+  background: var(--mb-surface) !important;
+}
+
+[class*="text-[#272721]"],
+[class*="text-[#44403c]"],
+[class*="text-[#001830]"] {
+  color: var(--mb-ink) !important;
+}
+
+[class*="bg-[#353532]"],
+[class*="bg-[#001830]"] {
+  background: color-mix(in srgb, var(--mb-ink) 70%, transparent) !important;
+}

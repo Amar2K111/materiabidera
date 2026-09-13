@@ -14,7 +14,7 @@ export function LandingFooter() {
               className="brand"
               aria-label="MateriaBTP — retour en haut de page"
             >
-              <BrandLogo height={26} />
+              <BrandLogo height={26} variant="on-dark" />
             </Link>
             <p className="foot-tag">
               L’IA des appels d’offres BTP, du DCE au mémoire technique exporté.

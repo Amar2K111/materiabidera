@@ -1,14 +1,21 @@
 import Image from "next/image";
 
-const LOGO_WIDTH = 878;
-const LOGO_HEIGHT = 150;
-const ICON_WIDTH = 1024;
-const ICON_HEIGHT = 682;
+const WORDMARK_WIDTH = 302;
+const WORDMARK_HEIGHT = 52;
+const ICON_SIZE = 48;
+
+const LOGO_SRC = {
+  default: "/materiabtp-assets/images/logo-materiabtp-wordmark.png",
+  onDark: "/materiabtp-assets/images/logo-materiabtp-wordmark-light.png",
+  icon: "/materiabtp-assets/images/logo-materiabtp-icon.png",
+} as const;
 
 type BrandLogoProps = {
   height?: number;
   className?: string;
   priority?: boolean;
+  /** Logo blanc / bleu clair pour header et footer sombres */
+  variant?: "default" | "on-dark";
 };
 
 type BrandMarkProps = {
@@ -24,12 +31,13 @@ export function BrandLogo({
   height = 28,
   className,
   priority = false,
+  variant = "default",
 }: BrandLogoProps) {
-  const width = Math.round((height * LOGO_WIDTH) / LOGO_HEIGHT);
+  const width = Math.round((height * WORDMARK_WIDTH) / WORDMARK_HEIGHT);
 
   return (
     <Image
-      src="/images/materiabtp-logo.png"
+      src={variant === "on-dark" ? LOGO_SRC.onDark : LOGO_SRC.default}
       alt="MateriaBTP"
       width={width}
       height={height}
@@ -47,18 +55,16 @@ export function BrandMark({
   priority = false,
   decorative = false,
 }: BrandMarkProps) {
-  const width = Math.round((size * ICON_WIDTH) / ICON_HEIGHT);
-
   return (
     <Image
-      src="/images/materiabtp-icon.png"
-      alt={decorative ? "" : "MateriaBTP"}
-      width={width}
+      src={LOGO_SRC.icon}
+      width={size}
       height={size}
+      alt={decorative ? "" : "MateriaBTP"}
       className={className}
       priority={priority}
       aria-hidden={decorative}
-      style={{ width: "auto", height: size }}
+      style={{ width: size, height: size }}
     />
   );
 }
@@ -67,7 +73,7 @@ export function BrandMark({
 export function BrandName({ className = "" }: { className?: string }) {
   return (
     <span className={`inline-flex items-baseline font-extrabold tracking-[-0.06em] ${className}`}>
-      <span className="text-[#001845]">Materia</span>
+      <span className="text-ink">Materia</span>
       <span className="text-brand">BTP</span>
     </span>
   );

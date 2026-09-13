@@ -1,12 +1,11 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { BrandMark } from "@/components/brand/BrandLogo";
+import { BrandLogo, BrandMark } from "@/components/brand/BrandLogo";
 import { LogOut } from "lucide-react";
-import { isSupabaseConfigured } from "@/lib/env";
 import { getAppContext } from "@/lib/data/context";
 import { SidebarNav } from "@/components/app/sidebar";
 import { MobileNav } from "@/components/app/mobile-nav";
-import { SetupRequired } from "@/components/app/setup-required";
+import { SessionBootstrap } from "@/components/app/session-bootstrap";
+import "@/components/app/app-ui.css";
 
 /** Page authentifiee : toujours rendue a la demande, jamais prerendue. */
 export const dynamic = "force-dynamic";
@@ -16,15 +15,9 @@ export default async function AppLayout({
 }: {
   children: React.ReactNode;
 }) {
-  if (!isSupabaseConfigured) return <SetupRequired />;
-
   const ctx = await getAppContext();
-  if (!ctx) redirect("/login");
-  // Sans organisation, la base entreprise n'existe pas : l'onboarding est
-  // le seul passage possible (section 39).
-  if (!ctx.organization) redirect("/onboarding");
 
-  const initials = (ctx.organization.name || "?")
+  const initials = (ctx.fullName || ctx.organization.name || "?")
     .split(/\s+/)
     .slice(0, 2)
     .map((w) => w[0])
@@ -32,48 +25,75 @@ export default async function AppLayout({
     .toUpperCase();
 
   return (
-    <div className="min-h-dvh bg-white">
-      {/* Barre superieure */}
-      <header className="sticky top-0 z-50 flex h-14 items-center justify-between gap-4 border-b border-line bg-white/90 px-4 backdrop-blur-md">
-        <div className="flex min-w-0 items-center gap-3">
-          <MobileNav />
-          <Link href="/app" className="flex flex-none items-center">
-            <BrandMark size={22} />
-          </Link>
-          <span className="truncate text-[13px] font-semibold text-ink-58">
-            {ctx.organization.name}
-          </span>
-        </div>
+    <div className="app-ui app-ui__shell">
+      <SessionBootstrap isGuest={ctx.isGuest} />
+      <aside className="app-ui__sidebar">
+        <Link href="/app" className="app-ui__sidebar-brand" aria-label="MateriaBTP — tableau de bord">
+          <BrandLogo height={28} priority />
+        </Link>
 
-        <div className="flex flex-none items-center gap-2">
-          <span
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-wash text-[11.5px] font-bold text-brand"
-            title={ctx.email ?? undefined}
-            aria-hidden
-          >
-            {initials}
-          </span>
-          <form action="/auth/signout" method="post">
-            <button
-              type="submit"
-              className="flex h-8 w-8 items-center justify-center rounded-[7px] text-ink-42 transition-colors hover:bg-paper hover:text-ink"
-              aria-label="Se deconnecter"
-              title="Se deconnecter"
-            >
-              <LogOut className="h-4 w-4" strokeWidth={1.8} />
-            </button>
-          </form>
-        </div>
-      </header>
-
-      <div className="flex">
-        {/* Navigation laterale, persistante sur bureau */}
-        <aside className="sticky top-14 hidden h-[calc(100dvh-56px)] w-[228px] flex-none border-r border-line bg-paper px-3 py-4 lg:block">
+        <div className="app-ui__sidebar-nav">
+          <p className="app-ui__nav-label">Navigation</p>
           <SidebarNav />
-        </aside>
+        </div>
 
-        <main className="min-w-0 flex-1 px-4 py-8 sm:px-8">
-          <div className="mx-auto max-w-[1180px]">{children}</div>
+        <div className="app-ui__sidebar-foot">
+          <p className="app-ui__sidebar-org">{ctx.organization.name}</p>
+          <div className="app-ui__sidebar-user">
+            <span
+              className="app-ui__avatar"
+              title={ctx.email ?? undefined}
+              aria-hidden
+            >
+              {initials}
+            </span>
+            {!ctx.isGuest ? (
+              <form action="/auth/signout" method="post">
+                <button
+                  type="submit"
+                  className="app-ui__sidebar-logout"
+                  aria-label="Se deconnecter"
+                  title="Se deconnecter"
+                >
+                  <LogOut className="h-4 w-4" strokeWidth={1.8} />
+                </button>
+              </form>
+            ) : null}
+          </div>
+        </div>
+      </aside>
+
+      <div className="app-ui__main-col">
+        <header className="app-ui__header">
+          <div className="app-ui__header-l">
+            <MobileNav />
+            <Link href="/app" className="app-ui__header-brand lg:hidden">
+              <BrandMark size={22} />
+            </Link>
+            <span className="app-ui__org lg:hidden">{ctx.organization.name}</span>
+          </div>
+
+          <div className="app-ui__header-r lg:hidden">
+            <span className="app-ui__avatar" title={ctx.email ?? undefined} aria-hidden>
+              {initials}
+            </span>
+            {!ctx.isGuest ? (
+              <form action="/auth/signout" method="post">
+                <button
+                  type="submit"
+                  className="flex h-8 w-8 items-center justify-center rounded-[8px] text-ink-42 transition-colors hover:bg-paper hover:text-ink"
+                  aria-label="Se deconnecter"
+                  title="Se deconnecter"
+                >
+                  <LogOut className="h-4 w-4" strokeWidth={1.8} />
+                </button>
+              </form>
+            ) : null}
+          </div>
+        </header>
+
+        <main className="app-ui__main-wrap">
+          <div className="app-ui__main-inner">{children}</div>
         </main>
       </div>
     </div>

@@ -18,7 +18,7 @@ function StackedDocumentsIllustration() {
       <g transform="rotate(-7 400 520)">
         <rect x="192" y="188" width="416" height="580" rx="6" fill="#fff" stroke="rgba(0,0,0,.14)" />
         <rect x="192" y="188" width="416" height="34" fill="rgba(0,0,0,.04)" />
-        <text x="216" y="211" fontFamily="Manrope, sans-serif" fontSize="15" fontWeight="700" fill="rgba(0,0,0,.42)">
+        <text x="216" y="211" fontFamily="Inter, sans-serif" fontSize="15" fontWeight="700" fill="rgba(0,0,0,.42)">
           CCAP
         </text>
         <g fill="rgba(0,0,0,.10)">
@@ -32,7 +32,7 @@ function StackedDocumentsIllustration() {
       <g transform="rotate(4 400 520)">
         <rect x="178" y="206" width="428" height="596" rx="6" fill="#fff" stroke="rgba(0,0,0,.16)" />
         <rect x="178" y="206" width="428" height="34" fill="rgba(0,0,0,.04)" />
-        <text x="202" y="229" fontFamily="Manrope, sans-serif" fontSize="15" fontWeight="700" fill="rgba(0,0,0,.42)">
+        <text x="202" y="229" fontFamily="Inter, sans-serif" fontSize="15" fontWeight="700" fill="rgba(0,0,0,.42)">
           CCTP
         </text>
         <g fill="rgba(0,0,0,.10)">
@@ -47,7 +47,7 @@ function StackedDocumentsIllustration() {
       <g transform="rotate(-1.5 400 540)">
         <rect x="150" y="230" width="452" height="612" rx="8" fill="#fff" stroke="rgba(0,0,0,.2)" />
         <rect x="150" y="230" width="452" height="40" fill="rgba(0,0,0,.045)" />
-        <text x="176" y="256" fontFamily="Manrope, sans-serif" fontSize="16" fontWeight="700" fill="rgba(0,0,0,.62)">
+        <text x="176" y="256" fontFamily="Inter, sans-serif" fontSize="16" fontWeight="700" fill="rgba(0,0,0,.62)">
           Règlement de consultation
         </text>
         <g fill="rgba(0,0,0,.12)">
@@ -74,7 +74,7 @@ function StackedDocumentsIllustration() {
           <rect x="176" y="748" width="396" height="10" rx="5" />
           <rect x="176" y="778" width="240" height="10" rx="5" />
         </g>
-        <text x="176" y="822" fontFamily="Manrope, sans-serif" fontSize="13" fontWeight="700" fill="rgba(0,0,0,.3)">
+        <text x="176" y="822" fontFamily="Inter, sans-serif" fontSize="13" fontWeight="700" fill="rgba(0,0,0,.3)">
           page 12 sur 487
         </text>
       </g>

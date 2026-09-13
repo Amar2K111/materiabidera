@@ -1,49 +1,72 @@
-import type { ReactNode } from "react";
+const ALT =
+  "Capture MateriaBTP : tableau de bord avec dossiers appels d'offres BTP en cours";
 
-const USER_PHOTO = "/images/hero-user.jpg";
+const SRC = "/images/hero/dashboard-fr.png";
+const SRCSET = [
+  "/images/hero/_r/dashboard-fr-480.png 480w",
+  "/images/hero/_r/dashboard-fr-640.png 640w",
+  "/images/hero/_r/dashboard-fr-960.png 960w",
+  "/images/hero/_r/dashboard-fr-1440.png 1440w",
+  "/images/hero/dashboard-fr.png 1440w",
+].join(", ");
 
-const STEPS = [
-  { label: "Analyse du dossier", pct: 100, tone: "ok" as const, status: "Terminé" },
-  { label: "Exigences extraites", pct: 100, tone: "ok" as const, status: "Terminé" },
-  { label: "Mémoire technique", pct: 64, tone: "warn" as const, status: "En cours" },
-  { label: "Contrôle avant dépôt", pct: 0, tone: null, status: "À faire" },
-];
-
-/** Visuel hero : tablette horizontale + photo utilisateur + progression (style Tenderbolt). */
-export function HeroVisual({ children }: { children: ReactNode }) {
+function HeroWindowMockup({
+  className,
+  sizes,
+}: {
+  className: string;
+  sizes: string;
+}) {
   return (
-    <figure
-      className="hero-visual rv"
-      aria-label="Professionnelle utilisant MateriaBTP sur tablette pour préparer une réponse à un appel d’offres BTP"
-    >
-      <div className="hero-tablet-wrap">
-        <div className="hero-tablet">
-          <div className="hero-tablet-display">{children}</div>
-        </div>
-
-        <div className="hero-user-photo">
-          <img
-            src={USER_PHOTO}
-            loading="eager"
-            decoding="async"
-            alt="Responsable d’entreprise BTP travaillant sur son poste avec MateriaBTP"
-          />
-        </div>
-
-        <div className="hero-user-steps">
-          <ul aria-hidden="true">
-            {STEPS.map((step) => (
-              <li key={step.label}>
-                <span>{step.label}</span>
-                <div className={`hero-step-bar${step.tone ? ` ${step.tone}` : ""}`}>
-                  <i style={{ width: `${step.pct}%` }} />
-                </div>
-                <em>{step.status}</em>
-              </li>
-            ))}
-          </ul>
+    <div className={className}>
+      <div className="hero-banner-media__stage">
+        <div className="hero-banner-media__frame">
+          <div className="hero-banner-media__chrome" aria-hidden="true">
+            <div className="hero-banner-media__dots">
+              <span />
+              <span />
+              <span />
+            </div>
+            <div className="hero-banner-media__url">materiabtp.info</div>
+          </div>
+          <div className="hero-banner-media__viewport">
+            <picture>
+              <img
+                className="hero-banner-media__img"
+                src={SRC}
+                srcSet={SRCSET}
+                sizes={sizes}
+                alt={ALT}
+                fetchPriority="high"
+                decoding="async"
+              />
+            </picture>
+          </div>
         </div>
       </div>
-    </figure>
+    </div>
+  );
+}
+
+/**
+ * Visuel hero : capture dashboard centrée dans une fenêtre app inclinée.
+ */
+export function HeroVisual() {
+  return (
+    <div
+      className="hero-visual rv"
+      aria-label="Interface MateriaBTP — tableau de bord dossiers appels d'offres BTP"
+    >
+      <div className="hero-visual-col hidden sm:block min-w-0">
+        <HeroWindowMockup
+          className="hero-banner-media"
+          sizes="(min-width: 640px) 48vw, 1px"
+        />
+      </div>
+      <HeroWindowMockup
+        className="hero-banner-media hero-banner-media--mobile w-full sm:hidden"
+        sizes="100vw"
+      />
+    </div>
   );
 }

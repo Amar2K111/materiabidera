@@ -13,15 +13,15 @@ import { cn } from "@/lib/utils/cn";
  */
 export const PROJECT_SECTIONS = [
   { segment: "", label: "Vue d'ensemble", enabled: true },
-  { segment: "documents", label: "Documents", enabled: true },
+  { segment: "documents", label: "DCE", enabled: true },
   { segment: "analyse", label: "Analyse", enabled: true },
   { segment: "go-no-go", label: "Go / No-Go", enabled: true },
   { segment: "exigences", label: "Exigences", enabled: true },
-  { segment: "strategie", label: "Strategie", enabled: true },
-  { segment: "memoire", label: "Memoire technique", enabled: true },
-  { segment: "controle", label: "Controle qualite", enabled: true },
+  { segment: "strategie", label: "Stratégie", enabled: true },
+  { segment: "memoire", label: "Mémoire technique", enabled: true },
+  { segment: "controle", label: "Contrôle", enabled: true },
   { segment: "checklist", label: "Checklist", enabled: true },
-  { segment: "export", label: "Export", enabled: true },
+  { segment: "export", label: "Export Word / PDF", enabled: true },
 ] as const;
 
 export function ProjectNav({ projectId }: { projectId: string }) {

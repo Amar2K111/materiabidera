@@ -280,7 +280,7 @@ La navigation doit être cohérente et persistante.
 
 # 6. DESIGN SYSTEM
 
-Le design doit être **premium SaaS B2B**, comparable au niveau de finition de produits modernes comme Tenderbolt, mais sans copier leur identité graphique ou leurs textes.
+Le design doit être **premium SaaS B2B**, comparable au niveau de finition de produits modernes comme MateriaBTP, mais sans copier leur identité graphique ou leurs textes.
 
 Design BIDERA :
 

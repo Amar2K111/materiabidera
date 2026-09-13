@@ -1,68 +1,75 @@
 import Link from "next/link";
 import { FolderPlus } from "lucide-react";
-import { getAppContext } from "@/lib/data/context";
 import {
   getDashboardCounts,
   listProjectsWithProgress,
   type ProjectProgress,
 } from "@/lib/data/projects";
 import { PROJECT_STATUS, deadlineLabel, formatDate } from "@/lib/projects";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
-import { MetricRow, type Metric } from "@/components/ui/metrics";
+import { TrustPills } from "@/components/app/trust-pills";
+import { WorkflowStrip } from "@/components/app/workflow-strip";
 import { cn } from "@/lib/utils/cn";
 
 const RECOMMENDATION_LABELS: Record<
   "GO" | "VIGILANCE" | "NO_GO",
-  { label: string; tone: "ok" | "warn" | "risk" }
+  { label: string; tone: string }
 > = {
-  GO: { label: "GO", tone: "ok" },
-  VIGILANCE: { label: "Sous reserve", tone: "warn" },
-  NO_GO: { label: "NO-GO", tone: "risk" },
+  GO: { label: "GO", tone: "is-ok" },
+  VIGILANCE: { label: "Sous réserve", tone: "is-warn" },
+  NO_GO: { label: "NO-GO", tone: "is-risk" },
 };
 
 export default async function DashboardPage() {
-  const [ctx, counts, projects] = await Promise.all([
-    getAppContext(),
+  const [counts, projects] = await Promise.all([
     getDashboardCounts(),
     listProjectsWithProgress(6),
   ]);
 
-  const orgName = ctx?.organization?.name ?? "";
-
-  const metrics: Metric[] = [
+  const metrics = [
     { label: "Dossiers actifs", value: String(counts.active) },
-    { label: "Dossiers a traiter", value: String(counts.toProcess) },
-    { label: "Memoires en cours", value: String(counts.writing) },
+    { label: "Dossiers à traiter", value: String(counts.toProcess) },
+    { label: "Mémoires en cours", value: String(counts.writing) },
     {
-      label: "Echeances proches",
+      label: "Échéances proches",
       value: String(counts.dueSoon),
-      tone: counts.dueSoon > 0 ? "warn" : "neutral",
+      tone: counts.dueSoon > 0 ? "is-warn" : undefined,
     },
   ];
 
   return (
-    <div className="space-y-8">
-      <header className="flex flex-wrap items-start justify-between gap-4">
+    <div>
+      <header className="mb-8 flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0">
-          <h1 className="text-[28px] font-extrabold tracking-[-0.038em]">
-            Bonjour, {orgName}
-          </h1>
-          <p className="mt-2 text-[14.5px] text-ink-58">
-            Voici l&apos;etat de vos reponses aux appels d&apos;offres.
+          <h1 className="app-ui__page-title">Tableau de bord</h1>
+          <p className="app-ui__page-lead">
+            De l&apos;analyse du DCE au mémoire technique vérifié — une vue claire
+            sur chaque dossier en cours.
           </p>
+          <TrustPills className="mt-4" />
+          <WorkflowStrip className="mt-5" />
         </div>
         <Link href="/app/dossiers/nouveau" className="flex-none">
           <Button className="h-11">+ Nouveau dossier</Button>
         </Link>
       </header>
 
-      <MetricRow items={metrics} />
+      <div className="app-ui__metrics app-ui__metrics--4">
+        {metrics.map((m) => (
+          <div
+            key={m.label}
+            className={`app-ui__metric${m.tone ? ` ${m.tone}` : ""}`}
+          >
+            <b>{m.value}</b>
+            <span>{m.label}</span>
+          </div>
+        ))}
+      </div>
 
-      <section>
+      <section className="mt-8">
         <div className="mb-4 flex items-center justify-between gap-4">
-          <h2 className="text-[15px] font-bold">Dossiers recents</h2>
+          <h2 className="text-[17px] font-semibold tracking-[-0.02em]">Dossiers récents</h2>
           {projects.length > 0 ? (
             <Link
               href="/app/dossiers"
@@ -77,7 +84,7 @@ export default async function DashboardPage() {
           <EmptyState
             icon={<FolderPlus className="h-5 w-5" strokeWidth={1.8} />}
             title="Aucun dossier pour le moment"
-            description="Un dossier regroupe un appel d'offres : son DCE, les exigences detectees, votre decision Go/No-Go, votre strategie et votre memoire technique. Commencez par deposer le DCE que vous devez traiter."
+            description="Un dossier regroupe un appel d'offres : DCE, exigences tracées, décision Go/No-Go, stratégie et mémoire technique. Commencez par déposer le DCE à traiter."
             action={
               <Link href="/app/dossiers/nouveau">
                 <Button>Analyser mon premier DCE</Button>
@@ -85,7 +92,7 @@ export default async function DashboardPage() {
             }
           />
         ) : (
-          <ul className="grid gap-3 sm:grid-cols-2">
+          <ul className="app-ui__card-grid">
             {projects.map((project) => (
               <li key={project.id}>
                 <ProjectCard project={project} />
@@ -104,15 +111,20 @@ function ProjectCard({ project }: { project: ProjectProgress }) {
   const decision = project.recommendation
     ? RECOMMENDATION_LABELS[project.recommendation]
     : null;
+  const tagTone =
+    status.tone === "ok"
+      ? "is-ok"
+      : status.tone === "warn"
+        ? "is-warn"
+        : status.tone === "risk"
+          ? "is-risk"
+          : "";
 
   return (
-    <Link
-      href={`/app/dossiers/${project.id}`}
-      className="block rounded-[10px] border border-line bg-white p-4 shadow-card transition-colors hover:border-ink"
-    >
+    <Link href={`/app/dossiers/${project.id}`} className="app-ui__project-card">
       <div className="flex items-start justify-between gap-3">
-        <h3 className="text-[14px] font-bold">{project.name}</h3>
-        <Badge tone={status.tone}>{status.label}</Badge>
+        <h3 className="text-[15px] font-semibold tracking-[-0.015em]">{project.name}</h3>
+        <span className={`app-ui__tag ${tagTone}`}>{status.label}</span>
       </div>
 
       <p className="mt-1.5 text-[12.5px] text-ink-58">
@@ -120,7 +132,6 @@ function ProjectCard({ project }: { project: ProjectProgress }) {
           "Acheteur et lot non renseignes"}
       </p>
 
-      {/* Une mesure qui n'a pas eu lieu s'affiche en tiret, jamais en zero. */}
       <div className="mt-4 flex items-center gap-5 border-t border-line-soft pt-3">
         <div>
           <p className="text-[10.5px] font-bold text-ink-42">Go / No-Go</p>
@@ -128,9 +139,9 @@ function ProjectCard({ project }: { project: ProjectProgress }) {
             <span
               className={cn(
                 "tabular text-[15px] font-extrabold",
-                decision?.tone === "ok" && "text-ok",
-                decision?.tone === "warn" && "text-warn",
-                decision?.tone === "risk" && "text-risk",
+                decision?.tone === "is-ok" && "text-ok",
+                decision?.tone === "is-warn" && "text-warn",
+                decision?.tone === "is-risk" && "text-risk",
                 !decision && "text-ink-42",
               )}
             >
@@ -152,11 +163,8 @@ function ProjectCard({ project }: { project: ProjectProgress }) {
             </p>
           ) : (
             <div className="mt-1.5 flex items-center gap-2">
-              <span className="h-1 flex-1 overflow-hidden rounded-full bg-line-soft">
-                <span
-                  className="block h-full rounded-full bg-brand"
-                  style={{ width: `${project.memoryProgress}%` }}
-                />
+              <span className="app-ui__bar h-1 flex-1">
+                <i style={{ width: `${project.memoryProgress}%` }} />
               </span>
               <span className="tabular flex-none text-[11.5px] font-bold">
                 {project.memoryProgress} %

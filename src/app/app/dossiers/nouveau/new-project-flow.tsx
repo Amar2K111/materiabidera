@@ -9,7 +9,13 @@ import { FieldHint, Input, Label } from "@/components/ui/field";
 import { Notice } from "@/components/ui/notice";
 import { DceUploader } from "@/components/app/dce-uploader";
 
-export function NewProjectFlow({ organizationId }: { organizationId: string }) {
+export function NewProjectFlow({
+  organizationId,
+  isGuest = false,
+}: {
+  organizationId: string;
+  isGuest?: boolean;
+}) {
   const router = useRouter();
 
   const [step, setStep] = useState<1 | 2>(1);
@@ -48,7 +54,10 @@ export function NewProjectFlow({ organizationId }: { organizationId: string }) {
 
     if (insertError || !data) {
       setError(
-        "La creation du dossier a echoue. Merci de reessayer dans un instant.",
+        isGuest
+          ? "Session non active. Attendez la fin de l'initialisation puis reessayez."
+          : insertError?.message ??
+              "La creation du dossier a echoue. Merci de reessayer dans un instant.",
       );
       setPending(false);
       return;
@@ -161,7 +170,7 @@ export function NewProjectFlow({ organizationId }: { organizationId: string }) {
             <Button
               type="submit"
               className="h-11 flex-1"
-              disabled={pending || name.trim().length < 3}
+              disabled={pending || isGuest || name.trim().length < 3}
             >
               {pending ? "Creation..." : "Continuer"}
             </Button>

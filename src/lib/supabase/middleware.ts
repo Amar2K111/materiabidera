@@ -1,18 +1,10 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-import { isSupabaseConfigured, supabaseConfig } from "@/lib/env";
+import { ensureDemoSessionMiddleware } from "@/lib/demo-session-middleware";
+import { getServiceRoleKey, isSupabaseConfigured, supabaseConfig } from "@/lib/env";
 
-/** Prefixes reserves aux utilisateurs authentifies. */
-const PROTECTED_PREFIXES = ["/app", "/onboarding"];
-
-/** Pages d'authentification : inaccessibles une fois connecte. */
-const AUTH_PATHS = ["/login", "/signup"];
-
-function isProtected(pathname: string) {
-  return PROTECTED_PREFIXES.some(
-    (p) => pathname === p || pathname.startsWith(`${p}/`),
-  );
-}
+/** Pages auth / onboarding : redirigees vers l'app (pas de login requis). */
+const AUTH_BYPASS_PATHS = ["/login", "/signup", "/onboarding"];
 
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request });
@@ -46,18 +38,24 @@ export async function updateSession(request: NextRequest) {
 
   // Rafraichit la session. Ne rien inserer entre la creation du client
   // et cet appel : la session serait perdue de maniere aleatoire.
-  const {
+  let {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user && isProtected(pathname)) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    url.searchParams.set("suite", pathname);
-    return NextResponse.redirect(url);
+  if (!user && getServiceRoleKey()) {
+    const ok = await ensureDemoSessionMiddleware(supabase);
+    if (ok) {
+      ({
+        data: { user },
+      } = await supabase.auth.getUser());
+    }
   }
 
-  if (user && AUTH_PATHS.includes(pathname)) {
+  if (
+    AUTH_BYPASS_PATHS.some(
+      (p) => pathname === p || pathname.startsWith(`${p}/`),
+    )
+  ) {
     const url = request.nextUrl.clone();
     url.pathname = "/app";
     url.search = "";

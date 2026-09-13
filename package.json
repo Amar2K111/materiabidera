@@ -8,7 +8,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "capture:features": "node scripts/capture-feature-images.mjs",
+    "capture:hero": "node scripts/capture-hero-dashboard.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.124.0",
