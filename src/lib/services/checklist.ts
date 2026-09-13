@@ -22,7 +22,7 @@ export type ChecklistState = {
 export const GROUP_LABELS: Record<ChecklistGroup, string> = {
   ADMINISTRATIF: "Administratif",
   TECHNIQUE: "Technique",
-  CONTROLE: "Controle",
+  CONTROLE: "Contrôle",
 };
 
 /**
@@ -41,40 +41,40 @@ const MANUAL_ITEMS: Array<{
   {
     key: "engagement_signed",
     group: "ADMINISTRATIF",
-    label: "Acte d'engagement complete et signe",
-    detail: "Montants portes, signature electronique ou manuscrite apposee.",
+    label: "Acte d'engagement complété et signé",
+    detail: "Montants portés, signature électronique ou manuscrite apposée.",
   },
   {
     key: "attestations",
     group: "ADMINISTRATIF",
-    label: "Attestations fiscales et sociales a jour",
-    detail: "Attestation de vigilance URSSAF et regularite fiscale valides.",
+    label: "Attestations fiscales et sociales à jour",
+    detail: "Attestation de vigilance URSSAF et régularité fiscale valides.",
   },
   {
     key: "insurance",
     group: "ADMINISTRATIF",
-    label: "Attestations d'assurance en cours de validite",
+    label: "Attestations d'assurance en cours de validité",
     detail:
-      "Responsabilite civile et decennale couvrant la nature des travaux.",
+      "Responsabilité civile et décennale couvrant la nature des travaux.",
   },
   {
     key: "rc_pieces",
     group: "ADMINISTRATIF",
-    label: "Toutes les pieces exigees par le reglement sont reunies",
+    label: "Toutes les pièces exigées par le règlement sont réunies",
     detail:
-      "Relisez la liste du reglement de consultation piece par piece avant depot.",
+      "Relisez la liste du règlement de consultation pièce par pièce avant dépôt.",
   },
   {
     key: "schedule",
     group: "TECHNIQUE",
-    label: "Planning d'execution joint",
-    detail: "Phasage et jalons coherents avec le delai impose.",
+    label: "Planning d'exécution joint",
+    detail: "Phasage et jalons cohérents avec le délai imposé.",
   },
   {
     key: "price_documents",
     group: "TECHNIQUE",
-    label: "Pieces de prix completees",
-    detail: "DPGF ou BPU renseignes, sans ligne oubliee.",
+    label: "Pièces de prix complétées",
+    detail: "DPGF ou BPU renseignés, sans ligne oubliée.",
   },
 ];
 
@@ -150,53 +150,53 @@ export async function getChecklist(
     {
       id: "auto_engagement_doc",
       group: "ADMINISTRATIF",
-      label: "Acte d'engagement present au dossier",
+      label: "Acte d'engagement présent au dossier",
       detail: kinds.has("ACTE_ENGAGEMENT")
-        ? "Une piece de ce type figure parmi les documents deposes."
-        : "Aucune piece classee comme acte d'engagement n'a ete deposee.",
+        ? "Une pièce de ce type figure parmi les documents déposés."
+        : "Aucune pièce classée comme acte d'engagement n'a été déposée.",
       automatic: true,
       passed: kinds.has("ACTE_ENGAGEMENT"),
     },
     {
       id: "auto_certifications",
       group: "ADMINISTRATIF",
-      label: "Certifications enregistrees dans la base entreprise",
-      detail: `${certifications} certification(s) enregistree(s).`,
+      label: "Certifications enregistrées dans la base entreprise",
+      detail: `${certifications} certification(s) enregistrée(s).`,
       automatic: true,
       passed: certifications > 0,
     },
     {
       id: "auto_memory_written",
       group: "TECHNIQUE",
-      label: "Tous les chapitres du memoire sont rediges",
-      detail: `${written.length} chapitre(s) rediges sur ${allSections.length}.`,
+      label: "Tous les chapitres du mémoire sont rédigés",
+      detail: `${written.length} chapitre(s) rédigés sur ${allSections.length}.`,
       automatic: true,
       passed: allSections.length > 0 && written.length === allSections.length,
     },
     {
       id: "auto_references",
       group: "TECHNIQUE",
-      label: "References de chantiers enregistrees",
-      detail: `${references} reference(s) enregistree(s).`,
+      label: "Références de chantiers enregistrées",
+      detail: `${references} référence(s) enregistrée(s).`,
       automatic: true,
       passed: references > 0,
     },
     {
       id: "auto_means",
       group: "TECHNIQUE",
-      label: "Moyens humains et materiels enregistres",
-      detail: `${employees} personne(s) et ${equipment} materiel(s) enregistres.`,
+      label: "Moyens humains et matériels enregistrés",
+      detail: `${employees} personne(s) et ${equipment} matériel(s) enregistrés.`,
       automatic: true,
       passed: employees > 0 && equipment > 0,
     },
     {
       id: "auto_coverage",
       group: "CONTROLE",
-      label: "Toutes les exigences sont traitees",
+      label: "Toutes les exigences sont traitées",
       detail:
         allRequirements.length === 0
-          ? "Aucune exigence n'a ete relevee."
-          : `${coveredIds.size} exigence(s) traitees sur ${allRequirements.length}.`,
+          ? "Aucune exigence n'a été relevée."
+          : `${coveredIds.size} exigence(s) traitées sur ${allRequirements.length}.`,
       automatic: true,
       passed:
         allRequirements.length > 0 &&
@@ -205,7 +205,7 @@ export async function getChecklist(
     {
       id: "auto_sources",
       group: "CONTROLE",
-      label: "Chaque chapitre redige cite au moins une source",
+      label: "Chaque chapitre rédigé cite au moins une source",
       detail: `${withSources} chapitre(s) sur ${written.length} citent une source.`,
       automatic: true,
       passed: written.length > 0 && withSources === written.length,
@@ -213,10 +213,10 @@ export async function getChecklist(
     {
       id: "auto_no_blocking",
       group: "CONTROLE",
-      label: "Aucun probleme bloquant en attente",
+      label: "Aucun problème bloquant en attente",
       detail: check
-        ? `${blockingOpen} probleme(s) bloquant(s) non traites.`
-        : "Le controle qualite n'a pas encore ete lance.",
+        ? `${blockingOpen} problème(s) bloquant(s) non traités.`
+        : "Le contrôle qualité n'a pas encore été lancé.",
       automatic: true,
       passed: Boolean(check) && blockingOpen === 0,
     },

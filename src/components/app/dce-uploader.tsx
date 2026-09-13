@@ -17,8 +17,8 @@ export function DceUploader({
     <DocumentUploader
       organizationId={organizationId}
       onUploaded={onUploaded}
-      title="Deposez les pieces du DCE"
-      description="Glissez vos fichiers ici, ou parcourez votre ordinateur. Formats acceptes : PDF, DOC, DOCX, XLS, XLSX et ZIP."
+      title="Déposez les pièces du DCE"
+      description="Glissez vos fichiers ici, ou parcourez votre ordinateur. Formats acceptés : PDF, DOC, DOCX, XLS, XLSX et ZIP."
       target={{
         bucket: "dce",
         table: "project_documents",

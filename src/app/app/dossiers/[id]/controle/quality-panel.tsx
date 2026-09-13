@@ -133,7 +133,7 @@ export function QualityPanel({
       {error ? <Notice tone="risk">{error}</Notice> : null}
 
       {/* --- Synthese --------------------------------------------------- */}
-      <section className="grid gap-4 lg:grid-cols-[320px_minmax(0,1fr)]">
+      <section className="grid gap-4 lg:grid-cols-[320px_minmax(0,1fr)] lg:items-start">
         <div className="rounded-[14px] border border-line bg-white p-6 shadow-card">
           <p className="text-[12.5px] font-medium text-ink-42">Qualité du mémoire</p>
           <p className={cn("tabular mt-1 text-[52px] leading-none font-bold tracking-[-0.05em]", scoreTone)}>

@@ -91,7 +91,7 @@ export async function buildProjectContext(
         }`
       : "";
 
-    return `[${id}] (${row.category}, priorite ${row.priority}) ${row.text}${where}`;
+    return `[${id}] (${row.category}, priorité ${row.priority}) ${row.text}${where}`;
   });
 
   // --- Base entreprise --------------------------------------------------------
@@ -107,7 +107,7 @@ export async function buildProjectContext(
   }
 
   // --- Analyse du DCE ---------------------------------------------------------
-  let dceSummary = "Le dossier n'a pas encore ete analyse.";
+  let dceSummary = "Le dossier n'a pas encore été analysé.";
 
   if (analysis) {
     const vigilanceLines = (
@@ -159,7 +159,7 @@ export async function buildProjectContext(
     dceSummary,
     requirementLines,
     companyBase: snapshot.isEmpty
-      ? "La base entreprise est vide : aucune reference, aucun moyen, aucune certification n'a ete renseigne."
+      ? "La base entreprise est vide : aucune référence, aucun moyen, aucune certification n'a été renseigné."
       : renderCompanySnapshot(snapshot),
     snapshot,
     sourcesById,

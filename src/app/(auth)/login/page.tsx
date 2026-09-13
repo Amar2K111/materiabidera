@@ -61,7 +61,7 @@ function LoginForm() {
         Connexion
       </h1>
       <p className="mt-2 text-[14px] text-ink-58">
-        Accedez a vos dossiers d&apos;appels d&apos;offres.
+        Accédez à vos dossiers d&apos;appels d&apos;offres.
       </p>
 
       {error ? (
@@ -119,7 +119,7 @@ function LoginForm() {
       <p className="mt-8 text-center text-[13.5px] text-ink-58">
         Pas encore de compte ?{" "}
         <Link href="/signup" className="font-bold text-brand">
-          Creer un compte
+          Créer un compte
         </Link>
       </p>
     </>

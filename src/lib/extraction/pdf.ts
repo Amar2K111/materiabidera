@@ -61,12 +61,12 @@ export async function extractPdf(data: Uint8Array): Promise<ExtractionResult> {
     if (message.toLowerCase().includes("password")) {
       throw new ExtractionError(
         message,
-        "Ce PDF est protege par mot de passe et ne peut pas etre lu.",
+        "Ce PDF est protégé par mot de passe et ne peut pas être lu.",
       );
     }
     throw new ExtractionError(
       message,
-      "Ce PDF n'a pas pu etre ouvert. Il est peut-etre endommage.",
+      "Ce PDF n'a pas pu être ouvert. Il est peut-être endommagé.",
     );
   }
 

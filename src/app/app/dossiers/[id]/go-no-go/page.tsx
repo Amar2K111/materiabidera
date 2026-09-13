@@ -28,11 +28,11 @@ export default async function GoNoGoPage({
 
   if (!isAiConfigured()) {
     return (
-      <Notice tone="warn" title="Moteur d'analyse non configure">
+      <Notice tone="warn" title="Moteur d'analyse non configuré">
         <p className="mt-1">
-          L&apos;evaluation d&apos;une opportunite necessite un moteur
+          L&apos;évaluation d&apos;une opportunité nécessite un moteur
           d&apos;analyse. Aucune note n&apos;est produite tant qu&apos;il
-          n&apos;est pas configure.
+          n&apos;est pas configuré.
         </p>
       </Notice>
     );
@@ -42,8 +42,8 @@ export default async function GoNoGoPage({
     return (
       <EmptyState
         icon={<Scale className="h-5 w-5" strokeWidth={1.8} />}
-        title="Le dossier doit d'abord etre analyse"
-        description="L'evaluation Go/No-Go s'appuie sur les exigences et les points de vigilance releves dans le dossier de consultation, confrontes a votre base entreprise."
+        title="Le dossier doit d'abord être analysé"
+        description="L'évaluation Go/No-Go s'appuie sur les exigences et les points de vigilance relevés dans le dossier de consultation, confrontés à votre base entreprise."
         action={
           <ButtonLink href={`/app/dossiers/${project.id}/analyse`}>Analyser le dossier</ButtonLink>
         }

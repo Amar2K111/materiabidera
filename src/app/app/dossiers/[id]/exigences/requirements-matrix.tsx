@@ -13,7 +13,7 @@ import {
   type RequirementSource,
   type RequirementStatus,
 } from "@/lib/requirements";
-import { readableDocumentName } from "@/components/app/sources";
+import { shortDocumentName } from "@/components/app/sources";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/field";
@@ -24,9 +24,9 @@ const STATUSES: RequirementStatus[] = ["TO_HANDLE", "COVERED", "MISSING"];
 
 function shortSource(source: RequirementSource | undefined): string {
   if (!source) return "Sans source";
-  const name = readableDocumentName(
-    source.project_documents?.file_name ?? "Document",
-  );
+  const name = source.project_documents
+    ? shortDocumentName(source.project_documents.file_name)
+    : "Pièce supprimée";
   return source.page_number ? `${name}, p. ${source.page_number}` : name;
 }
 
@@ -262,7 +262,7 @@ export function RequirementsMatrix({
                   >
                     {PRIORITY_LABELS[r.priority]}
                   </span>
-                  <span className="row-start-1 self-start lg:row-auto lg:self-auto">
+                  <span className="col-start-2 row-start-1 self-start lg:col-start-auto lg:row-start-auto lg:self-auto">
                     <Badge tone={STATUS_LABELS[r.status].tone}>
                       {STATUS_LABELS[r.status].label}
                     </Badge>

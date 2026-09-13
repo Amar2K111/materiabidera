@@ -60,7 +60,7 @@ export async function buildCompanySnapshot(
       id: next(),
       table: "company_references",
       recordId: r.id as string,
-      label: `Reference : ${r.name}`,
+      label: `Référence : ${r.name}`,
       text: join([
         ["Chantier", r.name],
         ["Client", r.client],
@@ -80,7 +80,7 @@ export async function buildCompanySnapshot(
       id: next(),
       table: "company_employees",
       recordId: e.id as string,
-      label: `Equipe : ${e.full_name}`,
+      label: `Équipe : ${e.full_name}`,
       text: join([
         ["Nom", e.full_name],
         ["Fonction", e.role],
@@ -96,7 +96,7 @@ export async function buildCompanySnapshot(
       id: next(),
       table: "company_equipment",
       recordId: m.id as string,
-      label: `Materiel : ${m.name}`,
+      label: `Matériel : ${m.name}`,
       text: join([
         ["Designation", m.name],
         ["Categorie", m.category],
@@ -144,7 +144,7 @@ export async function buildCompanySnapshot(
       id: next(),
       table: "company_methods",
       recordId: m.id as string,
-      label: `Methode : ${m.title}`,
+      label: `Méthode : ${m.title}`,
       text: join([
         ["Intitule", m.title],
         ["Domaine", METHOD_DOMAIN_LABELS[String(m.domain)] ?? m.domain],

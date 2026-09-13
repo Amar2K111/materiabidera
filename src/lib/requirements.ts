@@ -80,10 +80,10 @@ export const CATEGORY_LABELS: Record<RequirementCategory, string> = {
   ADMINISTRATIF: "Administratif",
   TECHNIQUE: "Technique",
   MOYENS: "Moyens",
-  DELAI: "Delai",
+  DELAI: "Délai",
   QSE: "QSE",
   FINANCIER: "Financier",
-  REFERENCE: "Reference",
+  REFERENCE: "Référence",
   AUTRE: "Autre",
 };
 
@@ -92,7 +92,7 @@ export const STATUS_LABELS: Record<
   { label: string; tone: "ok" | "warn" | "risk" }
 > = {
   COVERED: { label: "Couvert", tone: "ok" },
-  TO_HANDLE: { label: "A traiter", tone: "warn" },
+  TO_HANDLE: { label: "À traiter", tone: "warn" },
   MISSING: { label: "Manquant", tone: "risk" },
 };
 

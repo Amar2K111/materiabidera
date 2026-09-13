@@ -58,17 +58,17 @@ export class AiError extends Error {
 
     switch (this.kind) {
       case "conflict":
-        return "L'operation entre en conflit avec un travail deja enregistre.";
+        return "L'opération entre en conflit avec un travail déjà enregistré.";
       case "not_configured":
-        return "Le moteur d'analyse n'est pas configure. Renseignez une cle dans les parametres du serveur.";
+        return "Le moteur d'analyse n'est pas configuré. Renseignez une clé dans les paramètres du serveur.";
       case "rate_limited":
-        return "Le moteur d'analyse est momentanement sature. Merci de relancer dans quelques minutes.";
+        return "Le moteur d'analyse est momentanément saturé. Merci de relancer dans quelques minutes.";
       case "unavailable":
-        return "Le moteur d'analyse est indisponible. L'operation n'a pas ete effectuee.";
+        return "Le moteur d'analyse est indisponible. L'opération n'a pas été effectuée.";
       case "refused":
         return "Le moteur d'analyse n'a pas pu traiter ce contenu.";
       case "invalid_output":
-        return "La reponse du moteur d'analyse etait inexploitable. Rien n'a ete enregistre.";
+        return "La réponse du moteur d'analyse était inexploitable. Rien n'a été enregistré.";
     }
   }
 }

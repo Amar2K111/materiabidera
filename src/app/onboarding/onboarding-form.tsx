@@ -8,13 +8,13 @@ import { FieldHint, Input, Label, Textarea } from "@/components/ui/field";
 import { Notice } from "@/components/ui/notice";
 
 const ACTIVITIES = [
-  "Entreprise generale",
+  "Entreprise générale",
   "Gros oeuvre",
   "Second oeuvre",
   "Enveloppe et couverture",
-  "Genie civil",
+  "Génie civil",
   "Travaux publics",
-  "Lots techniques (CVC, electricite, plomberie)",
+  "Lots techniques (CVC, électricité, plomberie)",
   "Amenagement et finitions",
   "Autre",
 ];
@@ -44,7 +44,7 @@ export function OnboardingForm() {
 
     if (rpcError || !orgId) {
       setError(
-        "La creation de votre espace a echoue. Merci de reessayer dans un instant.",
+        "La création de votre espace a échoué. Merci de réessayer dans un instant.",
       );
       setPending(false);
       return;
@@ -72,7 +72,7 @@ export function OnboardingForm() {
   return (
     <div className="mt-10">
       <p className="text-[12.5px] font-bold text-ink-42">
-        Etape {step} sur {STEPS}
+        Étape {step} sur {STEPS}
       </p>
       <div className="mt-3 flex gap-1.5" aria-hidden>
         {Array.from({ length: STEPS }, (_, i) => (
@@ -97,8 +97,8 @@ export function OnboardingForm() {
             Quel est le nom de votre entreprise ?
           </h1>
           <p className="mt-2 text-[14px] text-ink-58">
-            Il apparaitra sur vos dossiers et sur vos memoires techniques
-            exportes.
+            Il apparaîtra sur vos dossiers et sur vos mémoires techniques
+            exportés.
           </p>
           <div className="mt-6">
             <Label htmlFor="org">Raison sociale</Label>
@@ -106,7 +106,7 @@ export function OnboardingForm() {
               id="org"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Ex. Batiment Durand et Fils"
+              placeholder="Ex. Bâtiment Durand et Fils"
               autoFocus
             />
           </div>
@@ -116,11 +116,11 @@ export function OnboardingForm() {
       {step === 2 ? (
         <div className="mt-8">
           <h1 className="text-[26px] font-extrabold tracking-[-0.035em]">
-            Quelle est votre activite principale ?
+            Quelle est votre activité principale ?
           </h1>
           <p className="mt-2 text-[14px] text-ink-58">
             Cette information oriente la lecture des DCE et la structure de vos
-            memoires.
+            mémoires.
           </p>
           <div className="mt-6 grid gap-2">
             {ACTIVITIES.map((a) => (
@@ -145,23 +145,23 @@ export function OnboardingForm() {
       {step === 3 ? (
         <div className="mt-8">
           <h1 className="text-[26px] font-extrabold tracking-[-0.035em]">
-            Presentez votre entreprise
+            Présentez votre entreprise
           </h1>
           <p className="mt-2 text-[14px] text-ink-58">
-            Ce texte sera reutilise comme source. Vous pourrez le completer a
+            Ce texte sera réutilisé comme source. Vous pourrez le compléter à
             tout moment depuis la base entreprise.
           </p>
           <div className="mt-6">
-            <Label htmlFor="presentation">Presentation</Label>
+            <Label htmlFor="presentation">Présentation</Label>
             <Textarea
               id="presentation"
               rows={6}
               value={presentation}
               onChange={(e) => setPresentation(e.target.value)}
-              placeholder="Activite, anciennete, effectif, savoir-faire, types de chantiers realises..."
+              placeholder="Activité, ancienneté, effectif, savoir-faire, types de chantiers réalisés..."
             />
             <FieldHint>
-              Facultatif a cette etape, mais fortement recommande.
+              Facultatif à cette étape, mais fortement recommandé.
             </FieldHint>
           </div>
           <div className="mt-4">
@@ -205,7 +205,7 @@ export function OnboardingForm() {
             disabled={pending}
             onClick={finish}
           >
-            {pending ? "Creation de votre espace..." : "Terminer"}
+            {pending ? "Création de votre espace..." : "Terminer"}
           </Button>
         )}
       </div>

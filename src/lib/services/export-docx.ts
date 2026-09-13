@@ -54,8 +54,8 @@ export async function buildDocx(payload: ExportPayload): Promise<Buffer> {
 
   const doc = new Document({
     creator: payload.organizationName,
-    title: `Memoire technique — ${payload.projectName}`,
-    description: "Memoire technique de reponse a appel d'offres",
+    title: `Mémoire technique — ${payload.projectName}`,
+    description: "Mémoire technique de réponse à appel d'offres",
 
     styles: {
       default: {
@@ -142,7 +142,7 @@ function buildCover(payload: ExportPayload): Paragraph[] {
       ],
       spacing: { after: 600 },
     }),
-    new Paragraph({ style: "CoverTitle", text: "Memoire technique" }),
+    new Paragraph({ style: "CoverTitle", text: "Mémoire technique" }),
     new Paragraph({
       children: [
         new TextRun({ text: payload.projectName, size: 28, color: INK }),
@@ -152,7 +152,7 @@ function buildCover(payload: ExportPayload): Paragraph[] {
   ];
 
   const facts: Array<[string, string | null]> = [
-    ["Reference", payload.reference],
+    ["Référence", payload.reference],
     ["Acheteur", payload.buyer],
     ["Lot", payload.lot],
     ["Date limite de remise", payload.deadline],
@@ -204,7 +204,7 @@ function buildFooter(payload: ExportPayload): Footer {
       new Paragraph({
         alignment: AlignmentType.CENTER,
         children: [
-          new TextRun({ text: "Memoire technique — ", size: 16, color: MUTED }),
+          new TextRun({ text: "Mémoire technique — ", size: 16, color: MUTED }),
           new TextRun({
             text: payload.lot ?? payload.projectName,
             size: 16,
@@ -244,7 +244,7 @@ function buildSection(
       new Paragraph({
         children: [
           new TextRun({
-            text: "Chapitre non redige.",
+            text: "Chapitre non rédigé.",
             italics: true,
             color: MUTED,
           }),

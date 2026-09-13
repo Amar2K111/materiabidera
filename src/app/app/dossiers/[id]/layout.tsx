@@ -12,6 +12,7 @@ import {
   type StepSegment,
   type StepState,
 } from "@/components/app/project-nav";
+import { DeleteProjectButton } from "@/components/app/delete-project-button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils/cn";
 
@@ -79,6 +80,7 @@ export default async function ProjectLayout({
           <Badge tone={status.tone === "neutral" ? "neutral" : status.tone}>
             {status.label}
           </Badge>
+          <DeleteProjectButton projectId={project.id} />
         </div>
       </header>
 

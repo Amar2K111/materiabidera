@@ -6,7 +6,7 @@ import type { QualityCheck } from "@/lib/data/quality";
 import type { ProjectProgressSummary } from "@/lib/data/projects";
 import type { DceAnalysis, Requirement } from "@/lib/requirements";
 import { NEXT_STEP, type ProjectStatus } from "@/lib/projects";
-import { readableDocumentName } from "@/components/app/sources";
+import { shortDocumentName } from "@/components/app/sources";
 import { ButtonLink } from "@/components/ui/button";
 import { Notice } from "@/components/ui/notice";
 import { cn } from "@/lib/utils/cn";
@@ -174,7 +174,7 @@ export function ProjectOverviewPanels({
       return {
         title: p.title,
         source: source
-          ? `${readableDocumentName(source.documentName)}${
+          ? `${shortDocumentName(source.documentName)}${
               source.pageNumber ? `, p. ${source.pageNumber}` : ""
             }`
           : "DCE",

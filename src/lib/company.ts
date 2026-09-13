@@ -39,8 +39,8 @@ export type CollectionDef = {
 
 const METHOD_DOMAINS = [
   { value: "CHANTIER", label: "Conduite de chantier" },
-  { value: "QUALITE", label: "Qualite" },
-  { value: "SECURITE", label: "Securite" },
+  { value: "QUALITE", label: "Qualité" },
+  { value: "SECURITE", label: "Sécurité" },
   { value: "ENVIRONNEMENT", label: "Environnement" },
   { value: "ORGANISATION", label: "Organisation" },
   { value: "AUTRE", label: "Autre" },
@@ -50,12 +50,12 @@ export const COLLECTIONS: CollectionDef[] = [
   {
     slug: "references",
     table: "company_references",
-    title: "References",
+    title: "Références",
     purpose:
-      "Vos chantiers realises. Ce sont eux qui prouvent votre experience face a une consultation.",
+      "Vos chantiers réalisés. Ce sont eux qui prouvent votre expérience face à une consultation.",
     emptyDescription:
-      "Ajoutez vos chantiers realises. MateriaBTP s'en sert pour reperer ceux qui ressemblent au marche analyse, et pour les proposer dans votre memoire technique.",
-    addLabel: "Ajouter une reference",
+      "Ajoutez vos chantiers réalisés. MateriaBTP s'en sert pour repérer ceux qui ressemblent au marché analysé, et pour les proposer dans votre mémoire technique.",
+    addLabel: "Ajouter une référence",
     titleField: "name",
     summaryFields: ["client", "year", "amount", "work_type"],
     fields: [
@@ -64,21 +64,21 @@ export const COLLECTIONS: CollectionDef[] = [
         label: "Nom du chantier",
         type: "text",
         required: true,
-        placeholder: "Ex. Rehabilitation de l'ecole Jean Moulin",
+        placeholder: "Ex. Réhabilitation de l'école Jean Moulin",
         wide: true,
       },
       { key: "client", label: "Client", type: "text" },
-      { key: "year", label: "Annee", type: "number", placeholder: "2025" },
+      { key: "year", label: "Année", type: "number", placeholder: "2025" },
       { key: "amount", label: "Montant", type: "text", placeholder: "Ex. 1 240 000 EUR HT" },
       { key: "lot", label: "Lot", type: "text" },
       { key: "work_type", label: "Nature des travaux", type: "text" },
       { key: "location", label: "Localisation", type: "text" },
       {
         key: "constraints",
-        label: "Contraintes rencontrees",
+        label: "Contraintes rencontrées",
         type: "textarea",
         wide: true,
-        hint: "Site occupe, phasage, coactivite, delais tenus, nuisances maitrisees.",
+        hint: "Site occupé, phasage, coactivité, délais tenus, nuisances maîtrisées.",
       },
       { key: "description", label: "Description", type: "textarea", wide: true },
     ],
@@ -86,11 +86,11 @@ export const COLLECTIONS: CollectionDef[] = [
   {
     slug: "equipe",
     table: "company_employees",
-    title: "Equipe",
+    title: "Équipe",
     purpose:
-      "Les moyens humains que vous pouvez affecter a un chantier, avec leurs competences.",
+      "Les moyens humains que vous pouvez affecter à un chantier, avec leurs compétences.",
     emptyDescription:
-      "Ajoutez les personnes que vous engagez sur vos chantiers. Leurs fonctions et competences alimentent la partie moyens humains de vos memoires.",
+      "Ajoutez les personnes que vous engagez sur vos chantiers. Leurs fonctions et compétences alimentent la partie moyens humains de vos mémoires.",
     addLabel: "Ajouter une personne",
     titleField: "full_name",
     summaryFields: ["role", "experience"],
@@ -103,8 +103,8 @@ export const COLLECTIONS: CollectionDef[] = [
         wide: true,
       },
       { key: "role", label: "Fonction", type: "text", placeholder: "Ex. Conducteur de travaux" },
-      { key: "experience", label: "Experience", type: "text", placeholder: "Ex. 12 ans" },
-      { key: "skills", label: "Competences", type: "textarea", wide: true },
+      { key: "experience", label: "Expérience", type: "text", placeholder: "Ex. 12 ans" },
+      { key: "skills", label: "Compétences", type: "textarea", wide: true },
       {
         key: "certifications",
         label: "Habilitations et certifications",
@@ -116,22 +116,22 @@ export const COLLECTIONS: CollectionDef[] = [
   {
     slug: "materiel",
     table: "company_equipment",
-    title: "Materiel",
+    title: "Matériel",
     purpose:
-      "Les moyens materiels dont vous disposez en propre, et leur disponibilite.",
+      "Les moyens matériels dont vous disposez en propre, et leur disponibilité.",
     emptyDescription:
-      "Ajoutez votre materiel. Il sert a demontrer que vous disposez des moyens exiges par la consultation.",
-    addLabel: "Ajouter du materiel",
+      "Ajoutez votre matériel. Il sert à démontrer que vous disposez des moyens exigés par la consultation.",
+    addLabel: "Ajouter du matériel",
     titleField: "name",
     summaryFields: ["category", "quantity", "availability"],
     fields: [
-      { key: "name", label: "Designation", type: "text", required: true, wide: true },
-      { key: "category", label: "Categorie", type: "text", placeholder: "Ex. Levage" },
-      { key: "quantity", label: "Quantite", type: "text" },
-      { key: "availability", label: "Disponibilite", type: "text", placeholder: "Ex. En propre" },
+      { key: "name", label: "Désignation", type: "text", required: true, wide: true },
+      { key: "category", label: "Catégorie", type: "text", placeholder: "Ex. Levage" },
+      { key: "quantity", label: "Quantité", type: "text" },
+      { key: "availability", label: "Disponibilité", type: "text", placeholder: "Ex. En propre" },
       {
         key: "specifications",
-        label: "Caracteristiques",
+        label: "Caractéristiques",
         type: "textarea",
         wide: true,
       },
@@ -142,18 +142,18 @@ export const COLLECTIONS: CollectionDef[] = [
     table: "company_certifications",
     title: "Certifications",
     purpose:
-      "Vos certifications en cours de validite, avec leurs dates et references.",
+      "Vos certifications en cours de validité, avec leurs dates et références.",
     emptyDescription:
-      "Ajoutez vos certifications. Une consultation qui en exige une pourra ainsi etre confrontee a ce que vous detenez reellement.",
+      "Ajoutez vos certifications. Une consultation qui en exige une pourra ainsi être confrontée à ce que vous détenez réellement.",
     addLabel: "Ajouter une certification",
     titleField: "name",
     summaryFields: ["reference", "valid_until"],
     fields: [
       { key: "name", label: "Certification", type: "text", required: true, wide: true },
-      { key: "reference", label: "Numero ou reference", type: "text" },
+      { key: "reference", label: "Numéro ou référence", type: "text" },
       { key: "issued_on", label: "Date d'obtention", type: "date" },
       { key: "valid_until", label: "Valable jusqu'au", type: "date" },
-      { key: "notes", label: "Precisions", type: "textarea", wide: true },
+      { key: "notes", label: "Précisions", type: "textarea", wide: true },
     ],
   },
   {
@@ -163,31 +163,31 @@ export const COLLECTIONS: CollectionDef[] = [
     purpose:
       "Vos qualifications professionnelles et les domaines qu'elles couvrent.",
     emptyDescription:
-      "Ajoutez vos qualifications, par exemple Qualibat ou RGE, avec leur domaine. Elles sont frequemment exigees dans les reglements de consultation.",
+      "Ajoutez vos qualifications, par exemple Qualibat ou RGE, avec leur domaine. Elles sont fréquemment exigées dans les règlements de consultation.",
     addLabel: "Ajouter une qualification",
     titleField: "name",
     summaryFields: ["domain", "reference", "valid_until"],
     fields: [
       { key: "name", label: "Qualification", type: "text", required: true, wide: true },
       { key: "domain", label: "Domaine", type: "text" },
-      { key: "reference", label: "Reference", type: "text" },
+      { key: "reference", label: "Référence", type: "text" },
       { key: "valid_until", label: "Valable jusqu'au", type: "date" },
-      { key: "notes", label: "Precisions", type: "textarea", wide: true },
+      { key: "notes", label: "Précisions", type: "textarea", wide: true },
     ],
   },
   {
     slug: "methodes",
     table: "company_methods",
-    title: "Methodes",
+    title: "Méthodes",
     purpose:
-      "Vos facons de faire : conduite de chantier, qualite, securite, environnement.",
+      "Vos façons de faire : conduite de chantier, qualité, sécurité, environnement.",
     emptyDescription:
-      "Decrivez vos methodes de travail. Elles evitent les reponses generiques : votre memoire s'appuiera sur vos procedures reelles, pas sur des formules toutes faites.",
-    addLabel: "Ajouter une methode",
+      "Décrivez vos méthodes de travail. Elles évitent les réponses génériques : votre mémoire s'appuiera sur vos procédures réelles, pas sur des formules toutes faites.",
+    addLabel: "Ajouter une méthode",
     titleField: "title",
     summaryFields: ["domain"],
     fields: [
-      { key: "title", label: "Intitule", type: "text", required: true, wide: true },
+      { key: "title", label: "Intitulé", type: "text", required: true, wide: true },
       {
         key: "domain",
         label: "Domaine",

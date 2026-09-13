@@ -18,6 +18,31 @@ export function readableDocumentName(name: string): string {
     .trim();
 }
 
+/**
+ * Nom court d'une piece du DCE : "CCTP Cahier des clauses techniques" devient
+ * "CCTP" lorsque le nom commence par un sigle connu.
+ */
+export function shortDocumentName(name: string): string {
+  const readable = readableDocumentName(name);
+  const acronym = readable.match(/^(RC|CCTP|CCAP|CCAG|DPGF|BPU|DQE|AE|ATTRI1|PGC|DIUO)\b/i);
+  return acronym ? acronym[1].toUpperCase() : readable;
+}
+
+/** Libelles de fiches enregistres avant l'accentuation de l'interface. */
+const COMPANY_PREFIXES: Array<[RegExp, string]> = [
+  [/^Reference :/, "Référence :"],
+  [/^Equipe :/, "Équipe :"],
+  [/^Materiel :/, "Matériel :"],
+  [/^Methode :/, "Méthode :"],
+];
+
+export function readableCompanyLabel(label: string): string {
+  for (const [re, to] of COMPANY_PREFIXES) {
+    if (re.test(label)) return label.replace(re, to);
+  }
+  return label;
+}
+
 function isCompanySource(source: CitedSource) {
   return source.pageNumber === null && source.label === "base entreprise";
 }
@@ -25,8 +50,8 @@ function isCompanySource(source: CitedSource) {
 export function SourceChip({ source }: { source: CitedSource }) {
   const company = isCompanySource(source);
   const name = company
-    ? source.documentName
-    : readableDocumentName(source.documentName);
+    ? readableCompanyLabel(source.documentName)
+    : shortDocumentName(source.documentName);
   const where = source.pageNumber
     ? `p. ${source.pageNumber}`
     : company

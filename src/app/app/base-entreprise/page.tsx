@@ -19,7 +19,7 @@ export default async function BaseEntreprisePresentationPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Etat de votre base</CardTitle>
+          <CardTitle>État de votre base</CardTitle>
         </CardHeader>
         <CardBody>
           <ul className="grid gap-2 sm:grid-cols-2">

@@ -8,17 +8,17 @@ export function authErrorMessage(raw: string | undefined): string {
   if (m.includes("invalid login credentials"))
     return "Adresse e-mail ou mot de passe incorrect.";
   if (m.includes("email not confirmed"))
-    return "Votre adresse e-mail n'a pas encore ete confirmee. Consultez votre boite de reception.";
+    return "Votre adresse e-mail n'a pas encore été confirmée. Consultez votre boîte de réception.";
   if (m.includes("user already registered") || m.includes("already been registered"))
-    return "Un compte existe deja avec cette adresse e-mail.";
+    return "Un compte existe déjà avec cette adresse e-mail.";
   if (m.includes("password should be at least"))
-    return "Le mot de passe doit contenir au moins 8 caracteres.";
+    return "Le mot de passe doit contenir au moins 8 caractères.";
   if (m.includes("rate limit") || m.includes("too many"))
-    return "Trop de tentatives. Merci de reessayer dans quelques minutes.";
+    return "Trop de tentatives. Merci de réessayer dans quelques minutes.";
   if (m.includes("network") || m.includes("fetch"))
-    return "Connexion au service impossible. Verifiez votre reseau puis reessayez.";
+    return "Connexion au service impossible. Vérifiez votre réseau puis réessayez.";
   if (m.includes("provider is not enabled"))
-    return "Cette methode de connexion n'est pas activee sur ce projet.";
+    return "Cette méthode de connexion n'est pas activée sur ce projet.";
 
-  return "La connexion a echoue. Merci de reessayer.";
+  return "La connexion a échoué. Merci de réessayer.";
 }

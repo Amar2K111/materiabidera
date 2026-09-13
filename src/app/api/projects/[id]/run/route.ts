@@ -34,7 +34,7 @@ export async function POST(
   const access = await requireProjectAccess(id);
   if (!access) {
     return NextResponse.json(
-      { message: "Dossier introuvable ou acces refuse." },
+      { message: "Dossier introuvable ou accès refusé." },
       { status: 404 },
     );
   }
@@ -51,7 +51,7 @@ export async function POST(
     return NextResponse.json(
       {
         message:
-          "Le moteur d'analyse n'est pas configure. L'operation ne peut pas etre lancee.",
+          "Le moteur d'analyse n'est pas configuré. L'opération ne peut pas être lancée.",
       },
       { status: 503 },
     );
@@ -91,7 +91,7 @@ export async function POST(
       case "section": {
         if (!parsed.data.sectionId) {
           return NextResponse.json(
-            { message: "Chapitre non precise." },
+            { message: "Chapitre non précisé." },
             { status: 400 },
           );
         }
@@ -115,7 +115,7 @@ export async function POST(
     }
 
     return NextResponse.json(
-      { message: "L'operation n'a pas pu aboutir. Rien n'a ete enregistre." },
+      { message: "L'opération n'a pas pu aboutir. Rien n'a été enregistré." },
       { status: 500 },
     );
   }

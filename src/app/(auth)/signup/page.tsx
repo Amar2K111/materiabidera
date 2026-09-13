@@ -24,7 +24,7 @@ export default function SignupPage() {
     setError(null);
 
     if (password.length < 8) {
-      setError("Le mot de passe doit contenir au moins 8 caracteres.");
+      setError("Le mot de passe doit contenir au moins 8 caractères.");
       return;
     }
 
@@ -61,16 +61,16 @@ export default function SignupPage() {
     return (
       <>
         <h1 className="text-[26px] font-extrabold tracking-[-0.035em]">
-          Verifiez votre boite de reception
+          Vérifiez votre boîte de réception
         </h1>
         <p className="mt-3 text-[14px] leading-relaxed text-ink-70">
-          Un lien de confirmation vient d&apos;etre envoye a{" "}
+          Un lien de confirmation vient d&apos;être envoyé à{" "}
           <span className="font-semibold">{email}</span>. Ouvrez-le pour activer
           votre compte, puis revenez vous connecter.
         </p>
         <Link href="/login">
           <Button variant="ghost" className="mt-6 h-11 w-full">
-            Retour a la connexion
+            Retour à la connexion
           </Button>
         </Link>
       </>
@@ -80,7 +80,7 @@ export default function SignupPage() {
   return (
     <>
       <h1 className="text-[26px] font-extrabold tracking-[-0.035em]">
-        Creer un compte
+        Créer un compte
       </h1>
       <p className="mt-2 text-[14px] text-ink-58">
         Quelques minutes suffisent pour analyser votre premier DCE.
@@ -128,16 +128,16 @@ export default function SignupPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <FieldHint>8 caracteres minimum.</FieldHint>
+          <FieldHint>8 caractères minimum.</FieldHint>
         </div>
 
         <Button type="submit" disabled={pending} className="mt-6 h-11 w-full">
-          {pending ? "Creation en cours..." : "Creer mon compte"}
+          {pending ? "Création en cours..." : "Créer mon compte"}
         </Button>
       </form>
 
       <p className="mt-8 text-center text-[13.5px] text-ink-58">
-        Deja un compte ?{" "}
+        Déjà un compte ?{" "}
         <Link href="/login" className="font-bold text-brand">
           Se connecter
         </Link>

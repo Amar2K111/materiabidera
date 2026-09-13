@@ -14,7 +14,7 @@ export async function POST(
   const access = await requireProjectAccess(id);
   if (!access) {
     return NextResponse.json(
-      { message: "Dossier introuvable ou acces refuse." },
+      { message: "Dossier introuvable ou accès refusé." },
       { status: 404 },
     );
   }
@@ -23,7 +23,7 @@ export async function POST(
     return NextResponse.json(
       {
         message:
-          "Le moteur d'analyse n'est pas configure. Le controle ne peut pas etre lance.",
+          "Le moteur d'analyse n'est pas configuré. Le contrôle ne peut pas être lancé.",
       },
       { status: 503 },
     );
@@ -42,7 +42,7 @@ export async function POST(
       return NextResponse.json({ message: error.userMessage }, { status });
     }
     return NextResponse.json(
-      { message: "Le controle n'a pas pu aboutir." },
+      { message: "Le contrôle n'a pas pu aboutir." },
       { status: 500 },
     );
   }

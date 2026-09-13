@@ -26,17 +26,17 @@ export async function extractionOf(
     case "doc":
       throw new ExtractionError(
         "legacy .doc",
-        "Le format .doc n'est pas lisible. Enregistrez ce fichier en .docx puis deposez-le a nouveau.",
+        "Le format .doc n'est pas lisible. Enregistrez ce fichier en .docx puis déposez-le à nouveau.",
       );
     case "xls":
       throw new ExtractionError(
         "legacy .xls",
-        "Le format .xls n'est pas lisible. Enregistrez ce fichier en .xlsx puis deposez-le a nouveau.",
+        "Le format .xls n'est pas lisible. Enregistrez ce fichier en .xlsx puis déposez-le à nouveau.",
       );
     case "zip":
       throw new ExtractionError(
         "archive",
-        "Cette archive doit d'abord etre decompressee pour que ses pieces soient analysees.",
+        "Cette archive doit d'abord être décompressée pour que ses pièces soient analysées.",
       );
     default:
       throw new ExtractionError(

@@ -53,7 +53,7 @@ export async function ingestNextCompanyDocument(input: {
     // Une archive n'a pas de sens ici : chaque piece se depose individuellement.
     if (extensionOf(fileName) === "zip") {
       return await fail(
-        "Deposez les fichiers un par un plutot qu'en archive pour cette section.",
+        "Déposez les fichiers un par un plutôt qu'en archive pour cette section.",
       );
     }
 
@@ -62,7 +62,7 @@ export async function ingestNextCompanyDocument(input: {
       .download(doc.storage_path as string);
 
     if (downloadError || !file) {
-      return await fail("Le fichier n'a pas pu etre recupere depuis le stockage.");
+      return await fail("Le fichier n'a pas pu être récupéré depuis le stockage.");
     }
 
     const result = await extractionOf(
@@ -72,7 +72,7 @@ export async function ingestNextCompanyDocument(input: {
 
     if (result.needsOcr) {
       return await fail(
-        "Ce document est un scan sans texte selectionnable. Fournissez une version texte pour qu'il puisse servir de source.",
+        "Ce document est un scan sans texte sélectionnable. Fournissez une version texte pour qu'il puisse servir de source.",
       );
     }
 
@@ -115,7 +115,7 @@ export async function ingestNextCompanyDocument(input: {
     return fail(
       error instanceof ExtractionError
         ? error.userMessage
-        : "Ce document n'a pas pu etre lu.",
+        : "Ce document n'a pas pu être lu.",
     );
   }
 }

@@ -55,9 +55,8 @@ export function NewProjectFlow({
     if (insertError || !data) {
       setError(
         isGuest
-          ? "Session non active. Attendez la fin de l'initialisation puis reessayez."
-          : insertError?.message ??
-              "La creation du dossier a echoue. Merci de reessayer dans un instant.",
+          ? "Session non active. Attendez la fin de l'initialisation puis réessayez."
+          : "La création du dossier a échoué. Merci de réessayer dans un instant.",
       );
       setPending(false);
       return;
@@ -85,7 +84,7 @@ export function NewProjectFlow({
         />
       </div>
       <p className="mt-3 text-[12.5px] font-bold text-ink-42">
-        Etape {step} sur 2
+        Étape {step} sur 2
       </p>
 
       {error ? (
@@ -101,24 +100,24 @@ export function NewProjectFlow({
           </h1>
           <p className="mt-2 text-[14px] text-ink-58">
             Ces informations structurent le dossier et permettent de suivre
-            l&apos;echeance de remise.
+            l&apos;échéance de remise.
           </p>
 
           <div className="mt-7">
-            <Label htmlFor="name">Objet du marche</Label>
+            <Label htmlFor="name">Objet du marché</Label>
             <Input
               id="name"
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Ex. Rehabilitation du groupe scolaire Jean Moulin"
+              placeholder="Ex. Réhabilitation du groupe scolaire Jean Moulin"
               autoFocus
             />
           </div>
 
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             <div>
-              <Label htmlFor="reference">Reference de la consultation</Label>
+              <Label htmlFor="reference">Référence de la consultation</Label>
               <Input
                 id="reference"
                 value={reference}
@@ -138,7 +137,7 @@ export function NewProjectFlow({
           </div>
 
           <div className="mt-4">
-            <Label htmlFor="buyer">Acheteur ou maitre d&apos;ouvrage</Label>
+            <Label htmlFor="buyer">Acheteur ou maître d&apos;ouvrage</Label>
             <Input
               id="buyer"
               value={buyer}
@@ -156,7 +155,7 @@ export function NewProjectFlow({
               onChange={(e) => setDeadline(e.target.value)}
             />
             <FieldHint>
-              Utilisee pour le decompte des jours restants sur votre tableau de
+              Utilisée pour le décompte des jours restants sur votre tableau de
               bord.
             </FieldHint>
           </div>
@@ -170,7 +169,7 @@ export function NewProjectFlow({
               className="h-11 flex-1"
               disabled={pending || isGuest || name.trim().length < 3}
             >
-              {pending ? "Creation..." : "Continuer"}
+              {pending ? "Création..." : "Continuer"}
             </Button>
           </div>
         </form>
@@ -179,11 +178,11 @@ export function NewProjectFlow({
       {step === 2 && projectId ? (
         <div className="mt-6">
           <h1 className="text-[26px] font-extrabold tracking-[-0.035em]">
-            Deposer le DCE
+            Déposer le DCE
           </h1>
           <p className="mt-2 text-[14px] text-ink-58">
-            Ajoutez le reglement de consultation, le CCTP, le CCAP, la DPGF et
-            toute autre piece utile. Vous pourrez en ajouter d&apos;autres plus
+            Ajoutez le règlement de consultation, le CCTP, le CCAP, la DPGF et
+            toute autre pièce utile. Vous pourrez en ajouter d&apos;autres plus
             tard.
           </p>
 

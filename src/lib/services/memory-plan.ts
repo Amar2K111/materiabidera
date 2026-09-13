@@ -26,7 +26,7 @@ export async function runMemoryPlan(input: {
     throw new AiError(
       "Analyse absente.",
       "conflict",
-      "Le dossier doit d'abord etre analyse.",
+      "Le dossier doit d'abord être analysé.",
     );
   }
 
@@ -40,9 +40,9 @@ export async function runMemoryPlan(input: {
   const written = (existing ?? []).filter((s) => s.status !== "EMPTY");
   if (written.length > 0) {
     throw new AiError(
-      "Chapitres deja rediges.",
+      "Chapitres déjà rédigés.",
       "conflict",
-      `${written.length} chapitre(s) sont deja rediges. Regenerer le plan les supprimerait. Videz-les ou modifiez le plan a la main.`,
+      `${written.length} chapitre(s) sont déjà rédigés. Régénérer le plan les supprimerait. Videz-les ou modifiez le plan à la main.`,
     );
   }
 
@@ -53,7 +53,7 @@ export async function runMemoryPlan(input: {
     .eq("project_id", input.projectId)
     .eq("kind", "CADRE_MEMOIRE");
 
-  let memoryFramework = "Aucun cadre de memoire n'est impose par l'acheteur.";
+  let memoryFramework = "Aucun cadre de mémoire n'est imposé par l'acheteur.";
 
   if (frameworkDocs && frameworkDocs.length > 0) {
     const { data: pages } = await admin
@@ -95,7 +95,7 @@ export async function runMemoryPlan(input: {
           detail: string;
         }>).map((r) => `- ${r.title} : ${r.detail}`),
       ].join("\n")
-    : "Aucune strategie n'a encore ete etablie.";
+    : "Aucune stratégie n'a encore été établie.";
 
   const run = await startRun(admin, {
     organizationId: input.organizationId,
@@ -117,7 +117,7 @@ export async function runMemoryPlan(input: {
         dceSummary: context.dceSummary,
         requirements:
           context.requirementLines.join("\n") ||
-          "Aucune exigence n'a ete relevee.",
+          "Aucune exigence n'a été relevée.",
         strategy: strategyText,
         memoryFramework,
       }),

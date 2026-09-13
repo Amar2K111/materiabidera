@@ -19,7 +19,7 @@ export async function POST(
   const access = await requireProjectAccess(id);
   if (!access) {
     return NextResponse.json(
-      { message: "Dossier introuvable ou acces refuse." },
+      { message: "Dossier introuvable ou accès refusé." },
       { status: 404 },
     );
   }

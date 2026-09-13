@@ -742,10 +742,16 @@
 .app-ui__bar {
   display: block;
   height: 6px;
-  flex: 1;
+  flex: none;
   overflow: hidden;
   border-radius: 100px;
   background: var(--ui-line-soft);
+}
+
+/* Dans une ligne, la barre occupe l'espace restant ; jamais en colonne. */
+.app-ui__krow > .app-ui__bar,
+.flex:not(.flex-col) > .app-ui__bar {
+  flex: 1 1 0%;
 }
 
 .app-ui__bar i {

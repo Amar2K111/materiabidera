@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { OrganizationForm } from "./organization-form";
 
 const ROLE_LABELS: Record<string, string> = {
-  owner: "Proprietaire",
+  owner: "Propriétaire",
   admin: "Administrateur",
   member: "Membre",
 };
@@ -20,8 +20,8 @@ export default async function ParametresPage() {
   return (
     <div className="space-y-8">
       <PageHeader
-        title="Parametres"
-        subtitle="Informations de votre entreprise, compte utilisateur et etat des services connectes."
+        title="Paramètres"
+        subtitle="Informations de votre entreprise, compte utilisateur et état des services connectés."
       />
 
       <OrganizationForm organization={ctx.organization} />
@@ -33,7 +33,7 @@ export default async function ParametresPage() {
         <CardBody className="space-y-3 text-[13.5px]">
           <div className="flex justify-between gap-4">
             <span className="text-ink-58">Adresse e-mail</span>
-            <span className="font-semibold">{ctx.email ?? "Non renseignee"}</span>
+            <span className="font-semibold">{ctx.email ?? "Non renseignée"}</span>
           </div>
           <div className="flex justify-between gap-4">
             <span className="text-ink-58">Role</span>
@@ -46,17 +46,17 @@ export default async function ParametresPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Services connectes</CardTitle>
+          <CardTitle>Services connectés</CardTitle>
         </CardHeader>
         <CardBody className="space-y-3 text-[13.5px]">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <p className="font-semibold">Base de donnees</p>
+              <p className="font-semibold">Base de données</p>
               <p className="text-[12.5px] text-ink-42">
-                Stockage et isolation de vos donnees
+                Stockage et isolation de vos données
               </p>
             </div>
-            <Badge tone="ok">Connectee</Badge>
+            <Badge tone="ok">Connectée</Badge>
           </div>
 
           <div className="flex items-center justify-between gap-4 border-t border-line-soft pt-3">
@@ -65,11 +65,11 @@ export default async function ParametresPage() {
               <p className="text-[12.5px] text-ink-42">
                 {ai.configured
                   ? `Fournisseur : ${ai.provider}`
-                  : "Requis pour analyser un DCE et rediger un memoire"}
+                  : "Requis pour analyser un DCE et rédiger un mémoire"}
               </p>
             </div>
             <Badge tone={ai.configured ? "ok" : "warn"}>
-              {ai.configured ? "Configure" : "Non configure"}
+              {ai.configured ? "Configure" : "Non configuré"}
             </Badge>
           </div>
 
@@ -81,7 +81,7 @@ export default async function ParametresPage() {
               </p>
             </div>
             <Badge tone={isStripeConfigured ? "ok" : "neutral"}>
-              {isStripeConfigured ? "Configure" : "Non configure"}
+              {isStripeConfigured ? "Configure" : "Non configuré"}
             </Badge>
           </div>
         </CardBody>

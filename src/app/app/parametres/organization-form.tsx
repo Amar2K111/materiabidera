@@ -59,8 +59,8 @@ export function OrganizationForm({
         {status === "error" ? (
           <div className="mb-4">
             <Notice tone="risk">
-              L&apos;enregistrement a echoue. Verifiez vos droits puis
-              reessayez.
+              L&apos;enregistrement a échoué. Vérifiez vos droits puis
+              réessayez.
             </Notice>
           </div>
         ) : null}
@@ -77,7 +77,7 @@ export function OrganizationForm({
               />
             </div>
             <div>
-              <Label htmlFor="activity">Activite principale</Label>
+              <Label htmlFor="activity">Activité principale</Label>
               <Input
                 id="activity"
                 value={activity}
@@ -96,7 +96,7 @@ export function OrganizationForm({
           </div>
 
           <div className="mt-4">
-            <Label htmlFor="presentation">Presentation</Label>
+            <Label htmlFor="presentation">Présentation</Label>
             <Textarea
               id="presentation"
               rows={6}
@@ -111,7 +111,7 @@ export function OrganizationForm({
             </Button>
             {status === "saved" ? (
               <span className="text-[13px] font-semibold text-ok">
-                Modifications enregistrees
+                Modifications enregistrées
               </span>
             ) : null}
           </div>

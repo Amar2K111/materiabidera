@@ -46,8 +46,8 @@ export type UploadTarget = {
 export function DocumentUploader({
   organizationId,
   target,
-  title = "Deposez vos fichiers",
-  description = "Glissez vos fichiers ici, ou parcourez votre ordinateur. Formats acceptes : PDF, DOC, DOCX, XLS, XLSX et ZIP.",
+  title = "Déposez vos fichiers",
+  description = "Glissez vos fichiers ici, ou parcourez votre ordinateur. Formats acceptés : PDF, DOC, DOCX, XLS, XLSX et ZIP.",
   onUploaded,
 }: {
   organizationId: string;
@@ -70,7 +70,7 @@ export function DocumentUploader({
       const room = MAX_FILES_PER_UPLOAD - current.length;
       if (room <= 0) {
         setGlobalError(
-          `Vous pouvez deposer au maximum ${MAX_FILES_PER_UPLOAD} fichiers a la fois.`,
+          `Vous pouvez déposer au maximum ${MAX_FILES_PER_UPLOAD} fichiers à la fois.`,
         );
         return current;
       }
@@ -129,7 +129,7 @@ export function DocumentUploader({
                   ...i,
                   state: "rejected",
                   message:
-                    "Le transfert a echoue. Verifiez votre connexion puis reessayez.",
+                    "Le transfert a échoué. Vérifiez votre connexion puis réessayez.",
                 }
               : i,
           ),
@@ -157,7 +157,7 @@ export function DocumentUploader({
               ? {
                   ...i,
                   state: "rejected",
-                  message: "Le document n'a pas pu etre enregistre.",
+                  message: "Le document n'a pas pu être enregistré.",
                 }
               : i,
           ),
@@ -174,7 +174,7 @@ export function DocumentUploader({
     setBusy(false);
     if (uploaded > 0) onUploaded?.(uploaded);
     else {
-      setGlobalError("Aucun fichier n'a pu etre depose. Merci de reessayer.");
+      setGlobalError("Aucun fichier n'a pu être déposé. Merci de réessayer.");
     }
   }
 
@@ -280,11 +280,11 @@ export function DocumentUploader({
             >
               {busy
                 ? "Transfert en cours..."
-                : `Deposer ${pendingCount} fichier${pendingCount > 1 ? "s" : ""}`}
+                : `Déposer ${pendingCount} fichier${pendingCount > 1 ? "s" : ""}`}
             </Button>
             {doneCount > 0 ? (
               <span className="text-[13px] font-semibold text-ok">
-                {doneCount} fichier{doneCount > 1 ? "s" : ""} depose
+                {doneCount} fichier{doneCount > 1 ? "s" : ""} déposé
                 {doneCount > 1 ? "s" : ""}
               </span>
             ) : null}

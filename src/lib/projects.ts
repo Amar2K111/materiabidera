@@ -18,13 +18,13 @@ export const PROJECT_STATUS: Record<
 > = {
   DRAFT: { label: "Brouillon", tone: "neutral" },
   ANALYZING: { label: "Analyse en cours", tone: "brand" },
-  ANALYZED: { label: "Analyse terminee", tone: "brand" },
+  ANALYZED: { label: "Analyse terminée", tone: "brand" },
   GO: { label: "Go", tone: "ok" },
   NO_GO: { label: "No-Go", tone: "risk" },
-  STRATEGY_READY: { label: "Strategie prete", tone: "brand" },
-  WRITING: { label: "Redaction", tone: "brand" },
-  REVIEW: { label: "Controle", tone: "warn" },
-  READY: { label: "Pret a deposer", tone: "ok" },
+  STRATEGY_READY: { label: "Stratégie prête", tone: "brand" },
+  WRITING: { label: "Rédaction", tone: "brand" },
+  REVIEW: { label: "Contrôle", tone: "warn" },
+  READY: { label: "Prêt à déposer", tone: "ok" },
   EXPORTED: { label: "Exporté", tone: "ok" },
 };
 
@@ -65,7 +65,7 @@ export function deadlineLabel(deadline: string | null): {
 } {
   const days = daysUntil(deadline);
   if (days === null) return { text: "Sans date limite", tone: "neutral" };
-  if (days < 0) return { text: "Date limite depassee", tone: "risk" };
+  if (days < 0) return { text: "Date limite dépassée", tone: "risk" };
   if (days === 0) return { text: "Remise aujourd'hui", tone: "risk" };
   if (days === 1) return { text: "1 jour restant", tone: "risk" };
   if (days <= 7) return { text: `${days} jours restants`, tone: "warn" };
@@ -79,9 +79,9 @@ const DATE_FORMAT = new Intl.DateTimeFormat("fr-FR", {
 });
 
 export function formatDate(value: string | null): string {
-  if (!value) return "Non renseignee";
+  if (!value) return "Non renseignée";
   const d = new Date(value);
-  return Number.isNaN(d.getTime()) ? "Non renseignee" : DATE_FORMAT.format(d);
+  return Number.isNaN(d.getTime()) ? "Non renseignée" : DATE_FORMAT.format(d);
 }
 
 const DATETIME_FORMAT = new Intl.DateTimeFormat("fr-FR", {

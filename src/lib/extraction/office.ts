@@ -34,7 +34,7 @@ export async function extractDocx(
   } catch (error) {
     throw new ExtractionError(
       error instanceof Error ? error.message : String(error),
-      `Le document ${fileName} n'a pas pu etre lu.`,
+      `Le document ${fileName} n'a pas pu être lu.`,
     );
   }
 }
@@ -138,7 +138,7 @@ export async function extractXlsx(
   } catch (error) {
     throw new ExtractionError(
       error instanceof Error ? error.message : String(error),
-      `Le tableur ${fileName} n'a pas pu etre lu.`,
+      `Le tableur ${fileName} n'a pas pu être lu.`,
     );
   }
 }

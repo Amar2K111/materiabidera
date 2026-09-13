@@ -15,7 +15,7 @@ export async function POST() {
     return NextResponse.json(
       {
         message:
-          "Service indisponible en mode invite. Configurez Supabase pour activer l'ingestion.",
+          "Service indisponible en mode invité. Configurez Supabase pour activer l'ingestion.",
       },
       { status: 401 },
     );
@@ -42,7 +42,7 @@ export async function POST() {
     return NextResponse.json(
       {
         message:
-          "La lecture des documents a echoue. Merci de relancer dans un instant.",
+          "La lecture des documents a échoué. Merci de relancer dans un instant.",
       },
       { status: 500 },
     );

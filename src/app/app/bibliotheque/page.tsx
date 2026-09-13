@@ -14,8 +14,8 @@ export default async function BibliothequePage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Bibliotheque"
-        subtitle="Vos documents exploitables comme sources : anciens memoires, fiches de reference, CV, certifications et documents QSE."
+        title="Bibliothèque"
+        subtitle="Vos documents exploitables comme sources : anciens mémoires, fiches de référence, CV, certifications et documents QSE."
       />
       <LibrarySection
         organizationId={ctx.organization.id}

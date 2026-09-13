@@ -46,7 +46,7 @@ export function CollectionEditor({
       .eq("id", id);
 
     if (deleteError) {
-      setError("La suppression n'a pas pu etre effectuee.");
+      setError("La suppression n'a pas pu être effectuée.");
       return;
     }
     setPendingDelete(null);
@@ -80,7 +80,7 @@ export function CollectionEditor({
           }
         />
       ) : (
-        <ul className="space-y-2.5">
+        <ul className="grid gap-3 md:grid-cols-2">
           {rows.map((row) => {
             const summary = collection.summaryFields
               .map((key) =>
@@ -90,16 +90,16 @@ export function CollectionEditor({
                 ),
               )
               .filter(Boolean)
-              .join(" | ");
+              .join(" · ");
 
             return (
               <li
                 key={row.id}
-                className="rounded-[10px] border border-line bg-white p-4 shadow-card"
+                className="rounded-[12px] border border-line bg-white p-4 shadow-card transition-colors hover:border-ink-42/40"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0">
-                    <h3 className="text-[14px] font-bold">
+                    <h3 className="text-[14px] leading-snug font-semibold">
                       {String(row[collection.titleField] ?? "Sans titre")}
                     </h3>
                     {summary ? (
@@ -130,7 +130,7 @@ export function CollectionEditor({
                 {pendingDelete === row.id ? (
                   <div className="mt-4 flex flex-wrap items-center gap-3 border-t border-line-soft pt-4">
                     <span className="text-[13px] font-semibold">
-                      Supprimer cette fiche definitivement ?
+                      Supprimer cette fiche définitivement ?
                     </span>
                     <Button
                       size="sm"
@@ -222,7 +222,7 @@ function CollectionForm({
           .insert({ ...payload, organization_id: organizationId });
 
     if (writeError) {
-      setError("L'enregistrement a echoue. Merci de reessayer.");
+      setError("L'enregistrement a échoué. Merci de réessayer.");
       setSaving(false);
       return;
     }
@@ -332,7 +332,7 @@ function FieldInput({
           onChange={(e) => onChange(e.target.value)}
           className="h-10 w-full rounded-[8px] border border-line bg-white px-3 text-[14px] focus:border-brand focus:outline-none"
         >
-          <option value="">Non precise</option>
+          <option value="">Non précisé</option>
           {field.options?.map((o) => (
             <option key={o.value} value={o.value}>
               {o.label}

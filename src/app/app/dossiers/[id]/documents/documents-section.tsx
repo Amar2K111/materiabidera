@@ -253,6 +253,9 @@ export function DocumentsSection({
 }
 
 function DocumentStatusBadge({ doc }: { doc: ProjectDocument }) {
+  if (doc.status === "EXTRACTED" && /\.zip$/i.test(doc.file_name)) {
+    return <Badge tone="ok">Archive dépliée</Badge>;
+  }
   if (doc.status === "EXTRACTED") return <Badge tone="ok">Texte extrait</Badge>;
   if (doc.status === "EXTRACTING") return <Badge tone="brand">Lecture…</Badge>;
   if (doc.status === "FAILED") return <Badge tone="risk">Échec de lecture</Badge>;

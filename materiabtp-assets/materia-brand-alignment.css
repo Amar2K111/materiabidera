@@ -1,5 +1,15 @@
 /* MateriaBTP — design PlumTech + palette logo (#0035A9) */
 
+/* Masque le badge « N » Next.js en dev (overlay sur la landing statique). */
+nextjs-portal,
+[data-nextjs-dev-overlay],
+[data-nextjs-dev-tools-button],
+[data-nextjs-dev-tools-menu] {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
 html,
 body {
   overflow-x: clip;
@@ -214,17 +224,91 @@ button,
 
 .hero-tenderbolt__visual {
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  min-height: 0;
+  min-width: 0;
+  overflow: visible;
+}
+
+.hero-tenderbolt__scene {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+}
+
+.hero-tenderbolt__deco {
+  pointer-events: none;
+  position: absolute;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 2.4rem;
+}
+
+.hero-tenderbolt__deco--tl {
+  z-index: 0;
+  top: -4.5%;
+  left: -4.5%;
+  width: 45%;
+  background: var(--color-lazuli-200, #3580d4);
+}
+
+.hero-tenderbolt__deco--br-lazuli {
+  z-index: 0;
+  right: -4.5%;
+  bottom: -4.5%;
+  width: 45%;
+  background: var(--color-lazuli-200, #3580d4);
+}
+
+.hero-tenderbolt__mockup {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+}
+
+.hero-tenderbolt__mockup--desktop {
+  display: none;
+}
+
+.hero-tenderbolt__mockup--mobile {
+  display: block;
+  margin-top: 0.5rem;
+}
+
+.hero-tenderbolt__shot {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  border-radius: 0;
 }
 
 @media (min-width: 640px) {
-  .hero-tenderbolt .hero-banner-media:not(.hero-banner-media--mobile) {
-    width: min(48vw, 640px);
-    margin-top: -0.5rem;
-    margin-left: -1vw;
+  .hero-tenderbolt__visual {
+    width: min(48vw, 560px);
+    max-width: 560px;
+  }
+
+  .hero-tenderbolt__scene {
+    width: 100%;
+  }
+
+  .hero-tenderbolt__mockup--desktop {
+    display: block;
+  }
+
+  .hero-tenderbolt__mockup--mobile {
+    display: none;
+  }
+
+  .hero-tenderbolt__deco--tl {
+    top: -1.25rem;
+    left: -1.25rem;
+    width: 38%;
+  }
+
+  .hero-tenderbolt__deco--br-lazuli {
+    right: -1.25rem;
+    bottom: -1.25rem;
+    width: 38%;
   }
 }
 

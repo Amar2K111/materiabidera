@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+nextjs-portal,
+[data-nextjs-dev-overlay],
+[data-nextjs-dev-tools-button],
+[data-nextjs-dev-tools-menu] {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
 /* ============================================================================
    DESIGN SYSTEM MateriaBTP — Enterprise B2B SaaS
    Blanc dominant · encre #001830 · accent #0035A9 (logo MateriaBTP)

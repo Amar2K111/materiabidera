@@ -5,7 +5,7 @@ import { getServiceRoleKey } from "@/lib/env";
 export async function POST() {
   if (!getServiceRoleKey()) {
     return NextResponse.json(
-      { error: "Supabase non configure (cle service role manquante)." },
+      { error: "Supabase non configuré (clé service role manquante)." },
       { status: 503 },
     );
   }
@@ -13,7 +13,7 @@ export async function POST() {
   const ok = await ensureDemoSession();
   if (!ok) {
     return NextResponse.json(
-      { error: "Impossible de preparer la session demo." },
+      { error: "Impossible de préparer la session demo." },
       { status: 500 },
     );
   }

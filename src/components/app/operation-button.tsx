@@ -44,12 +44,12 @@ export function OperationButton({
       const payload = await response.json();
 
       if (!response.ok) {
-        setError(payload.message ?? "L'operation n'a pas pu aboutir.");
+        setError(payload.message ?? "L'opération n'a pas pu aboutir.");
         setRunning(false);
         return;
       }
     } catch {
-      setError("L'operation n'a pas pu aboutir. Merci de relancer.");
+      setError("L'opération n'a pas pu aboutir. Merci de relancer.");
       setRunning(false);
       return;
     }

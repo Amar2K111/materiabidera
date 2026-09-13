@@ -1,6 +1,7 @@
 import "server-only";
 import { createClient } from "@/lib/supabase/server";
 import { stripCitationCodes } from "@/lib/citations";
+import { FACTOR_LABELS } from "@/lib/decision";
 import { dedupeCited, type CitedSource } from "@/lib/requirements";
 
 export type GoRecommendation = "GO" | "VIGILANCE" | "NO_GO";
@@ -49,6 +50,7 @@ export async function getGoNoGo(
   analysis.go_no_go_factors.sort((a, b) => a.position - b.position);
   analysis.summary = stripCitationCodes(analysis.summary);
   for (const factor of analysis.go_no_go_factors) {
+    factor.label = FACTOR_LABELS[factor.key] ?? factor.label;
     factor.justification = stripCitationCodes(factor.justification);
     factor.sources = dedupeCited(factor.sources ?? []);
   }

@@ -110,7 +110,7 @@ export async function buildPdf(payload: ExportPayload): Promise<Buffer> {
 
 function MemoryDocument({ payload }: { payload: ExportPayload }) {
   const facts: Array<[string, string | null]> = [
-    ["Reference", payload.reference],
+    ["Référence", payload.reference],
     ["Acheteur", payload.buyer],
     ["Lot", payload.lot],
     ["Date limite de remise", payload.deadline],
@@ -118,7 +118,7 @@ function MemoryDocument({ payload }: { payload: ExportPayload }) {
 
   return (
     <Document
-      title={`Memoire technique — ${payload.projectName}`}
+      title={`Mémoire technique — ${payload.projectName}`}
       author={payload.organizationName}
     >
       {/* --- Couverture --- */}
@@ -126,7 +126,7 @@ function MemoryDocument({ payload }: { payload: ExportPayload }) {
         <Text style={styles.coverOrg}>
           {payload.organizationName.toUpperCase()}
         </Text>
-        <Text style={styles.coverTitle}>Memoire technique</Text>
+        <Text style={styles.coverTitle}>Mémoire technique</Text>
         <Text style={styles.coverProject}>{payload.projectName}</Text>
 
         {facts.map(([label, value]) =>
@@ -192,7 +192,7 @@ function SectionBody({
 
       {paragraphs.length === 0 ? (
         <Text style={[styles.paragraph, styles.empty]}>
-          Chapitre non redige.
+          Chapitre non rédigé.
         </Text>
       ) : (
         paragraphs.map((text, i) => (
@@ -227,7 +227,7 @@ function PageFurniture({ payload }: { payload: ExportPayload }) {
         style={styles.footer}
         fixed
         render={({ pageNumber, totalPages }) =>
-          `Memoire technique — ${payload.lot ?? payload.projectName} — page ${pageNumber} sur ${totalPages}`
+          `Mémoire technique — ${payload.lot ?? payload.projectName} — page ${pageNumber} sur ${totalPages}`
         }
       />
     </>

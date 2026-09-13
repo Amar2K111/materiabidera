@@ -10,7 +10,7 @@ export default function BaseEntrepriseLayout({
   children: React.ReactNode;
 }) {
   const items = [
-    { href: BASE, label: "Presentation" },
+    { href: BASE, label: "Présentation" },
     ...COLLECTIONS.map((c) => ({
       href: `${BASE}/${c.slug}`,
       label: c.title,
@@ -21,7 +21,7 @@ export default function BaseEntrepriseLayout({
     <div className="space-y-6">
       <PageHeader
         title="Base entreprise"
-        subtitle="La memoire permanente de votre entreprise. Plus elle est complete, plus vos reponses sont adaptees et verifiables."
+        subtitle="La mémoire permanente de votre entreprise. Plus elle est complète, plus vos réponses sont adaptées et vérifiables."
       />
       <TabNav items={items} ariaLabel="Sections de la base entreprise" />
       <div className="pt-2">{children}</div>

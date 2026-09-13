@@ -29,10 +29,10 @@ export default async function ExportPage({
     return (
       <EmptyState
         icon={<FileDown className="h-5 w-5" strokeWidth={1.8} />}
-        title="Aucun chapitre redige"
-        description="L'export produit le memoire technique au format Word et PDF, avec couverture, sommaire, titres hierarchises et pagination."
+        title="Aucun chapitre rédigé"
+        description="L'export produit le mémoire technique au format Word et PDF, avec couverture, sommaire, titres hiérarchisés et pagination."
         action={
-          <ButtonLink href={`/app/dossiers/${project.id}/memoire`}>Rediger le memoire</ButtonLink>
+          <ButtonLink href={`/app/dossiers/${project.id}/memoire`}>Rédiger le mémoire</ButtonLink>
         }
       />
     );

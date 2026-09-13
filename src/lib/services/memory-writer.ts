@@ -112,7 +112,7 @@ export async function writeSection(input: {
           detail: string;
         }>).map((r) => `- ${r.title} : ${r.detail}`),
       ].join("\n")
-    : "Aucune strategie n'a ete etablie.";
+    : "Aucune stratégie n'a été établie.";
 
   // --- Redaction --------------------------------------------------------------
   const run = await startRun(admin, {

@@ -41,7 +41,7 @@ export function validateFile(file: File): string | null {
   const allowedMimes = ALLOWED[ext];
 
   if (!allowedMimes) {
-    return "Format non pris en charge. Formats acceptes : PDF, DOC, DOCX, XLS, XLSX, ZIP.";
+    return "Format non pris en charge. Formats acceptés : PDF, DOC, DOCX, XLS, XLSX, ZIP.";
   }
   if (file.size === 0) {
     return "Le fichier est vide.";
@@ -52,7 +52,7 @@ export function validateFile(file: File): string | null {
     )}.`;
   }
   if (file.type && !allowedMimes.includes(file.type)) {
-    return "Le contenu du fichier ne correspond pas a son extension.";
+    return "Le contenu du fichier ne correspond pas à son extension.";
   }
   return null;
 }
@@ -90,18 +90,18 @@ export type DocumentKind =
   | "UNKNOWN";
 
 export const DOCUMENT_KIND_LABELS: Record<DocumentKind, string> = {
-  RC: "Reglement de consultation",
+  RC: "Règlement de consultation",
   CCTP: "CCTP",
   CCAP: "CCAP",
   ACTE_ENGAGEMENT: "Acte d'engagement",
   DPGF: "DPGF",
   BPU: "BPU",
   PLAN: "Plan",
-  CADRE_MEMOIRE: "Cadre de memoire",
+  CADRE_MEMOIRE: "Cadre de mémoire",
   ANNEXE: "Annexe",
-  ADMINISTRATIF: "Piece administrative",
+  ADMINISTRATIF: "Pièce administrative",
   AUTRE: "Autre",
-  UNKNOWN: "A classer",
+  UNKNOWN: "À classer",
 };
 
 /**

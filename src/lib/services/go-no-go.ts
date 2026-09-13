@@ -33,7 +33,7 @@ export async function runGoNoGo(input: {
 
   const context = await buildProjectContext(admin, input);
   if (!context.hasAnalysis) {
-    throw new AiError("Le dossier doit d'abord etre analyse.", "invalid_output");
+    throw new AiError("Le dossier doit d'abord être analysé.", "invalid_output");
   }
 
   const run = await startRun(admin, {
@@ -57,7 +57,7 @@ export async function runGoNoGo(input: {
         dceSummary: context.dceSummary,
         requirements:
           context.requirementLines.join("\n") ||
-          "Aucune exigence n'a ete relevee.",
+          "Aucune exigence n'a été relevée.",
         companyBase: context.companyBase,
       }),
       schema: GoNoGoSchema,
@@ -139,7 +139,7 @@ export async function runGoNoGo(input: {
             score: produced?.score ?? 0,
             justification:
               stripCitationCodes(produced?.justification ?? null) ??
-              "Ce facteur n'a pas pu etre evalue a partir des elements disponibles.",
+              "Ce facteur n'a pas pu être évalué à partir des éléments disponibles.",
             confidence: produced?.confidence ?? "LOW",
             sources: resolveSources(
               produced?.sourceIds ?? [],

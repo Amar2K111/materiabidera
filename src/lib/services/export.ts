@@ -59,7 +59,7 @@ export async function exportMemory(input: {
   const allSections = sections ?? [];
   if (allSections.length === 0) {
     throw new ExportError(
-      "Le plan du memoire n'a pas encore ete cree. Il n'y a rien a exporter.",
+      "Le plan du mémoire n'a pas encore été créé. Il n'y a rien à exporter.",
     );
   }
 
@@ -68,7 +68,7 @@ export async function exportMemory(input: {
   );
   if (written.length === 0) {
     throw new ExportError(
-      "Aucun chapitre n'est redige. Il n'y a rien a exporter.",
+      "Aucun chapitre n'est rédigé. Il n'y a rien à exporter.",
     );
   }
 
@@ -107,7 +107,7 @@ export async function exportMemory(input: {
     }
   } catch {
     throw new ExportError(
-      "Le document n'a pas pu etre produit. Merci de reessayer.",
+      "Le document n'a pas pu être produit. Merci de réessayer.",
     );
   }
 
@@ -131,7 +131,7 @@ export async function exportMemory(input: {
 
   if (uploadError) {
     throw new ExportError(
-      "Le document a ete produit mais n'a pas pu etre enregistre.",
+      "Le document a été produit mais n'a pas pu être enregistré.",
     );
   }
 

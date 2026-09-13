@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Check, Lock } from "lucide-react";
+import { ArrowRight, Check, ShieldCheck, TriangleAlert } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import type {
   ChecklistEntry,
@@ -12,6 +13,18 @@ import type {
 import { ButtonLink } from "@/components/ui/button";
 import { Notice } from "@/components/ui/notice";
 import { cn } from "@/lib/utils/cn";
+
+/** Page du dossier ou corriger un point verifie automatiquement. */
+const FIX_SEGMENT: Record<string, { segment: string; label: string }> = {
+  auto_engagement_doc: { segment: "documents", label: "Pièces du DCE" },
+  auto_certifications: { segment: "", label: "Base entreprise" },
+  auto_memory_written: { segment: "memoire", label: "Mémoire" },
+  auto_references: { segment: "", label: "Base entreprise" },
+  auto_means: { segment: "", label: "Base entreprise" },
+  auto_coverage: { segment: "exigences", label: "Exigences" },
+  auto_sources: { segment: "memoire", label: "Mémoire" },
+  auto_no_blocking: { segment: "controle", label: "Contrôle" },
+};
 
 export function ChecklistPanel({
   projectId,
@@ -54,111 +67,160 @@ export function ChecklistPanel({
 
     setBusy(null);
     if (writeError) {
-      setError("Votre verification n'a pas pu etre enregistree.");
+      setError("Votre vérification n'a pas pu être enregistrée.");
       return;
     }
     router.refresh();
   }
 
   const groups: ChecklistGroup[] = ["ADMINISTRATIF", "TECHNIQUE", "CONTROLE"];
+  const total = checklist.entries.length;
+  const passed = total - checklist.remaining;
+
+  function fixHref(entry: ChecklistEntry) {
+    const fix = FIX_SEGMENT[entry.id];
+    if (!fix) return null;
+    return {
+      href:
+        fix.label === "Base entreprise"
+          ? "/app/base-entreprise"
+          : `/app/dossiers/${projectId}${fix.segment ? `/${fix.segment}` : ""}`,
+      label: fix.label,
+    };
+  }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* --- Verdict --- */}
-      <div
+      <section
         className={cn(
-          "rounded-[10px] border p-6",
-          checklist.ready
-            ? "border-ok/30 bg-ok-wash"
-            : "border-warn/30 bg-warn-wash",
+          "flex flex-wrap items-center gap-5 rounded-[14px] border bg-white p-6 shadow-card",
+          checklist.ready ? "border-ok/30" : "border-warn/30",
         )}
       >
-        <p
+        <span
           className={cn(
-            "text-[28px] font-extrabold tracking-[-0.035em]",
-            checklist.ready ? "text-ok" : "text-warn",
+            "flex h-12 w-12 flex-none items-center justify-center rounded-full",
+            checklist.ready ? "bg-ok-wash text-ok" : "bg-warn-wash text-warn",
           )}
         >
-          {checklist.ready
-            ? "PRET A DEPOSER"
-            : `${checklist.remaining} POINT${checklist.remaining > 1 ? "S" : ""} A TRAITER`}
-        </p>
-        <p className="mt-2 max-w-[80ch] text-[13px] leading-relaxed text-ink-70">
-          {checklist.ready
-            ? "Tous les points verifies automatiquement sont satisfaits et vous avez confirme les autres. La responsabilite du depot reste la votre."
-            : "Les points marques d'un cadenas sont verifies par MateriaBTP a partir de vos donnees. Les autres relevent de votre propre verification."}
-        </p>
-      </div>
+          {checklist.ready ? (
+            <ShieldCheck className="h-6 w-6" strokeWidth={1.8} />
+          ) : (
+            <TriangleAlert className="h-6 w-6" strokeWidth={1.8} />
+          )}
+        </span>
+        <div className="min-w-0 flex-1">
+          <p
+            className={cn(
+              "text-[22px] font-bold tracking-[-0.025em]",
+              checklist.ready ? "text-ok" : "text-warn",
+            )}
+          >
+            {checklist.ready
+              ? "Prêt à déposer"
+              : `${checklist.remaining} point${checklist.remaining > 1 ? "s" : ""} à traiter`}
+          </p>
+          <p className="mt-1 max-w-[80ch] text-[13.5px] leading-relaxed text-ink-58">
+            {checklist.ready
+              ? "Tous les points vérifiés automatiquement sont satisfaits et vous avez confirmé les autres. La responsabilité du dépôt reste la vôtre."
+              : "Les points marqués « Vérifié par MateriaBTP » sont constatés sur vos données. Les autres relèvent de votre propre vérification."}
+          </p>
+        </div>
+        <div className="w-full sm:w-44">
+          <p className="tabular text-right text-[13px] font-semibold text-ink-58">
+            {passed} / {total}
+          </p>
+          <span className={cn("app-ui__bar mt-1.5", checklist.ready ? "is-ok" : "is-warn")}>
+            <i style={{ width: `${total === 0 ? 0 : (passed / total) * 100}%` }} />
+          </span>
+        </div>
+      </section>
 
       {error ? <Notice tone="risk">{error}</Notice> : null}
 
-      {groups.map((group) => {
-        const entries = checklist.entries.filter((e) => e.group === group);
-        if (entries.length === 0) return null;
+      <div className="grid gap-6 xl:grid-cols-3">
+        {groups.map((group) => {
+          const entries = checklist.entries.filter((e) => e.group === group);
+          if (entries.length === 0) return null;
 
-        return (
-          <section key={group}>
-            <h2 className="mb-3 text-[15px] font-bold">{groupLabels[group]}</h2>
-            <ul className="overflow-hidden rounded-[10px] border border-line">
-              {entries.map((entry) => (
-                <li
-                  key={entry.id}
-                  className="flex items-start gap-3 border-b border-line-soft px-4 py-3 last:border-b-0"
-                >
-                  <button
-                    type="button"
-                    onClick={() => toggle(entry)}
-                    disabled={entry.automatic || busy === entry.id}
-                    aria-label={
-                      entry.automatic
-                        ? "Point verifie automatiquement"
-                        : entry.passed
-                          ? "Decocher"
-                          : "Cocher"
-                    }
-                    className={cn(
-                      "mt-0.5 flex h-[18px] w-[18px] flex-none items-center justify-center rounded-[5px] border transition-colors",
-                      entry.passed
-                        ? "border-ok bg-ok text-white"
-                        : "border-ink-42 bg-white",
-                      entry.automatic ? "cursor-default" : "hover:border-ink",
-                    )}
-                  >
-                    {entry.passed ? (
-                      <Check className="h-3 w-3" strokeWidth={3} />
-                    ) : null}
-                  </button>
+          return (
+            <section key={group}>
+              <h2 className="mb-3 text-[15px] font-semibold">{groupLabels[group]}</h2>
+              <ul className="divide-y divide-line-soft overflow-hidden rounded-[12px] border border-line bg-white shadow-card">
+                {entries.map((entry) => {
+                  const fix = !entry.passed && entry.automatic ? fixHref(entry) : null;
+                  return (
+                    <li key={entry.id} className="flex items-start gap-3 px-4 py-3.5">
+                      <button
+                        type="button"
+                        onClick={() => toggle(entry)}
+                        disabled={entry.automatic || busy === entry.id}
+                        aria-label={
+                          entry.automatic
+                            ? "Point vérifié automatiquement"
+                            : entry.passed
+                              ? "Décocher"
+                              : "Cocher"
+                        }
+                        className={cn(
+                          "mt-0.5 flex h-5 w-5 flex-none items-center justify-center rounded-[6px] border transition-colors",
+                          entry.passed
+                            ? "border-ok bg-ok text-white"
+                            : entry.automatic
+                              ? "border-warn bg-warn-wash"
+                              : "border-ink-42 bg-white hover:border-brand",
+                          entry.automatic ? "cursor-default" : "cursor-pointer",
+                        )}
+                      >
+                        {entry.passed ? <Check className="h-3 w-3" strokeWidth={3} /> : null}
+                      </button>
 
-                  <div className="min-w-0 flex-1">
-                    <p
-                      className={cn(
-                        "text-[13.5px] font-semibold",
-                        entry.passed && "text-ink-58",
-                      )}
-                    >
-                      {entry.label}
-                    </p>
-                    <p className="mt-0.5 text-[12.5px] text-ink-42">
-                      {entry.detail}
-                    </p>
-                  </div>
+                      <div className="min-w-0 flex-1">
+                        <p
+                          className={cn(
+                            "text-[13.5px] leading-snug font-medium",
+                            entry.passed && "text-ink-58",
+                          )}
+                        >
+                          {entry.label}
+                        </p>
+                        <p className="mt-0.5 text-[12.5px] leading-relaxed text-ink-42">
+                          {entry.detail}
+                        </p>
+                        <div className="mt-1.5 flex flex-wrap items-center gap-3">
+                          {entry.automatic ? (
+                            <span className="inline-flex items-center gap-1 text-[11.5px] font-medium text-ink-42">
+                              <ShieldCheck className="h-3 w-3" strokeWidth={2} />
+                              Vérifié par MateriaBTP
+                            </span>
+                          ) : null}
+                          {fix ? (
+                            <Link
+                              href={fix.href}
+                              className="inline-flex items-center gap-1 text-[12px] font-semibold text-brand"
+                            >
+                              Corriger dans {fix.label}
+                              <ArrowRight className="h-3 w-3" strokeWidth={2} />
+                            </Link>
+                          ) : null}
+                        </div>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          );
+        })}
+      </div>
 
-                  {entry.automatic ? (
-                    <Lock
-                      className="mt-1 h-3 w-3 flex-none text-ink-42"
-                      strokeWidth={1.8}
-                    />
-                  ) : null}
-                </li>
-              ))}
-            </ul>
-          </section>
-        );
-      })}
-
-      <section className="border-t border-line pt-6">
-        <ButtonLink href={`/app/dossiers/${projectId}/export`} className="h-11">Passer a l&apos;export</ButtonLink>
-      </section>
+      <div className="flex justify-end">
+        <ButtonLink href={`/app/dossiers/${projectId}/export`} className="h-11">
+          Passer à l&apos;export
+          <ArrowRight className="h-4 w-4" strokeWidth={2} />
+        </ButtonLink>
+      </div>
     </div>
   );
 }

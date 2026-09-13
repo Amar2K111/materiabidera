@@ -63,9 +63,9 @@ export async function runQualityCheck(input: {
 
   if (written.length === 0) {
     throw new AiError(
-      "Aucun chapitre redige.",
+      "Aucun chapitre rédigé.",
       "conflict",
-      "Aucun chapitre n'est redige. Le controle qualite porte sur le texte du memoire.",
+      "Aucun chapitre n'est rédigé. Le contrôle qualité porte sur le texte du mémoire.",
     );
   }
 
@@ -74,7 +74,7 @@ export async function runQualityCheck(input: {
   // donnees enregistrees, et sont donc reproductibles a l'identique.
   const { data: requirements } = await admin
     .from("requirements")
-    .select("id, status, priority")
+    .select("id, status, priority, category")
     .eq("project_id", input.projectId);
 
   const allRequirements = requirements ?? [];
@@ -153,9 +153,9 @@ export async function runQualityCheck(input: {
       system: QUALITY_SYSTEM,
       prompt: qualityPrompt({
         projectName: context.projectName,
-        criteria: criteria || "Aucun critere de jugement identifie.",
+        criteria: criteria || "Aucun critère de jugement identifié.",
         requirements:
-          context.requirementLines.join("\n") || "Aucune exigence relevee.",
+          context.requirementLines.join("\n") || "Aucune exigence relevée.",
         companyBase: context.companyBase,
         memory: memoryText,
       }),
@@ -170,32 +170,32 @@ export async function runQualityCheck(input: {
         label: "Couverture des exigences",
         score: coverage,
         computed: true,
-        detail: `${coveredIds.size} exigence(s) traitees sur ${allRequirements.length}.`,
+        detail: `${coveredIds.size} exigence(s) traitées sur ${allRequirements.length}.`,
       },
       {
         key: "criteriaAlignment",
-        label: "Alignement aux criteres",
+        label: "Alignement aux critères",
         score: value.judgement.criteriaAlignment,
         computed: false,
-        detail: "Appreciation du moteur d'analyse.",
+        detail: "Appréciation du moteur d'analyse.",
       },
       {
         key: "personalisation",
         label: "Personnalisation",
         score: value.judgement.personalisation,
         computed: false,
-        detail: "Appreciation du moteur d'analyse.",
+        detail: "Appréciation du moteur d'analyse.",
       },
       {
         key: "precision",
-        label: "Precision",
+        label: "Précision",
         score: value.judgement.precision,
         computed: false,
-        detail: "Appreciation du moteur d'analyse.",
+        detail: "Appréciation du moteur d'analyse.",
       },
       {
         key: "traceability",
-        label: "Tracabilite",
+        label: "Traçabilité",
         score: traceability,
         computed: true,
         detail: `${withSources} chapitre(s) sur ${written.length} citent au moins une source.`,
@@ -248,12 +248,16 @@ export async function runQualityCheck(input: {
           organization_id: input.organizationId,
           check_id: saved.id as string,
           kind: "REQUIREMENT_UNCOVERED" as const,
-          severity: (r.priority === "HIGH" ? "BLOCKING" : "IMPORTANT") as
-            | "BLOCKING"
-            | "IMPORTANT",
-          title: "Exigence non traitee",
+          // Une exigence administrative ou financiere se traite le plus souvent
+          // dans une autre piece (acte d'engagement, DPGF, depot) : elle est a
+          // verifier, sans bloquer le memoire.
+          severity: (r.priority === "HIGH" &&
+          !["ADMINISTRATIF", "FINANCIER"].includes(r.category as string)
+            ? "BLOCKING"
+            : "IMPORTANT") as "BLOCKING" | "IMPORTANT",
+          title: "Exigence non traitée",
           detail:
-            "Aucun chapitre redige ne traite cette exigence, et elle n'a pas ete marquee comme couverte.",
+            "Aucun chapitre rédigé ne traite cette exigence, et elle n'a pas été marquée comme couverte.",
           requirement_id: r.id as string,
           position: index,
         })),

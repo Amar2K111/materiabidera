@@ -72,10 +72,10 @@ export function createGeminiProvider(
         throw new AiError("Quota atteint.", "rate_limited");
       }
       if (message.includes("api key") || message.includes("permission")) {
-        throw new AiError("Cle d'API refusee.", "not_configured");
+        throw new AiError("Clé d'API refusée.", "not_configured");
       }
       if (message.includes("safety") || message.includes("blocked")) {
-        throw new AiError("Contenu refuse par le modele.", "refused");
+        throw new AiError("Contenu refusé par le modèle.", "refused");
       }
       throw new AiError("Service indisponible.", "unavailable");
     }
@@ -104,12 +104,12 @@ export function createGeminiProvider(
       try {
         parsed = JSON.parse(text);
       } catch {
-        throw new AiError("Reponse non exploitable.", "invalid_output");
+        throw new AiError("Réponse non exploitable.", "invalid_output");
       }
 
       const result = input.schema.safeParse(parsed);
       if (!result.success) {
-        throw new AiError("Reponse hors format attendu.", "invalid_output");
+        throw new AiError("Réponse hors format attendu.", "invalid_output");
       }
 
       return { value: result.data, usage };

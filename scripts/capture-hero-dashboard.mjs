@@ -48,7 +48,32 @@ const CAPTURE_CSS = `
   .app-ui__workflow { margin-top: 10px !important; padding: 10px 12px !important; }
   .app-ui__workflow-step { font-size: 10px !important; }
   [role="status"].fixed { display: none !important; }
+  nextjs-portal,
+  [data-nextjs-dev-tools-button],
+  [data-nextjs-dev-tools-menu],
+  [data-nextjs-toast] { display: none !important; visibility: hidden !important; }
 `;
+
+async function hideNextDevOverlay(page) {
+  await page.evaluate(() => {
+    document
+      .querySelectorAll("nextjs-portal, [data-nextjs-dev-overlay]")
+      .forEach((el) => el.remove());
+    for (const el of document.querySelectorAll("body *")) {
+      const style = getComputedStyle(el);
+      if (style.position !== "fixed" && style.position !== "sticky") continue;
+      const rect = el.getBoundingClientRect();
+      if (rect.width > 80 || rect.height > 80) continue;
+      const nearBottom = rect.bottom >= window.innerHeight - 8;
+      const nearTop = rect.top <= 8;
+      const nearLeft = rect.left <= 80;
+      const nearRight = rect.right >= window.innerWidth - 80;
+      if ((nearBottom || nearTop) && (nearLeft || nearRight)) {
+        el.remove();
+      }
+    }
+  });
+}
 
 async function getPlaywright() {
   try {
@@ -82,6 +107,7 @@ async function captureShell(outPath, width, height) {
   await page.addStyleTag({ content: CAPTURE_CSS });
   await page.waitForSelector(".capture-hero-scene", { timeout: 30_000 });
   await page.waitForTimeout(1200);
+  await hideNextDevOverlay(page);
 
   fs.mkdirSync(path.dirname(outPath), { recursive: true });
   await page.locator(".capture-hero-scene").screenshot({ path: outPath });

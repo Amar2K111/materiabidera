@@ -5,31 +5,31 @@ import { NO_INVENTION_RULES } from "./shared";
 export const GO_FACTORS = [
   {
     key: "technical_fit",
-    label: "Adequation technique",
+    label: "Adéquation technique",
     guidance:
       "Les travaux demandes correspondent-ils a ce que l'entreprise sait faire, au vu de ses references et de son activite ?",
   },
   {
     key: "capacity",
-    label: "Capacites disponibles",
+    label: "Capacités disponibles",
     guidance:
       "L'entreprise dispose-t-elle des moyens humains et materiels exiges par la consultation ?",
   },
   {
     key: "experience",
-    label: "Experience comparable",
+    label: "Expérience comparable",
     guidance:
       "L'entreprise possede-t-elle des references reellement comparables a ce marche ?",
   },
   {
     key: "criteria",
-    label: "Criteres gagnables",
+    label: "Critères gagnables",
     guidance:
       "Les criteres de jugement avantagent-ils l'entreprise, ou la desavantagent-ils ?",
   },
   {
     key: "schedule",
-    label: "Delai",
+    label: "Délai",
     guidance:
       "Le delai de remise et le delai d'execution sont-ils tenables ?",
   },

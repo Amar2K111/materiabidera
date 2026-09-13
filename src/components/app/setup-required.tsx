@@ -14,16 +14,16 @@ export function SetupRequired() {
         Configuration requise
       </h1>
       <p className="mt-3 text-[15px] leading-relaxed text-ink-70">
-        L&apos;application n&apos;est pas encore reliee a sa base de donnees.
-        Tant que cette etape n&apos;est pas faite, aucune authentification ni
+        L&apos;application n&apos;est pas encore reliée à sa base de données.
+        Tant que cette étape n&apos;est pas faite, aucune authentification ni
         aucun enregistrement n&apos;est possible.
       </p>
 
       <div className="mt-8">
-        <Notice title="Etapes a realiser">
+        <Notice title="Étapes à réaliser">
           <ol className="mt-2 list-decimal space-y-1.5 pl-4">
             <li>
-              Creer un projet Supabase, puis executer la migration
+              Créer un projet Supabase, puis exécuter la migration
               <span className="font-semibold">
                 {" "}
                 supabase/migrations/0001_foundation.sql
@@ -35,7 +35,7 @@ export function SetupRequired() {
               en <span className="font-semibold">.env.local</span>.
             </li>
             <li>
-              Renseigner l&apos;URL du projet et la cle anonyme, puis relancer le
+              Renseigner l&apos;URL du projet et la clé anonyme, puis relancer le
               serveur.
             </li>
           </ol>
@@ -43,8 +43,8 @@ export function SetupRequired() {
       </div>
 
       <p className="mt-6 text-[13px] text-ink-42">
-        La cle de service ne doit jamais porter le prefixe NEXT_PUBLIC_ : elle
-        contourne les regles de securite et doit rester cote serveur.
+        La clé de service ne doit jamais porter le préfixe NEXT_PUBLIC_ : elle
+        contourne les règles de sécurité et doit rester côté serveur.
       </p>
     </main>
   );

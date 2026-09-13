@@ -31,11 +31,11 @@ export default async function MemoryPage({
 
   if (!isAiConfigured()) {
     return (
-      <Notice tone="warn" title="Moteur d'analyse non configure">
+      <Notice tone="warn" title="Moteur d'analyse non configuré">
         <p className="mt-1">
-          La construction du plan et la redaction necessitent un moteur
-          d&apos;analyse. Vous pouvez neanmoins rediger vos chapitres a la main
-          une fois le plan cree.
+          La construction du plan et la rédaction nécessitent un moteur
+          d&apos;analyse. Vous pouvez néanmoins rédiger vos chapitres à la main
+          une fois le plan créé.
         </p>
       </Notice>
     );
@@ -45,8 +45,8 @@ export default async function MemoryPage({
     return (
       <EmptyState
         icon={<BookText className="h-5 w-5" strokeWidth={1.8} />}
-        title="Le dossier doit d'abord etre analyse"
-        description="Le plan du memoire est construit a partir du reglement de consultation, des criteres de jugement et du cadre de memoire impose lorsqu'il en existe un."
+        title="Le dossier doit d'abord être analysé"
+        description="Le plan du mémoire est construit à partir du règlement de consultation, des critères de jugement et du cadre de mémoire imposé lorsqu'il en existe un."
         action={
           <ButtonLink href={`/app/dossiers/${project.id}/analyse`}>Analyser le dossier</ButtonLink>
         }
@@ -59,10 +59,10 @@ export default async function MemoryPage({
       <div className="max-w-[640px]">
         <h2 className="text-[17px] font-bold">Construire le plan</h2>
         <p className="mt-2 text-[13.5px] leading-relaxed text-ink-58">
-          Le plan est etabli pour cette consultation precise : il suit le cadre
-          de memoire s&apos;il en existe un, sinon il se structure sur les
-          criteres de jugement et les exigences relevees. Aucun plan type
-          n&apos;est applique.
+          Le plan est établi pour cette consultation précise : il suit le cadre
+          de mémoire s&apos;il en existe un, sinon il se structure sur les
+          critères de jugement et les exigences relevées. Aucun plan type
+          n&apos;est appliqué.
         </p>
         <div className="mt-6">
           <OperationButton

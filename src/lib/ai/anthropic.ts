@@ -36,7 +36,7 @@ export function createAnthropicProvider(
       });
 
       if (response.stop_reason === "refusal") {
-        throw new AiError("Le modele a decline la demande.", "refused");
+        throw new AiError("Le modèle a décliné la demande.", "refused");
       }
 
       const text = response.content
@@ -57,7 +57,7 @@ export function createAnthropicProvider(
         throw new AiError("Quota atteint.", "rate_limited");
       }
       if (error instanceof Anthropic.AuthenticationError) {
-        throw new AiError("Cle d'API refusee.", "not_configured");
+        throw new AiError("Clé d'API refusée.", "not_configured");
       }
       throw new AiError("Service indisponible.", "unavailable");
     }
@@ -87,12 +87,12 @@ export function createAnthropicProvider(
       try {
         parsed = JSON.parse(text);
       } catch {
-        throw new AiError("Reponse non exploitable.", "invalid_output");
+        throw new AiError("Réponse non exploitable.", "invalid_output");
       }
 
       const result = input.schema.safeParse(parsed);
       if (!result.success) {
-        throw new AiError("Reponse hors format attendu.", "invalid_output");
+        throw new AiError("Réponse hors format attendu.", "invalid_output");
       }
 
       return { value: result.data, usage };

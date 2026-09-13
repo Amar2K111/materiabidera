@@ -15,7 +15,10 @@ import {
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import type { MemorySection, MemorySource } from "@/lib/data/memory";
-import { readableDocumentName } from "@/components/app/sources";
+import {
+  readableCompanyLabel,
+  shortDocumentName,
+} from "@/components/app/sources";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ConfirmButton } from "@/components/ui/confirm-button";
@@ -50,11 +53,11 @@ const STATUS_LABELS: Record<
 };
 
 function sourceTitle(source: MemorySource) {
-  if (source.origin === "ENTREPRISE") return source.label;
+  if (source.origin === "ENTREPRISE") return readableCompanyLabel(source.label);
   // "01_RC_Reglement.pdf, page 2" -> "RC Reglement", "p. 2"
   const [file, ...rest] = source.label.split(", ");
   const where = rest.join(", ").replace(/^page\s+/i, "p. ");
-  return where ? `${readableDocumentName(file)}, ${where}` : readableDocumentName(file);
+  return where ? `${shortDocumentName(file)}, ${where}` : shortDocumentName(file);
 }
 
 export function MemoryEditor({
@@ -281,7 +284,7 @@ export function MemoryEditor({
   return (
     <div className="grid gap-5 lg:grid-cols-[250px_minmax(0,1fr)] xl:grid-cols-[250px_minmax(0,1fr)_290px]">
       {/* ---------- Plan ---------- */}
-      <aside className="lg:sticky lg:top-[72px] lg:self-start">
+      <aside className="order-1 lg:sticky lg:top-[72px] lg:order-none lg:self-start">
         <div className="rounded-[12px] border border-line bg-white p-3 shadow-card">
           <div className="flex items-center justify-between gap-2 px-1.5 pt-1">
             <h2 className="text-[13.5px] font-semibold">Plan du mémoire</h2>
@@ -360,7 +363,9 @@ export function MemoryEditor({
       </aside>
 
       {/* ---------- Editeur ---------- */}
-      <section className="min-w-0">
+      {/* Sur petit ecran, les outils passent avant le texte : pas de long
+          defilement pour lancer une redaction. */}
+      <section className="order-3 min-w-0 lg:order-none">
         {!selected ? (
           <Notice>Sélectionnez un chapitre dans le plan.</Notice>
         ) : (
@@ -384,9 +389,10 @@ export function MemoryEditor({
             </div>
 
             <div className="px-5 pt-5 pb-6 sm:px-7">
-              <input
+              <textarea
                 defaultValue={selected.title}
                 key={selected.id}
+                rows={Math.max(1, Math.ceil(selected.title.length / 46))}
                 onBlur={(e) => {
                   const value = e.target.value.trim();
                   if (value && value !== selected.title) {
@@ -394,10 +400,13 @@ export function MemoryEditor({
                   }
                 }}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") e.currentTarget.blur();
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    e.currentTarget.blur();
+                  }
                 }}
                 aria-label="Titre du chapitre"
-                className="w-full rounded-[6px] border border-transparent bg-transparent px-1 py-0.5 -ml-1 text-[21px] leading-snug font-semibold tracking-[-0.02em] hover:border-line focus:border-brand focus:outline-none"
+                className="-ml-1 block w-full resize-none rounded-[6px] border border-transparent bg-transparent px-1 py-0.5 text-[21px] leading-snug font-semibold tracking-[-0.02em] hover:border-line focus:border-brand focus:outline-none"
               />
 
               {selected.brief ? (
@@ -500,7 +509,7 @@ export function MemoryEditor({
       </section>
 
       {/* ---------- Outils et sources ---------- */}
-      <aside className="space-y-4 lg:col-start-2 xl:sticky xl:top-[72px] xl:col-start-auto xl:self-start">
+      <aside className="order-2 space-y-4 lg:order-none lg:col-start-2 xl:sticky xl:top-[72px] xl:col-start-auto xl:self-start">
         <div className="rounded-[12px] border border-line bg-white p-4 shadow-card">
           <h2 className="text-[13.5px] font-semibold">Rédaction assistée</h2>
           <p className="mt-1 text-[12px] leading-relaxed text-ink-42">

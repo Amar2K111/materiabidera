@@ -67,7 +67,7 @@ export async function ingestNextDocument(input: {
         admin,
         documentId,
         fileName,
-        "Le fichier n'a pas pu etre recupere depuis le stockage.",
+        "Le fichier n'a pas pu être récupéré depuis le stockage.",
       );
     }
 
@@ -103,7 +103,7 @@ export async function ingestNextDocument(input: {
         admin,
         documentId,
         fileName,
-        "Ce document est un scan sans texte selectionnable. La reconnaissance optique n'est pas encore en service : fournissez une version texte de cette piece.",
+        "Ce document est un scan sans texte sélectionnable. La reconnaissance optique n'est pas encore en service : fournissez une version texte de cette pièce.",
       );
     }
 
@@ -163,7 +163,7 @@ export async function ingestNextDocument(input: {
     const message =
       error instanceof ExtractionError
         ? error.userMessage
-        : "Ce document n'a pas pu etre lu.";
+        : "Ce document n'a pas pu être lu.";
     return markFailed(admin, documentId, fileName, message);
   }
 }

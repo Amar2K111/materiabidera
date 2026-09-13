@@ -17,7 +17,7 @@ export function getAiProvider(): AiProvider {
   const { provider, apiKey, configured } = getAiConfig();
 
   if (!configured || !apiKey) {
-    throw new AiError("Fournisseur IA non configure.", "not_configured");
+    throw new AiError("Fournisseur IA non configuré.", "not_configured");
   }
 
   switch (provider) {

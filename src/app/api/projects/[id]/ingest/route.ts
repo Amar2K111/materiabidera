@@ -19,7 +19,7 @@ export async function POST(
   const access = await requireProjectAccess(id);
   if (!access) {
     return NextResponse.json(
-      { message: "Dossier introuvable ou acces refuse." },
+      { message: "Dossier introuvable ou accès refusé." },
       { status: 404 },
     );
   }
@@ -46,7 +46,7 @@ export async function POST(
     return NextResponse.json(
       {
         message:
-          "La lecture des documents a echoue. Merci de relancer dans un instant.",
+          "La lecture des documents a échoué. Merci de relancer dans un instant.",
       },
       { status: 500 },
     );
