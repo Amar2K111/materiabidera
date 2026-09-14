@@ -4,6 +4,7 @@ import { getProject, listProjectDocuments } from "@/lib/data/projects";
 import { getDceAnalysis } from "@/lib/data/analysis";
 import { isAiConfigured } from "@/lib/ai";
 import { formatDateTime } from "@/lib/projects";
+import { CONSTRAINT_LABELS } from "@/lib/requirements";
 import { AnalysisRunner } from "@/components/app/analysis-runner";
 import { Sources } from "@/components/app/sources";
 import { Badge } from "@/components/ui/badge";
@@ -102,6 +103,9 @@ export default async function ProjectAnalysisPage({
     ["Visite de site", analysis.site_visit],
   ];
 
+  const format = analysis.response_format ?? null;
+  const constraints = analysis.market_context?.constraints ?? [];
+
   return (
     <div className="space-y-8">
       {pending > 0 ? (
@@ -163,14 +167,41 @@ export default async function ProjectAnalysisPage({
                 >
                   <div className="flex items-baseline justify-between gap-3">
                     <h3 className="text-[14px] font-semibold">{c.label}</h3>
-                    <span className="tabular text-[18px] font-bold text-brand">
-                      {c.weight}
-                    </span>
+                    <Weight value={c.weight} />
                   </div>
                   {c.detail ? (
                     <p className="mt-1.5 text-[13px] leading-relaxed text-ink-70">
                       {c.detail}
                     </p>
+                  ) : null}
+                  {c.subcriteria && c.subcriteria.length > 0 ? (
+                    <ul className="mt-3 divide-y divide-line-soft rounded-[10px] border border-line-soft bg-paper/60">
+                      {c.subcriteria.map((sub, j) => (
+                        <li key={`${sub.label}-${j}`} className="px-3.5 py-2.5">
+                          <div className="flex items-baseline justify-between gap-3">
+                            <p className="text-[13px] leading-snug font-medium">{sub.label}</p>
+                            <Weight value={sub.weight} small />
+                          </div>
+                          {sub.detail ? (
+                            <p className="mt-0.5 text-[12.5px] leading-relaxed text-ink-58">
+                              {sub.detail}
+                            </p>
+                          ) : null}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
+                  {c.expectedElements && c.expectedElements.length > 0 ? (
+                    <div className="mt-3">
+                      <p className="text-[12px] font-medium text-ink-42">
+                        Éléments attendus par l&apos;acheteur
+                      </p>
+                      <ul className="mt-1 list-disc space-y-0.5 pl-4 text-[12.5px] leading-relaxed text-ink-70">
+                        {c.expectedElements.map((e, j) => (
+                          <li key={j}>{e}</li>
+                        ))}
+                      </ul>
+                    </div>
                   ) : null}
                   <Sources sources={c.sources} />
                 </li>
@@ -218,6 +249,72 @@ export default async function ProjectAnalysisPage({
         </section>
       </div>
 
+      {format || constraints.length > 0 ? (
+        <div className="grid gap-8 xl:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+          <section>
+            <h2 className="mb-3 text-[17px] font-semibold tracking-[-0.02em]">
+              Cadre de réponse
+            </h2>
+            {format ? (
+              <div className="rounded-[12px] border border-line bg-white p-4 shadow-card sm:p-5">
+                <div className="flex flex-wrap items-center gap-2">
+                  <Badge tone={format.imposedFramework ? "warn" : "neutral"}>
+                    {format.imposedFramework ? "Cadre imposé" : "Structure libre"}
+                  </Badge>
+                  <span className="text-[12.5px] text-ink-58">
+                    {format.pageLimit ? `Limite : ${format.pageLimit}` : "Aucune limite de pages trouvée"}
+                  </span>
+                </div>
+                {format.structure.length > 0 ? (
+                  <ol className="mt-3 list-decimal space-y-0.5 pl-5 text-[13px] leading-relaxed text-ink-70">
+                    {format.structure.map((s, i) => (
+                      <li key={i}>{s}</li>
+                    ))}
+                  </ol>
+                ) : null}
+                {format.constraints.length > 0 ? (
+                  <ul className="mt-3 list-disc space-y-0.5 pl-4 text-[12.5px] leading-relaxed text-ink-58">
+                    {format.constraints.map((s, i) => (
+                      <li key={i}>{s}</li>
+                    ))}
+                  </ul>
+                ) : null}
+                <Sources sources={format.sources} />
+              </div>
+            ) : (
+              <Notice>Relancez l&apos;analyse pour relever le cadre de réponse imposé.</Notice>
+            )}
+          </section>
+
+          <section>
+            <h2 className="mb-3 text-[17px] font-semibold tracking-[-0.02em]">
+              Contraintes du chantier
+            </h2>
+            {constraints.length === 0 ? (
+              <Notice>Aucune contrainte particulière n&apos;a été relevée.</Notice>
+            ) : (
+              <ul className="grid gap-3 sm:grid-cols-2">
+                {constraints.map((m, i) => (
+                  <li
+                    key={`${m.label}-${i}`}
+                    className="rounded-[12px] border border-line bg-white p-4 shadow-card"
+                  >
+                    <p className="text-[11.5px] font-semibold tracking-[0.04em] text-brand uppercase">
+                      {CONSTRAINT_LABELS[m.type] ?? m.type}
+                    </p>
+                    <h3 className="mt-1 text-[13.5px] leading-snug font-semibold">{m.label}</h3>
+                    {m.detail ? (
+                      <p className="mt-1 text-[12.5px] leading-relaxed text-ink-70">{m.detail}</p>
+                    ) : null}
+                    <Sources sources={m.sources} />
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        </div>
+      ) : null}
+
       {pending === 0 ? (
         <section className="flex flex-wrap items-start justify-between gap-4 rounded-[14px] border border-line bg-white p-5 shadow-card">
           <div>
@@ -231,6 +328,25 @@ export default async function ProjectAnalysisPage({
         </section>
       ) : null}
     </div>
+  );
+}
+
+/** Une ponderation absente du dossier est dite telle quelle, jamais estimee. */
+function Weight({ value, small }: { value: string; small?: boolean }) {
+  const missing = !value || /non (pr[ée]cis|trouv)/i.test(value);
+  return (
+    <span
+      className={cn(
+        "tabular flex-none",
+        missing
+          ? "text-[12px] font-medium text-ink-42 italic"
+          : small
+            ? "text-[13px] font-semibold text-brand"
+            : "text-[18px] font-bold text-brand",
+      )}
+    >
+      {missing ? "Pondération non précisée" : value}
+    </span>
   );
 }
 

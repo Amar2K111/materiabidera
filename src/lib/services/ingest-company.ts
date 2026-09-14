@@ -1,7 +1,9 @@
 import "server-only";
+import { isOwnStoragePath } from "@/lib/storage-path";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { extractionOf, ExtractionError } from "@/lib/extraction";
 import { extensionOf } from "@/lib/documents";
+import { transcribeScannedPdf } from "./ocr";
 
 export type CompanyIngestOutcome = {
   documentId: string;
@@ -57,6 +59,12 @@ export async function ingestNextCompanyDocument(input: {
       );
     }
 
+    // Le chemin est modifiable par l'utilisateur et la lecture se fait en cle
+    // de service : on refuse tout fichier hors du dossier de son organisation.
+    if (!isOwnStoragePath(doc.storage_path as string, input.organizationId)) {
+      return await fail("Le fichier n'a pas pu être récupéré depuis le stockage.");
+    }
+
     const { data: file, error: downloadError } = await admin.storage
       .from("entreprise")
       .download(doc.storage_path as string);
@@ -65,15 +73,22 @@ export async function ingestNextCompanyDocument(input: {
       return await fail("Le fichier n'a pas pu être récupéré depuis le stockage.");
     }
 
-    const result = await extractionOf(
-      new Uint8Array(await file.arrayBuffer()),
-      fileName,
-    );
+    const bytes = new Uint8Array(await file.arrayBuffer());
+    const extracted = await extractionOf(bytes, fileName);
+    let result = extracted;
 
-    if (result.needsOcr) {
-      return await fail(
-        "Ce document est un scan sans texte sélectionnable. Fournissez une version texte pour qu'il puisse servir de source.",
-      );
+    // Scan sans texte : reconnaissance du texte, puis meme traitement.
+    if (extracted.needsOcr) {
+      const ocr = await transcribeScannedPdf({
+        admin,
+        organizationId: input.organizationId,
+        projectId: null,
+        fileName,
+        bytes,
+        pageCount: extracted.pageCount ?? 0,
+      });
+      if (!ocr.ok) return await fail(ocr.message);
+      result = { ...extracted, units: ocr.units, needsOcr: false };
     }
 
     if (result.units.length === 0) {

@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { ListChecks } from "lucide-react";
 import { getProject } from "@/lib/data/projects";
 import { listRequirements } from "@/lib/data/analysis";
+import { listMemorySections } from "@/lib/data/memory";
 import { ButtonLink } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { RequirementsMatrix } from "./requirements-matrix";
@@ -15,9 +16,10 @@ export default async function ProjectRequirementsPage({
 }) {
   const { id } = await params;
   const { exigence } = await searchParams;
-  const [project, requirements] = await Promise.all([
+  const [project, requirements, sections] = await Promise.all([
     getProject(id),
     listRequirements(id),
+    listMemorySections(id),
   ]);
 
   if (!project) notFound();
@@ -39,6 +41,9 @@ export default async function ProjectRequirementsPage({
     <RequirementsMatrix
       projectId={project.id}
       requirements={requirements}
+      sectionTitles={Object.fromEntries(
+        sections.map((s) => [s.id, `${s.number ?? ""} ${s.title}`.trim()]),
+      )}
       initialOpenId={typeof exigence === "string" ? exigence : null}
     />
   );

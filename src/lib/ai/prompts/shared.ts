@@ -13,7 +13,7 @@ export const NO_INVENTION_RULES = `REGLES ABSOLUES
    materiel, ni qualification, ni certification, ni resultat.
 2. Tu ne rapportes que ce qui figure litteralement dans les extraits fournis.
 3. Si une information demandee ne figure pas dans les extraits, tu ecris
-   exactement : "Information non trouvee dans les sources disponibles."
+   exactement : "Information non trouvée dans les sources disponibles."
    Tu ne proposes aucune valeur plausible a la place.
 4. Tu ne deduis pas une information absente a partir d'usages du secteur.
 5. Chaque affirmation que tu produis doit s'appuyer sur un ou plusieurs

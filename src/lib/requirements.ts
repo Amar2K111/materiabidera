@@ -12,11 +12,70 @@ export type CitedSource = {
   label: string;
 };
 
+export type AwardSubcriterion = {
+  label: string;
+  /** Ponderation telle qu'ecrite, ou "Non precisee". */
+  weight: string;
+  /** Valeur numerique, uniquement si elle figure dans le document. */
+  weightValue: number | null;
+  detail: string;
+  sources: CitedSource[];
+};
+
 export type AwardCriterion = {
   label: string;
   weight: string;
+  /** Absent des analyses anterieures au moteur detaille. */
+  weightValue?: number | null;
+  expectedElements?: string[];
+  subcriteria?: AwardSubcriterion[];
   detail: string;
   sources: CitedSource[];
+};
+
+/** Cadre de reponse impose par le dossier. */
+export type ResponseFormat = {
+  imposedFramework: boolean;
+  structure: string[];
+  pageLimit: string | null;
+  constraints: string[];
+  sources: CitedSource[];
+};
+
+export type MarketConstraintType =
+  | "SITE_OCCUPE"
+  | "ACCES"
+  | "COACTIVITE"
+  | "HORAIRES"
+  | "NUISANCES"
+  | "SECURITE"
+  | "ENVIRONNEMENT"
+  | "DECHETS"
+  | "PLANNING"
+  | "PHASAGE"
+  | "INTERFACES"
+  | "AUTRE";
+
+export type MarketConstraint = {
+  type: MarketConstraintType;
+  label: string;
+  detail: string;
+  sources: CitedSource[];
+};
+
+export const CONSTRAINT_LABELS: Record<MarketConstraintType, string> = {
+  SITE_OCCUPE: "Site occupé",
+  ACCES: "Accès",
+  COACTIVITE: "Coactivité",
+  HORAIRES: "Horaires",
+  NUISANCES: "Nuisances",
+  SECURITE: "Sécurité",
+  ENVIRONNEMENT: "Environnement",
+  DECHETS: "Déchets",
+  PLANNING: "Planning",
+  PHASAGE: "Phasage",
+  INTERFACES: "Interfaces",
+  AUTRE: "Autre",
 };
 
 export type VigilancePoint = {
@@ -37,6 +96,9 @@ export type DceAnalysis = {
   site_visit: string | null;
   award_criteria: AwardCriterion[];
   vigilance_points: VigilancePoint[];
+  /** Presents une fois la migration 0008 appliquee. */
+  response_format?: ResponseFormat | null;
+  market_context?: { constraints: MarketConstraint[] } | null;
   provider: string | null;
   model: string | null;
   generated_at: string;
@@ -74,6 +136,42 @@ export type Requirement = {
   is_manual: boolean;
   position: number;
   requirement_sources: RequirementSource[];
+  /** Presents une fois la migration 0008 appliquee. */
+  mandatory?: boolean | null;
+  criterion_ref?: string | null;
+  /** Attente implicite : une interpretation, jamais une exigence contractuelle. */
+  buyer_intent?: string | null;
+  coverage?: RequirementCoverage | null;
+};
+
+export type CoverageStatus =
+  | "covered"
+  | "partially_covered"
+  | "not_covered"
+  | "needs_company_information"
+  | "not_applicable";
+
+/** Resultat du dernier controle pour une exigence. */
+export type RequirementCoverage = {
+  status: CoverageStatus;
+  /** Chapitres ou l'exigence est traitee. */
+  sectionIds: string[];
+  /** Ce qui manque pour une couverture complete. */
+  missing: string[];
+  /** Ce qui est deja present dans le memoire. */
+  present: string[];
+  checkedAt: string;
+};
+
+export const COVERAGE_LABELS: Record<
+  CoverageStatus,
+  { label: string; tone: "ok" | "warn" | "risk" | "neutral" }
+> = {
+  covered: { label: "Couverte", tone: "ok" },
+  partially_covered: { label: "Partielle", tone: "warn" },
+  not_covered: { label: "Absente", tone: "risk" },
+  needs_company_information: { label: "Info entreprise manquante", tone: "warn" },
+  not_applicable: { label: "Hors mémoire", tone: "neutral" },
 };
 
 export const CATEGORY_LABELS: Record<RequirementCategory, string> = {

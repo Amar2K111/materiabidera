@@ -24,6 +24,7 @@ const FIX_SEGMENT: Record<string, { segment: string; label: string }> = {
   auto_coverage: { segment: "exigences", label: "Exigences" },
   auto_sources: { segment: "memoire", label: "Mémoire" },
   auto_no_blocking: { segment: "controle", label: "Contrôle" },
+  auto_readiness: { segment: "controle", label: "Contrôle" },
 };
 
 export function ChecklistPanel({

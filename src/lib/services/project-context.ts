@@ -1,9 +1,14 @@
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { CitedSource } from "@/lib/requirements";
+import type {
+  AwardCriterion,
+  CitedSource,
+  MarketConstraint,
+  ResponseFormat,
+} from "@/lib/requirements";
 import {
   buildCompanySnapshot,
-  renderCompanySnapshot,
+  findCompanyEvidence,
   type CompanySnapshot,
 } from "./company-context";
 
@@ -24,6 +29,8 @@ export type ProjectContext = {
   dceSummary: string;
   requirementLines: string[];
   companyBase: string;
+  /** Criteres de notation, avec sous-criteres lorsqu'ils ont ete releves. */
+  criteria: AwardCriterion[];
   snapshot: CompanySnapshot;
   sourcesById: Map<string, CitedSource[]>;
   /** Correspondance entre reference citable (R1, R2...) et exigence reelle. */
@@ -95,7 +102,7 @@ export async function buildProjectContext(
   });
 
   // --- Base entreprise --------------------------------------------------------
-  for (const item of snapshot.items) {
+  for (const item of [...snapshot.items, ...snapshot.documents]) {
     sourcesById.set(item.id, [
       {
         documentId: item.recordId,
@@ -108,6 +115,7 @@ export async function buildProjectContext(
 
   // --- Analyse du DCE ---------------------------------------------------------
   let dceSummary = "Le dossier n'a pas encore été analysé.";
+  let criteria: AwardCriterion[] = [];
 
   if (analysis) {
     const vigilanceLines = (
@@ -123,18 +131,41 @@ export async function buildProjectContext(
       return `[${id}] (${point.severity}) ${point.title} : ${point.detail}`;
     });
 
-    const criteriaLines = (
-      (analysis.award_criteria ?? []) as Array<{
-        label: string;
-        weight: string;
-        detail: string;
-        sources: CitedSource[];
-      }>
-    ).map((c, index) => {
+    criteria = (analysis.award_criteria ?? []) as AwardCriterion[];
+    const criteriaLines = criteria.flatMap((c, index) => {
       const id = `K${index + 1}`;
       sourcesById.set(id, c.sources ?? []);
-      return `[${id}] ${c.label} (${c.weight}) : ${c.detail}`;
+      const lines = [
+        `[${id}] ${c.label} (${c.weight}) : ${c.detail}`,
+        ...(c.expectedElements ?? []).map((e) => `    élément apprécié : ${e}`),
+      ];
+      (c.subcriteria ?? []).forEach((sub, subIndex) => {
+        const subId = `${id}.${subIndex + 1}`;
+        sourcesById.set(subId, sub.sources ?? []);
+        lines.push(`  [${subId}] sous-critère ${sub.label} (${sub.weight}) : ${sub.detail}`);
+      });
+      return lines;
     });
+
+    const format = (analysis.response_format ?? null) as ResponseFormat | null;
+    const formatLines = format
+      ? [
+          `Cadre de réponse imposé : ${format.imposedFramework ? "oui" : "non"}`,
+          ...(format.structure.length > 0
+            ? [`Structure imposée : ${format.structure.join(" ; ")}`]
+            : []),
+          `Limite de pages : ${format.pageLimit ?? "non précisée"}`,
+          ...format.constraints.map((c) => `Contrainte de forme : ${c}`),
+        ]
+      : [];
+
+    const constraints = ((analysis.market_context?.constraints ?? []) as MarketConstraint[]).map(
+      (m, index) => {
+        const id = `M${index + 1}`;
+        sourcesById.set(id, m.sources ?? []);
+        return `[${id}] (${m.type}) ${m.label} : ${m.detail}`;
+      },
+    );
 
     dceSummary = [
       `Objet : ${analysis.subject ?? "non precise"}`,
@@ -147,11 +178,24 @@ export async function buildProjectContext(
       "",
       "Criteres d'attribution :",
       criteriaLines.join("\n") || "Aucun critere identifie.",
+      ...(formatLines.length > 0 ? ["", ...formatLines] : []),
+      "",
+      "Contraintes d'execution du marche :",
+      constraints.join("\n") || "Aucune contrainte particuliere relevee.",
       "",
       "Points de vigilance :",
       vigilanceLines.join("\n") || "Aucun point de vigilance releve.",
     ].join("\n");
   }
+
+  // Vue d'ensemble de la base entreprise, orientee vers ce marche : les fiches
+  // les plus pertinentes et les passages de bibliotheque lies au dossier.
+  // Plusieurs requetes : l'objet du marche, puis chaque exigence. Un passage
+  // proche d'une seule exigence importante reste ainsi retrouve.
+  const marketQueries = [
+    [project?.name, analysis?.subject, analysis?.lot].filter(Boolean).join("\n"),
+    ...requirementLines.slice(0, 99),
+  ].filter((q) => q.trim().length > 0);
 
   return {
     projectName: (project?.name as string) ?? "Consultation",
@@ -160,7 +204,13 @@ export async function buildProjectContext(
     requirementLines,
     companyBase: snapshot.isEmpty
       ? "La base entreprise est vide : aucune référence, aucun moyen, aucune certification n'a été renseigné."
-      : renderCompanySnapshot(snapshot),
+      : (
+          await findCompanyEvidence(admin, input.organizationId, snapshot, marketQueries, {
+            itemLimit: 80,
+            documentLimit: 12,
+          })
+        ).text,
+    criteria,
     snapshot,
     sourcesById,
     requirementIdsByRef,

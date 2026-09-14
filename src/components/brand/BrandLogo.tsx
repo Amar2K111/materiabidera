@@ -2,7 +2,6 @@ import Image from "next/image";
 
 const WORDMARK_WIDTH = 302;
 const WORDMARK_HEIGHT = 52;
-const ICON_SIZE = 48;
 
 const LOGO_SRC = {
   default: "/materiabtp-assets/images/logo-materiabtp-wordmark.png",

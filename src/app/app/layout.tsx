@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { BrandLogo, BrandMark } from "@/components/brand/BrandLogo";
 import { LogOut, Plus } from "lucide-react";
 import { getAppContext } from "@/lib/data/context";
@@ -16,6 +17,10 @@ export default async function AppLayout({
   children: React.ReactNode;
 }) {
   const ctx = await getAppContext();
+
+  // Hors demo, sans session, le middleware a deja renvoye vers la connexion.
+  // Un compte sans entreprise passe d'abord par l'onboarding (section 39).
+  if (!ctx.isGuest && !ctx.hasOrganization) redirect("/onboarding");
 
   // Les initiales designent l'entreprise affichee a cote, pas le compte.
   const initials = (ctx.organization.name || ctx.fullName || "?")

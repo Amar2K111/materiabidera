@@ -1,5 +1,6 @@
 import { createClient as createSupabaseAdmin } from "@supabase/supabase-js";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { isDemoAccessEnabled } from "@/lib/demo-access";
 
 const DEFAULT_DEMO_EMAIL = "admin@materiabidera.fr";
 
@@ -7,6 +8,8 @@ const DEFAULT_DEMO_EMAIL = "admin@materiabidera.fr";
 export async function ensureDemoSessionMiddleware(
   supabase: SupabaseClient,
 ): Promise<boolean> {
+  if (!isDemoAccessEnabled()) return false;
+
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !serviceKey) return false;

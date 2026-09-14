@@ -21,10 +21,27 @@ export const StrategySchema = z.object({
 
   companyMatches: z.array(
     z.object({
-      /** Identifiant d'une fiche de la base entreprise. */
+      /** Identifiant d'une fiche ou d'un passage de la base entreprise. */
       sourceId: z.string(),
       /** En quoi cet element sert la reponse a cette consultation. */
       why: z.string().max(600),
+    }),
+  ),
+
+  /**
+   * Informations absentes de la base entreprise qui amelioreraient nettement
+   * la reponse. Priorisees : impact x poids du critere x absence de preuve.
+   */
+  informationRequests: z.array(
+    z.object({
+      /** Question posee a l'entreprise, formulee pour etre completee. */
+      question: z.string().max(300),
+      /** Pourquoi cette information compte pour ce marche precis. */
+      why: z.string().max(400),
+      /** Critere ou sous-critere concerne, tel qu'intitule dans le dossier. */
+      criterion: z.string().max(200).nullable(),
+      impact: z.enum(["HIGH", "MEDIUM", "LOW"]),
+      sourceIds: z.array(z.string()),
     }),
   ),
 });
@@ -68,6 +85,18 @@ REGLES PROPRES A CETTE TACHE
 - Tu evites les conseils generiques applicables a n'importe quel marche. Chaque
   axe et chaque recommandation doit s'ancrer dans une particularite citee.
 - Tu produis entre trois et huit axes prioritaires.
+- Un element differenciant n'est retenu que s'il est prouve par la base
+  entreprise. Tu n'inventes aucun avantage concurrentiel.
+
+INFORMATIONS A DEMANDER
+- Tu listes au plus six informations absentes de la base entreprise dont
+  l'ajout renforcerait nettement la reponse (par exemple : un critere pondere
+  sur les moyens humains alors qu'aucun encadrant n'est renseigne).
+- Tu les classes par priorite : impact sur la reponse x poids du critere x
+  absence de preuve. HIGH seulement si un critere important resterait sans
+  preuve.
+- Tu ne demandes pas ce qui figure deja dans la base, ni ce que le dossier ne
+  requiert pas.
 
 FORMAT DE SORTIE
 Un objet JSON conforme au schema impose, sans texte autour.`;

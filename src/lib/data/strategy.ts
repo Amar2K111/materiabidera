@@ -1,5 +1,6 @@
 import "server-only";
 import { createClient } from "@/lib/supabase/server";
+import { isEngineSchemaReady } from "@/lib/engine/schema";
 import { dedupeCited, type CitedSource } from "@/lib/requirements";
 import { stripCitationCodes } from "@/lib/citations";
 
@@ -23,10 +24,20 @@ export type CompanyMatch = {
   why: string;
 };
 
+export type InformationRequest = {
+  question: string;
+  why: string;
+  criterion: string | null;
+  impact: "HIGH" | "MEDIUM" | "LOW";
+  sources: CitedSource[];
+};
+
 export type TenderStrategy = {
   priorities: StrategyPriority[];
   recommendations: StrategyRecommendation[];
   company_matches: CompanyMatch[];
+  /** Present une fois la migration 0008 appliquee. */
+  information_requests?: InformationRequest[] | null;
   generated_at: string;
 };
 
@@ -36,12 +47,16 @@ export async function getStrategy(
   const supabase = await createClient();
   const { data } = await supabase
     .from("tender_strategies")
-    .select("priorities, recommendations, company_matches, generated_at")
+    .select(
+      (await isEngineSchemaReady())
+        ? "priorities, recommendations, company_matches, information_requests, generated_at"
+        : "priorities, recommendations, company_matches, generated_at",
+    )
     .eq("project_id", projectId)
     .maybeSingle();
 
   if (!data) return null;
-  const strategy = data as TenderStrategy;
+  const strategy = data as unknown as TenderStrategy;
   for (const p of strategy.priorities ?? []) {
     p.rationale = stripCitationCodes(p.rationale);
     p.sources = dedupeCited(p.sources ?? []);
@@ -52,6 +67,10 @@ export async function getStrategy(
   }
   for (const m of strategy.company_matches ?? []) {
     m.why = stripCitationCodes(m.why);
+  }
+  for (const q of strategy.information_requests ?? []) {
+    q.why = stripCitationCodes(q.why);
+    q.sources = dedupeCited(q.sources ?? []);
   }
   return strategy;
 }

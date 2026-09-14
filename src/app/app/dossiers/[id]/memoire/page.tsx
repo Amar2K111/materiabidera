@@ -1,15 +1,21 @@
 import { notFound } from "next/navigation";
 import { BookText } from "lucide-react";
 import { getProject } from "@/lib/data/projects";
-import { getDceAnalysis } from "@/lib/data/analysis";
+import { getDceAnalysis, listRequirements } from "@/lib/data/analysis";
 import { listMemorySections } from "@/lib/data/memory";
+import { getQualityCheck } from "@/lib/data/quality";
+import { isEngineSchemaReady } from "@/lib/engine/schema";
 import { getAppContext } from "@/lib/data/context";
 import { isAiConfigured } from "@/lib/ai";
 import { OperationButton } from "@/components/app/operation-button";
 import { ButtonLink } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Notice } from "@/components/ui/notice";
-import { MemoryEditor } from "./memory-editor";
+import {
+  MemoryEditor,
+  type SectionAlert,
+  type SectionRequirement,
+} from "./memory-editor";
 
 export default async function MemoryPage({
   params,
@@ -20,11 +26,14 @@ export default async function MemoryPage({
 }) {
   const { id } = await params;
   const { chapitre } = await searchParams;
-  const [ctx, project, analysis, sections] = await Promise.all([
+  const [ctx, project, analysis, sections, requirements, check, engine] = await Promise.all([
     getAppContext(),
     getProject(id),
     getDceAnalysis(id),
     listMemorySections(id),
+    listRequirements(id),
+    getQualityCheck(id),
+    isEngineSchemaReady(),
   ]);
 
   if (!project || !ctx?.organization) notFound();
@@ -76,11 +85,34 @@ export default async function MemoryPage({
     );
   }
 
+  const requirementMap: Record<string, SectionRequirement> = {};
+  for (const r of requirements) {
+    requirementMap[r.id] = {
+      text: r.text,
+      mandatory: Boolean(r.mandatory),
+      coverage: r.coverage?.status ?? null,
+      covered: r.status === "COVERED",
+    };
+  }
+
+  const alerts: Record<string, SectionAlert[]> = {};
+  for (const issue of check?.quality_issues ?? []) {
+    if (!issue.section_id || issue.resolved_at) continue;
+    (alerts[issue.section_id] ??= []).push({
+      id: issue.id,
+      severity: issue.severity,
+      title: issue.title,
+    });
+  }
+
   return (
     <MemoryEditor
       projectId={project.id}
       organizationId={ctx.organization.id}
       sections={sections}
+      requirements={requirementMap}
+      alerts={alerts}
+      versionsEnabled={engine}
       initialSectionId={typeof chapitre === "string" ? chapitre : null}
     />
   );

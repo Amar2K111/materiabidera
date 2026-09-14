@@ -9,6 +9,7 @@ import {
 } from "@/lib/ai/prompts/strategy";
 import { buildProjectContext, resolveSources } from "./project-context";
 import { advanceProjectStatus } from "./project-status";
+import { isEngineSchemaReady } from "@/lib/engine/schema";
 import { stripCitationCodes } from "@/lib/citations";
 
 export type StrategyOutcome = {
@@ -74,7 +75,9 @@ export async function runStrategy(input: {
 
     // Un rapprochement qui ne pointe pas vers une fiche existante est ecarte :
     // il ne doit jamais apparaitre comme un element reel de la base.
-    const byId = new Map(context.snapshot.items.map((i) => [i.id, i]));
+    const byId = new Map(
+      [...context.snapshot.items, ...context.snapshot.documents].map((i) => [i.id, i]),
+    );
     const matches = value.companyMatches.flatMap((m) => {
       const item = byId.get(m.sourceId);
       if (!item) return [];
@@ -95,6 +98,17 @@ export async function runStrategy(input: {
         priorities,
         recommendations,
         company_matches: matches,
+        ...((await isEngineSchemaReady())
+          ? {
+              information_requests: value.informationRequests.map((r) => ({
+                question: stripCitationCodes(r.question),
+                why: stripCitationCodes(r.why),
+                criterion: r.criterion,
+                impact: r.impact,
+                sources: resolveSources(r.sourceIds, context.sourcesById),
+              })),
+            }
+          : {}),
         provider: provider.id,
         model: provider.model,
         generated_at: new Date().toISOString(),

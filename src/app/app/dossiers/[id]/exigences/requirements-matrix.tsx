@@ -4,8 +4,10 @@ import { useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { ChevronRight, Quote, Search, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import Link from "next/link";
 import {
   CATEGORY_LABELS,
+  COVERAGE_LABELS,
   PRIORITY_LABELS,
   STATUS_LABELS,
   type Requirement,
@@ -22,6 +24,13 @@ import { cn } from "@/lib/utils/cn";
 
 const STATUSES: RequirementStatus[] = ["TO_HANDLE", "COVERED", "MISSING"];
 
+const COVERAGE_TONE = {
+  ok: "bg-ok-wash text-ok",
+  warn: "bg-warn-wash text-warn",
+  risk: "bg-risk-wash text-risk",
+  neutral: "bg-line-soft text-ink-58",
+};
+
 function shortSource(source: RequirementSource | undefined): string {
   if (!source) return "Sans source";
   const name = source.project_documents
@@ -33,10 +42,12 @@ function shortSource(source: RequirementSource | undefined): string {
 export function RequirementsMatrix({
   projectId,
   requirements,
+  sectionTitles,
   initialOpenId,
 }: {
   projectId: string;
   requirements: Requirement[];
+  sectionTitles: Record<string, string>;
   initialOpenId?: string | null;
 }) {
   const router = useRouter();
@@ -49,9 +60,11 @@ export function RequirementsMatrix({
 
   // L'exigence ouverte suit l'adresse : un lien depuis le controle qualite
   // ouvre directement la bonne fiche.
-  useEffect(() => {
+  const [linkedId, setLinkedId] = useState(initialOpenId ?? null);
+  if ((initialOpenId ?? null) !== linkedId) {
+    setLinkedId(initialOpenId ?? null);
     setOpenId(initialOpenId ?? null);
-  }, [initialOpenId]);
+  }
 
   const counts = useMemo(() => {
     const base = { COVERED: 0, TO_HANDLE: 0, MISSING: 0 };
@@ -239,9 +252,26 @@ export function RequirementsMatrix({
                       <span>{shortSource(r.requirement_sources[0])}</span>
                       <span>Priorité {PRIORITY_LABELS[r.priority].toLowerCase()}</span>
                     </span>
-                    {r.is_manual ? (
-                      <span className="mt-1 block text-[11.5px] text-ink-42">
-                        Ajoutée manuellement
+                    {r.mandatory || r.coverage || r.is_manual ? (
+                      <span className="mt-1.5 flex flex-wrap items-center gap-1.5">
+                        {r.mandatory ? (
+                          <span className="rounded-[5px] bg-ink/[0.06] px-1.5 py-0.5 text-[11px] font-semibold text-ink-70">
+                            Obligatoire
+                          </span>
+                        ) : null}
+                        {r.coverage ? (
+                          <span
+                            className={cn(
+                              "rounded-[5px] px-1.5 py-0.5 text-[11px] font-semibold",
+                              COVERAGE_TONE[COVERAGE_LABELS[r.coverage.status].tone],
+                            )}
+                          >
+                            Mémoire : {COVERAGE_LABELS[r.coverage.status].label.toLowerCase()}
+                          </span>
+                        ) : null}
+                        {r.is_manual ? (
+                          <span className="text-[11.5px] text-ink-42">Ajoutée manuellement</span>
+                        ) : null}
                       </span>
                     ) : null}
                   </span>
@@ -283,6 +313,8 @@ export function RequirementsMatrix({
         <RequirementPanel
           key={open.id}
           requirement={open}
+          projectId={projectId}
+          sectionTitles={sectionTitles}
           onClose={() => openRequirement(null)}
           onUpdate={update}
         />
@@ -293,10 +325,14 @@ export function RequirementsMatrix({
 
 function RequirementPanel({
   requirement,
+  projectId,
+  sectionTitles,
   onClose,
   onUpdate,
 }: {
   requirement: Requirement;
+  projectId: string;
+  sectionTitles: Record<string, string>;
   onClose: () => void;
   onUpdate: (id: string, patch: Partial<Requirement>) => Promise<void>;
 }) {
@@ -346,7 +382,64 @@ function RequirementPanel({
             <Badge tone={requirement.priority === "HIGH" ? "warn" : "neutral"}>
               Priorité {PRIORITY_LABELS[requirement.priority].toLowerCase()}
             </Badge>
+            {requirement.mandatory ? <Badge tone="risk">Obligatoire</Badge> : null}
           </div>
+          {requirement.criterion_ref ? (
+            <p className="mt-2 text-[12.5px] text-ink-58">
+              Critère concerné : <span className="font-medium text-ink-70">{requirement.criterion_ref}</span>
+            </p>
+          ) : null}
+
+          {requirement.coverage ? (
+            <section className="mt-6 rounded-[10px] border border-line p-3.5">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <h3 className="text-[12.5px] font-semibold text-ink-42">
+                  Couverture dans le mémoire
+                </h3>
+                <Badge tone={COVERAGE_LABELS[requirement.coverage.status].tone}>
+                  {COVERAGE_LABELS[requirement.coverage.status].label}
+                </Badge>
+              </div>
+              {requirement.coverage.present.length > 0 ? (
+                <div className="mt-2.5">
+                  <p className="text-[12px] font-medium text-ok">Déjà présent</p>
+                  <ul className="mt-0.5 list-disc space-y-0.5 pl-4 text-[13px] leading-relaxed text-ink-70">
+                    {requirement.coverage.present.map((p, i) => (
+                      <li key={i}>{p}</li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+              {requirement.coverage.missing.length > 0 ? (
+                <div className="mt-2.5">
+                  <p className="text-[12px] font-medium text-warn">Manquant</p>
+                  <ul className="mt-0.5 list-disc space-y-0.5 pl-4 text-[13px] leading-relaxed text-ink-70">
+                    {requirement.coverage.missing.map((m, i) => (
+                      <li key={i}>{m}</li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+              {requirement.coverage.sectionIds.some((id) => sectionTitles[id]) ? (
+                <div className="mt-2.5 flex flex-wrap gap-1.5">
+                  {requirement.coverage.sectionIds
+                    .filter((id) => sectionTitles[id])
+                    .map((id) => (
+                      <Link
+                        key={id}
+                        href={`/app/dossiers/${projectId}/memoire?chapitre=${id}`}
+                        className="rounded-[6px] bg-brand-wash px-2 py-1 text-[12px] font-medium text-brand hover:bg-brand/10"
+                      >
+                        {sectionTitles[id]}
+                      </Link>
+                    ))}
+                </div>
+              ) : null}
+              <p className="mt-2.5 text-[11.5px] text-ink-42">
+                Constaté lors du dernier contrôle qualité.
+              </p>
+            </section>
+          ) : null}
 
           <section className="mt-6">
             <h3 className="text-[12.5px] font-semibold text-ink-42">Sources</h3>
@@ -389,6 +482,20 @@ function RequirementPanel({
               </h3>
               <p className="mt-2 text-[13.5px] leading-relaxed text-ink-70">
                 {requirement.expected_answer}
+              </p>
+            </section>
+          ) : null}
+
+          {requirement.buyer_intent ? (
+            <section className="mt-6 rounded-[10px] border border-dashed border-line bg-paper p-3.5">
+              <h3 className="text-[12.5px] font-semibold text-ink-42">
+                Interprétation : attente implicite de l&apos;acheteur
+              </h3>
+              <p className="mt-1.5 text-[13px] leading-relaxed text-ink-70">
+                {requirement.buyer_intent}
+              </p>
+              <p className="mt-1.5 text-[11.5px] text-ink-42">
+                Lecture proposée par MateriaBTP, pas une exigence écrite du dossier.
               </p>
             </section>
           ) : null}

@@ -17,6 +17,15 @@ export const RequirementSchema = z.object({
   priority: z.enum(["HIGH", "MEDIUM", "LOW"]),
   /** Ce que la reponse devra apporter concretement. */
   expectedAnswer: z.string().max(600),
+  /** Vrai si le document la rend obligatoire (rejet, "devra", "sous peine"). */
+  mandatory: z.boolean(),
+  /** Intitule exact du critere ou sous-critere de notation concerne, sinon null. */
+  criterionLabel: z.string().max(200).nullable(),
+  /**
+   * Ce que l'acheteur cherche vraisemblablement a verifier. C'est une
+   * interpretation prudente, affichee comme telle, jamais une exigence.
+   */
+  buyerIntent: z.string().max(400),
   /** Identifiants des extraits qui fondent cette exigence. */
   sourceIds: z.array(z.string()).min(1),
   /** Citation litterale, recopiee sans reformulation. */
@@ -76,6 +85,14 @@ REGLES PROPRES A CETTE TACHE
   meme chose, tu produis une seule exigence citant les deux identifiants.
 - Si les extraits ne contiennent aucune exigence, tu retournes une liste vide.
   Tu n'en fabriques pas pour remplir.
+- "mandatory" est vrai seulement si le document rend l'exigence obligatoire
+  (formulation imperative, rejet, penalite, "obligatoirement").
+- "criterionLabel" reprend l'intitule exact d'un critere ou sous-critere de la
+  liste fournie lorsque l'exigence y contribue ; null sinon. Tu n'inventes
+  aucun critere.
+- "buyerIntent" dit en une phrase ce que l'acheteur cherche a verifier (par
+  exemple : "s'assurer que l'equipe annoncee sera reellement mobilisee"). C'est
+  une interpretation : elle ne doit contenir aucun fait absent du document.
 
 FORMAT DE SORTIE
 Un objet JSON conforme au schema impose, sans texte autour.`;
@@ -83,8 +100,12 @@ Un objet JSON conforme au schema impose, sans texte autour.`;
 export function requirementsPrompt(input: {
   projectName: string;
   excerpts: Excerpt[];
+  criteria?: string[];
 }): string {
   return `Consultation : ${input.projectName}
+
+Criteres et sous-criteres de notation identifies :
+${input.criteria && input.criteria.length > 0 ? input.criteria.map((c) => `- ${c}`).join("\n") : "Aucun critere identifie."}
 
 Extraits du dossier de consultation :
 

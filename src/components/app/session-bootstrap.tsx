@@ -9,13 +9,12 @@ import { useRouter } from "next/navigation";
  */
 export function SessionBootstrap({ isGuest }: { isGuest: boolean }) {
   const router = useRouter();
-  const [pending, setPending] = useState(isGuest);
+  const [done, setDone] = useState(false);
+  // Un visiteur authentifie n'a rien a initialiser.
+  const pending = isGuest && !done;
 
   useEffect(() => {
-    if (!isGuest) {
-      setPending(false);
-      return;
-    }
+    if (!isGuest) return;
 
     let cancelled = false;
 
@@ -24,7 +23,7 @@ export function SessionBootstrap({ isGuest }: { isGuest: boolean }) {
         const res = await fetch("/api/auth/demo", { method: "POST" });
         if (!cancelled && res.ok) router.refresh();
       } finally {
-        if (!cancelled) setPending(false);
+        if (!cancelled) setDone(true);
       }
     })();
 

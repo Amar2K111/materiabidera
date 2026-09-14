@@ -2,10 +2,12 @@ import Anthropic from "@anthropic-ai/sdk";
 import { z } from "zod";
 import {
   AiError,
+  type AiFile,
   type AiProvider,
   type AiResult,
   type GenerateObjectInput,
   type GenerateTextInput,
+  validateStructured,
 } from "./types";
 
 const DEFAULT_MODEL = "claude-opus-5";
@@ -19,13 +21,31 @@ export function createAnthropicProvider(
   async function call(
     input: GenerateTextInput,
     jsonSchema?: Record<string, unknown>,
+    file?: AiFile,
   ) {
     try {
       const response = await client.messages.create({
         model,
         max_tokens: input.maxOutputTokens ?? 16000,
         system: input.system,
-        messages: [{ role: "user", content: input.prompt }],
+        messages: [
+          {
+            role: "user",
+            content: file
+              ? [
+                  {
+                    type: "document" as const,
+                    source: {
+                      type: "base64" as const,
+                      media_type: file.mimeType,
+                      data: Buffer.from(file.data).toString("base64"),
+                    },
+                  },
+                  { type: "text" as const, text: input.prompt },
+                ]
+              : input.prompt,
+          },
+        ],
         ...(jsonSchema
           ? {
               output_config: {
@@ -75,13 +95,27 @@ export function createAnthropicProvider(
     async generateObject<T>(
       input: GenerateObjectInput<T>,
     ): Promise<AiResult<T>> {
+      return generateStructured(input);
+    },
+
+    async generateObjectFromFile<T>(
+      input: GenerateObjectInput<T> & { file: AiFile },
+    ): Promise<AiResult<T>> {
+      return generateStructured(input, input.file);
+    },
+  };
+
+  async function generateStructured<T>(
+    input: GenerateObjectInput<T>,
+    file?: AiFile,
+  ): Promise<AiResult<T>> {
       // Le schema est impose au modele, puis la sortie est revalidee :
       // rien n'est enregistre sans avoir ete verifie (section 33).
       const jsonSchema = z.toJSONSchema(input.schema, {
         target: "draft-2020-12",
       }) as Record<string, unknown>;
 
-      const { text, usage } = await call(input, jsonSchema);
+      const { text, usage } = await call(input, jsonSchema, file);
 
       let parsed: unknown;
       try {
@@ -90,12 +124,6 @@ export function createAnthropicProvider(
         throw new AiError("Réponse non exploitable.", "invalid_output");
       }
 
-      const result = input.schema.safeParse(parsed);
-      if (!result.success) {
-        throw new AiError("Réponse hors format attendu.", "invalid_output");
-      }
-
-      return { value: result.data, usage };
-    },
-  };
+      return { value: validateStructured(input.schema, parsed), usage };
+  }
 }

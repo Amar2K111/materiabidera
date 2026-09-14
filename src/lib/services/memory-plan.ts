@@ -7,7 +7,9 @@ import {
   MemoryPlanSchema,
   memoryPlanPrompt,
 } from "@/lib/ai/prompts/memory-plan";
+import { stripCitationCodes } from "@/lib/citations";
 import { buildProjectContext } from "./project-context";
+import { isEngineSchemaReady } from "@/lib/engine/schema";
 
 export type PlanOutcome = { sections: number; replaced: boolean };
 
@@ -21,7 +23,10 @@ export async function runMemoryPlan(input: {
   const admin = createAdminClient();
   const provider = getAiProvider();
 
-  const context = await buildProjectContext(admin, input);
+  const [context, engine] = await Promise.all([
+    buildProjectContext(admin, input),
+    isEngineSchemaReady(),
+  ]);
   if (!context.hasAnalysis) {
     throw new AiError(
       "Analyse absente.",
@@ -146,6 +151,8 @@ export async function runMemoryPlan(input: {
           .map((ref) => context.requirementIdsByRef.get(ref))
           .filter((id): id is string => Boolean(id)),
         word_target: section.wordTarget,
+        // Le critere est repris tel quel dans l''interface : sans identifiant interne.
+        ...(engine ? { criterion_ref: stripCitationCodes(section.criterion) } : {}),
       })),
     );
 

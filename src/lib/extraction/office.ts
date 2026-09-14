@@ -4,6 +4,7 @@ import {
   type ExtractedUnit,
   type ExtractionResult,
 } from "./types";
+import { splitIntoPassages } from "./chunk";
 
 /**
  * DOCX : le format ne porte aucune pagination, celle-ci n'existant qu'au
@@ -22,12 +23,17 @@ export async function extractDocx(
     });
 
     const text = result.value.replace(/\n{3,}/g, "\n\n").trim();
+    const passages = splitIntoPassages(text, "\n\n");
 
     return {
-      units:
-        text.length > 0
-          ? [{ pageNumber: null, label: "document", text }]
-          : [],
+      units: passages.map((passage, index) => ({
+        pageNumber: null,
+        label:
+          passages.length === 1
+            ? "document"
+            : `passage ${index + 1} sur ${passages.length}`,
+        text: passage,
+      })),
       pageCount: null,
       needsOcr: false,
     };
@@ -109,28 +115,48 @@ export async function extractXlsx(
 
     for (const [index, path] of sheetFiles.entries()) {
       const xml = await zip.file(path)!.async("string");
-      const values: string[] = [];
+      const lines: string[] = [];
 
-      for (const cell of xml.matchAll(/<c\b([^>]*)>([\s\S]*?)<\/c>/g)) {
-        const attrs = cell[1];
-        const body = cell[2];
-        const isShared = /\bt="s"/.test(attrs);
-        const raw = textOfTags(body, "v")[0] ?? "";
+      // Une ligne du tableur reste une ligne de texte, cellules separees par
+      // " | " : une ligne de DPGF garde sa designation, son unite et sa
+      // quantite ensemble.
+      for (const row of xml.matchAll(/<row\b[^>]*?(?:\/>|>([\s\S]*?)<\/row>)/g)) {
+        const rowBody = row[1] ?? "";
+        const values: string[] = [];
 
-        if (isShared) {
-          const value = shared[Number(raw)];
-          if (value) values.push(value);
-        } else {
-          const inline = textOfTags(body, "t").join("");
-          const value = inline || raw;
-          if (value) values.push(value);
+        // Une cellule vide s'ecrit souvent <c r="B2" s="3"/> : elle ne doit
+        // pas absorber la cellule suivante.
+        for (const cell of rowBody.matchAll(/<c\b([^>]*?)(?:\/>|>([\s\S]*?)<\/c>)/g)) {
+          const attrs = cell[1];
+          const body = cell[2] ?? "";
+          if (!body) continue;
+          const isShared = /\bt="s"/.test(attrs);
+          const raw = textOfTags(body, "v")[0] ?? "";
+
+          const value = isShared
+            ? (shared[Number(raw)] ?? "")
+            : textOfTags(body, "t").join("") || raw;
+          const clean = value.replace(/\s+/g, " ").trim();
+          if (clean) values.push(clean);
         }
+
+        if (values.length > 0) lines.push(values.join(" | "));
       }
 
-      const text = values.join(" ").replace(/\s+/g, " ").trim();
+      const text = lines.join("\n").trim();
       if (text.length > 0) {
-        const name = sheetNames[index] ?? `feuille ${index + 1}`;
-        units.push({ pageNumber: null, label: `feuille ${name}`, text });
+        const name = sheetNames[index] ?? `${index + 1}`;
+        const passages = splitIntoPassages(text, "\n");
+        passages.forEach((passage, part) => {
+          units.push({
+            pageNumber: null,
+            label:
+              passages.length === 1
+                ? `feuille ${name}`
+                : `feuille ${name}, partie ${part + 1} sur ${passages.length}`,
+            text: passage,
+          });
+        });
       }
     }
 

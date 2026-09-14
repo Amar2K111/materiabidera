@@ -1,4 +1,10 @@
-/** Acces demo : actif en local ou si explicitement active via env. */
+/**
+ * Acces demo : connexion automatique au compte de demonstration.
+ *
+ * Actif en developpement, ou en production uniquement si ENABLE_DEMO_ACCESS
+ * vaut "true". Sans cette variable, l'application exige une vraie connexion :
+ * le compte demo n'est jamais ouvert a n'importe quel visiteur par defaut.
+ */
 export function isDemoAccessEnabled() {
   return (
     process.env.NODE_ENV === "development" ||

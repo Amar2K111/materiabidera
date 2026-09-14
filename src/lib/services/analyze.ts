@@ -4,6 +4,10 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { AiError, getAiProvider } from "@/lib/ai";
 import { finishRun, startRun } from "@/lib/ai/run-log";
+import { isEngineSchemaReady } from "@/lib/engine/schema";
+import { matchRequirements } from "@/lib/engine/requirement-match";
+import { cosine } from "@/lib/engine/semantic";
+import { embedTexts } from "./embeddings";
 import {
   MAX_TOTAL_CHARS,
   clampExcerpt,
@@ -77,6 +81,7 @@ export async function analyzeProject(input: {
   }
 
   const byId = new Map(units.map((u) => [u.id, u]));
+  const engine = await isEngineSchemaReady();
 
   const { data: before } = await admin
     .from("projects")
@@ -97,6 +102,7 @@ export async function analyzeProject(input: {
       input,
       units: units.slice(0, 60),
       byId,
+      engine,
     });
 
     const requirementCount = await runRequirements({
@@ -105,6 +111,8 @@ export async function analyzeProject(input: {
       input,
       units,
       byId,
+      criteria: overview.criteriaLabels,
+      engine,
     });
 
     await admin
@@ -114,7 +122,7 @@ export async function analyzeProject(input: {
 
     return {
       requirements: requirementCount,
-      vigilancePoints: overview,
+      vigilancePoints: overview.vigilance,
       documentsUsed: new Set(units.map((u) => u.documentId)).size,
       pagesUsed: units.length,
     };
@@ -200,8 +208,9 @@ async function runOverview(args: {
   input: { organizationId: string; projectId: string; projectName: string };
   units: SourceUnit[];
   byId: Map<string, SourceUnit>;
-}): Promise<number> {
-  const { admin, provider, input, units, byId } = args;
+  engine: boolean;
+}): Promise<{ vigilance: number; criteriaLabels: string[] }> {
+  const { admin, provider, input, units, byId, engine } = args;
 
   const run = await startRun(admin, {
     organizationId: input.organizationId,
@@ -224,12 +233,28 @@ async function runOverview(args: {
       maxOutputTokens: 8000,
     });
 
+    // Criteres et sous-criteres restent dans award_criteria (JSON) : aucune
+    // migration n'est necessaire pour les conserver.
     const criteria = value.awardCriteria.map((c) => ({
       label: c.label,
       weight: c.weight,
+      weightValue: c.weightValue,
+      expectedElements: c.expectedElements,
+      subcriteria: c.subcriteria.map((sub) => ({
+        label: sub.label,
+        weight: sub.weight,
+        weightValue: sub.weightValue,
+        detail: stripCitationCodes(sub.detail),
+        sources: resolveSources(sub.sourceIds, byId),
+      })),
       detail: stripCitationCodes(c.detail),
       sources: resolveSources(c.sourceIds, byId),
     }));
+
+    const criteriaLabels = criteria.flatMap((c) => [
+      c.label,
+      ...c.subcriteria.map((sub) => `${c.label} > ${sub.label}`),
+    ]);
 
     const vigilance = value.vigilancePoints.map((p) => ({
       title: p.title,
@@ -252,6 +277,25 @@ async function runOverview(args: {
         site_visit: value.siteVisit.value,
         award_criteria: criteria,
         vigilance_points: vigilance,
+        ...(engine
+          ? {
+              response_format: {
+                imposedFramework: value.responseFormat.imposedFramework,
+                structure: value.responseFormat.structure,
+                pageLimit: value.responseFormat.pageLimit,
+                constraints: value.responseFormat.constraints,
+                sources: resolveSources(value.responseFormat.sourceIds, byId),
+              },
+              market_context: {
+                constraints: value.marketConstraints.map((m) => ({
+                  type: m.type,
+                  label: m.label,
+                  detail: stripCitationCodes(m.detail),
+                  sources: resolveSources(m.sourceIds, byId),
+                })),
+              },
+            }
+          : {}),
         provider: provider.id,
         model: provider.model,
         generated_at: new Date().toISOString(),
@@ -268,7 +312,7 @@ async function runOverview(args: {
       },
     });
 
-    return vigilance.length;
+    return { vigilance: vigilance.length, criteriaLabels };
   } catch (error) {
     await finishRun(admin, run, {
       status: "FAILED",
@@ -285,16 +329,10 @@ async function runRequirements(args: {
   input: { organizationId: string; projectId: string; projectName: string };
   units: SourceUnit[];
   byId: Map<string, SourceUnit>;
+  criteria: string[];
+  engine: boolean;
 }): Promise<number> {
-  const { admin, provider, input, units, byId } = args;
-
-  // Les exigences saisies a la main par l'utilisateur sont preservees :
-  // seules celles issues d'une analyse precedente sont remplacees.
-  await admin
-    .from("requirements")
-    .delete()
-    .eq("project_id", input.projectId)
-    .eq("is_manual", false);
+  const { admin, provider, input, units, byId, criteria, engine } = args;
 
   const batches = batchUnits(units, BATCH_CHARS);
   const collected: ExtractedRequirement[] = [];
@@ -315,6 +353,7 @@ async function runRequirements(args: {
         prompt: requirementsPrompt({
           projectName: input.projectName,
           excerpts: batch,
+          criteria,
         }),
         schema: RequirementsSchema,
         schemaName: "Requirements",
@@ -340,36 +379,138 @@ async function runRequirements(args: {
     }
   }
 
+  // Aucune exigence trouvee : les exigences existantes ne sont pas touchees.
   if (collected.length === 0) return 0;
 
-  const { data: inserted } = await admin
+  // Une meme exigence peut ressortir de deux passes : on la garde une fois,
+  // avec l'ensemble de ses sources.
+  const unique = dedupeRequirements(collected);
+
+  // --- Rapprochement avec l'analyse precedente ---------------------------------
+  // Une exigence retrouvee garde son identifiant, donc son statut, la reponse
+  // saisie, sa couverture et ses rattachements aux chapitres. Les exigences
+  // saisies a la main ne sont jamais concernees.
+  const { data: previousRows } = await admin
     .from("requirements")
-    .insert(
-      collected.map((r, position) => ({
-        organization_id: input.organizationId,
-        project_id: input.projectId,
-        text: stripCitationCodes(r.text),
-        category: r.category,
-        priority: r.priority,
-        status: "TO_HANDLE",
-        expected_answer: stripCitationCodes(r.expectedAnswer ?? null),
-        is_manual: false,
-        position,
-      })),
-    )
-    .select("id");
+    .select("id, text, category, requirement_sources (document_id, page_number)")
+    .eq("project_id", input.projectId)
+    .eq("is_manual", false);
+  const previous = (previousRows ?? []) as unknown as Array<{
+    id: string;
+    text: string;
+    category: string;
+    requirement_sources: Array<{ document_id: string | null; page_number: number | null }>;
+  }>;
 
-  if (!inserted) return 0;
+  // Le passage cite (document et page) sert de reperage : une exigence
+  // reformulee cite le plus souvent le meme endroit du dossier.
+  const anchorsOf = (sources: Array<{ documentId: string | null; pageNumber: number | null }>) =>
+    sources.map((s) => `${s.documentId ?? ""}|${s.pageNumber ?? ""}`);
 
-  // Rattachement des sources : le modele a cite des identifiants d'extraits,
-  // que l'on retraduit ici en document et page reels.
-  const sources = inserted.flatMap((row, index) => {
-    const requirement = collected[index];
-    if (!requirement) return [];
+  // Proximite de sens : deux formulations tres differentes peuvent designer la
+  // meme exigence. Sans vecteurs disponibles, seul le vocabulaire compte.
+  const previousTexts = previous.map((r) => r.text);
+  const nextTexts = unique.map((r) => stripCitationCodes(r.text));
+  const [previousVectors, nextVectors] = await Promise.all([
+    embedTexts(admin, input.organizationId, previousTexts, "RETRIEVAL_DOCUMENT"),
+    embedTexts(admin, input.organizationId, nextTexts, "RETRIEVAL_DOCUMENT"),
+  ]);
+  const meaningOf =
+    previousVectors && nextVectors
+      ? (prevIndex: number, nextIndex: number) =>
+          cosine(previousVectors[prevIndex], nextVectors[nextIndex])
+      : undefined;
 
+  const matches = matchRequirements(
+    previous.map((r) => ({
+      text: r.text,
+      category: r.category,
+      anchors: anchorsOf(
+        (r.requirement_sources ?? []).map((s) => ({
+          documentId: s.document_id,
+          pageNumber: s.page_number,
+        })),
+      ),
+    })),
+    unique.map((r) => ({
+      text: stripCitationCodes(r.text),
+      category: r.category,
+      anchors: anchorsOf(resolveSources(r.sourceIds, byId)),
+    })),
+    { semantic: meaningOf },
+  );
+
+  const fields = (r: ExtractedRequirement, position: number) => ({
+    text: stripCitationCodes(r.text),
+    category: r.category,
+    priority: r.priority,
+    expected_answer: stripCitationCodes(r.expectedAnswer ?? null),
+    position,
+    ...(engine
+      ? {
+          mandatory: r.mandatory,
+          criterion_ref: r.criterionLabel,
+          buyer_intent: stripCitationCodes(r.buyerIntent || null),
+        }
+      : {}),
+  });
+
+  const idByIndex = new Map<number, string>();
+
+  // Exigences retrouvees : mise a jour sur place.
+  await Promise.all(
+    unique.map(async (r, index) => {
+      const prevIndex = matches.get(index);
+      if (prevIndex === undefined) return;
+      const id = previous[prevIndex].id;
+      const { error } = await admin
+        .from("requirements")
+        .update(fields(r, index))
+        .eq("id", id)
+        .eq("project_id", input.projectId);
+      if (!error) idByIndex.set(index, id);
+    }),
+  );
+
+  // Nouvelles exigences.
+  const fresh = unique
+    .map((r, index) => ({ r, index }))
+    .filter(({ index }) => !matches.has(index));
+  if (fresh.length > 0) {
+    const { data: inserted } = await admin
+      .from("requirements")
+      .insert(
+        fresh.map(({ r, index }) => ({
+          organization_id: input.organizationId,
+          project_id: input.projectId,
+          status: "TO_HANDLE",
+          is_manual: false,
+          ...fields(r, index),
+        })),
+      )
+      .select("id");
+    (inserted ?? []).forEach((row, i) => idByIndex.set(fresh[i].index, row.id as string));
+  }
+
+  // Exigences disparues du dossier : retirees des chapitres, puis supprimees.
+  const keptIds = new Set(idByIndex.values());
+  const removedIds = previous.map((p) => p.id).filter((id) => !keptIds.has(id));
+  if (removedIds.length > 0) {
+    await detachRequirements(admin, input.projectId, removedIds);
+    await admin.from("requirements").delete().in("id", removedIds).eq("project_id", input.projectId);
+  }
+
+  // Sources : remplacees pour les exigences retrouvees, creees pour les autres.
+  // Le modele a cite des identifiants d'extraits, retraduits en document et page.
+  const touchedIds = [...idByIndex.values()];
+  if (touchedIds.length > 0) {
+    await admin.from("requirement_sources").delete().in("requirement_id", touchedIds);
+  }
+  const sources = [...idByIndex.entries()].flatMap(([index, requirementId]) => {
+    const requirement = unique[index];
     return resolveSources(requirement.sourceIds, byId).map((s) => ({
       organization_id: input.organizationId,
-      requirement_id: row.id as string,
+      requirement_id: requirementId,
       document_id: s.documentId,
       page_number: s.pageNumber,
       label: s.label,
@@ -381,7 +522,53 @@ async function runRequirements(args: {
     await admin.from("requirement_sources").insert(sources);
   }
 
-  return inserted.length;
+  return idByIndex.size;
+}
+
+/** Retire des exigences supprimees des chapitres qui les referencaient. */
+async function detachRequirements(admin: SupabaseClient, projectId: string, ids: string[]) {
+  const removed = new Set(ids);
+  const { data: sections } = await admin
+    .from("memory_sections")
+    .select("id, requirement_ids")
+    .eq("project_id", projectId);
+
+  await Promise.all(
+    (sections ?? []).map((section) => {
+      const current = (section.requirement_ids ?? []) as string[];
+      const kept = current.filter((id) => !removed.has(id));
+      if (kept.length === current.length) return null;
+      return admin.from("memory_sections").update({ requirement_ids: kept }).eq("id", section.id as string);
+    }),
+  );
+}
+
+/** Cle de comparaison : sans accents, ponctuation ni casse. */
+function requirementKey(text: string): string {
+  return text
+    .normalize("NFD")
+    .replace(/\p{M}/gu, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim()
+    .slice(0, 140);
+}
+
+function dedupeRequirements(list: ExtractedRequirement[]): ExtractedRequirement[] {
+  const byKey = new Map<string, ExtractedRequirement>();
+  for (const requirement of list) {
+    const key = requirementKey(requirement.text);
+    const existing = byKey.get(key);
+    if (!existing) {
+      byKey.set(key, { ...requirement, sourceIds: [...requirement.sourceIds] });
+      continue;
+    }
+    existing.sourceIds = [...new Set([...existing.sourceIds, ...requirement.sourceIds])];
+    existing.mandatory = existing.mandatory || requirement.mandatory;
+    if (requirement.priority === "HIGH") existing.priority = "HIGH";
+    existing.criterionLabel = existing.criterionLabel ?? requirement.criterionLabel;
+  }
+  return [...byKey.values()];
 }
 
 /**

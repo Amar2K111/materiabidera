@@ -2,10 +2,12 @@ import { GoogleGenerativeAI, type ResponseSchema } from "@google/generative-ai";
 import { z } from "zod";
 import {
   AiError,
+  type AiFile,
   type AiProvider,
   type AiResult,
   type GenerateObjectInput,
   type GenerateTextInput,
+  validateStructured,
 } from "./types";
 
 const DEFAULT_MODEL = "gemini-2.5-pro";
@@ -17,6 +19,20 @@ const DEFAULT_MODEL = "gemini-2.5-pro";
 function toGeminiSchema(node: unknown): unknown {
   if (Array.isArray(node)) return node.map(toGeminiSchema);
   if (node && typeof node === "object") {
+    // Zod decrit un champ nullable par anyOf [type, null] ; Gemini attend
+    // le type seul accompagne de "nullable".
+    const anyOf = (node as { anyOf?: unknown[] }).anyOf;
+    if (Array.isArray(anyOf)) {
+      const nonNull = anyOf.filter(
+        (s) => !(s && typeof s === "object" && (s as { type?: string }).type === "null"),
+      );
+      if (nonNull.length === 1 && nonNull.length < anyOf.length) {
+        const { anyOf: _drop, ...rest } = node as Record<string, unknown>;
+        void _drop;
+        return toGeminiSchema({ ...rest, ...(nonNull[0] as object), nullable: true });
+      }
+    }
+
     const out: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(node)) {
       if (
@@ -43,6 +59,7 @@ export function createGeminiProvider(
   async function call(
     input: GenerateTextInput,
     responseSchema?: ResponseSchema,
+    file?: AiFile,
   ) {
     try {
       const generativeModel = genAI.getGenerativeModel({
@@ -56,7 +73,19 @@ export function createGeminiProvider(
         },
       });
 
-      const response = await generativeModel.generateContent(input.prompt);
+      const response = await generativeModel.generateContent(
+        file
+          ? [
+              {
+                inlineData: {
+                  data: Buffer.from(file.data).toString("base64"),
+                  mimeType: file.mimeType,
+                },
+              },
+              { text: input.prompt },
+            ]
+          : input.prompt,
+      );
       const usage = response.response.usageMetadata;
 
       return {
@@ -67,17 +96,24 @@ export function createGeminiProvider(
         },
       };
     } catch (error) {
-      const message = error instanceof Error ? error.message.toLowerCase() : "";
-      if (message.includes("quota") || message.includes("rate")) {
-        throw new AiError("Quota atteint.", "rate_limited");
+      const raw = error instanceof Error ? error.message : String(error);
+      const message = raw.toLowerCase();
+      // Le message d'origine est conserve pour le journal des operations ;
+      // l'utilisateur ne voit que le libelle associe au type d'erreur.
+      // Attention : toutes les erreurs du SDK citent "generateContent", qui
+      // contient "rate" : on teste le code HTTP et des termes precis.
+      if (
+        /\[429|resource_exhausted|quota|rate limit|too many requests/.test(message)
+      ) {
+        throw new AiError(`Quota atteint : ${raw}`, "rate_limited");
       }
-      if (message.includes("api key") || message.includes("permission")) {
-        throw new AiError("Clé d'API refusée.", "not_configured");
+      if (/api key|api_key_invalid|permission_denied|\[403/.test(message)) {
+        throw new AiError(`Clé d'API refusée : ${raw}`, "not_configured");
       }
-      if (message.includes("safety") || message.includes("blocked")) {
-        throw new AiError("Contenu refusé par le modèle.", "refused");
+      if (/safety|blocked|recitation/.test(message)) {
+        throw new AiError(`Contenu refusé par le modèle : ${raw}`, "refused");
       }
-      throw new AiError("Service indisponible.", "unavailable");
+      throw new AiError(`Service indisponible : ${raw}`, "unavailable");
     }
   }
 
@@ -93,12 +129,26 @@ export function createGeminiProvider(
     async generateObject<T>(
       input: GenerateObjectInput<T>,
     ): Promise<AiResult<T>> {
+      return generateStructured(input);
+    },
+
+    async generateObjectFromFile<T>(
+      input: GenerateObjectInput<T> & { file: AiFile },
+    ): Promise<AiResult<T>> {
+      return generateStructured(input, input.file);
+    },
+  };
+
+  async function generateStructured<T>(
+    input: GenerateObjectInput<T>,
+    file?: AiFile,
+  ): Promise<AiResult<T>> {
       // Le schema est impose au modele via responseSchema, puis la sortie
       // est revalidee : rien n'est enregistre sans avoir ete verifie.
       const responseSchema = toGeminiSchema(
         z.toJSONSchema(input.schema, { target: "draft-2020-12" }),
       ) as unknown as ResponseSchema;
-      const { text, usage } = await call(input, responseSchema);
+      const { text, usage } = await call(input, responseSchema, file);
 
       let parsed: unknown;
       try {
@@ -107,12 +157,6 @@ export function createGeminiProvider(
         throw new AiError("Réponse non exploitable.", "invalid_output");
       }
 
-      const result = input.schema.safeParse(parsed);
-      if (!result.success) {
-        throw new AiError("Réponse hors format attendu.", "invalid_output");
-      }
-
-      return { value: result.data, usage };
-    },
-  };
+      return { value: validateStructured(input.schema, parsed), usage };
+  }
 }

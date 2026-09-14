@@ -27,6 +27,9 @@ export function PhotoFallback({
     <>
       {illustration}
       {step < 2 ? (
+        // <img> volontaire : la bascule vers la photo de secours au premier
+        // echec (onError) n'est pas possible avec next/image sur ces sources.
+        // eslint-disable-next-line @next/next/no-img-element
         <img
           src={sources[step === 0 ? 0 : 1].src}
           loading="lazy"

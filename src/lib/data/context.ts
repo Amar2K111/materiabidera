@@ -21,6 +21,8 @@ export type AppContext = {
   organization: Organization;
   role: MemberRole | null;
   isGuest: boolean;
+  /** Faux pour un compte qui n'a pas encore cree son entreprise (onboarding). */
+  hasOrganization: boolean;
 };
 
 export const GUEST_USER_ID = "guest";
@@ -40,6 +42,7 @@ function guestAppContext(): AppContext {
     },
     role: "owner",
     isGuest: true,
+    hasOrganization: true,
   };
 }
 
@@ -103,5 +106,6 @@ export const getAppContext = cache(async (): Promise<AppContext> => {
     organization,
     role: (membership?.role as MemberRole | undefined) ?? "owner",
     isGuest: false,
+    hasOrganization: Boolean(membership?.organizations),
   };
 });

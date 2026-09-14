@@ -1,4 +1,5 @@
 import "server-only";
+import { isOwnStoragePath } from "@/lib/storage-path";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { extractionOf, ExtractionError } from "@/lib/extraction";
@@ -10,6 +11,7 @@ import {
   classifyPrompt,
 } from "@/lib/ai/prompts/classify-document";
 import { finishRun, startRun } from "@/lib/ai/run-log";
+import { transcribeScannedPdf } from "./ocr";
 
 export type IngestOutcome = {
   documentId: string;
@@ -58,6 +60,17 @@ export async function ingestNextDocument(input: {
   const storagePath = doc.storage_path as string;
 
   try {
+    // Le chemin est modifiable par l'utilisateur et la lecture se fait en cle
+    // de service : on refuse tout fichier hors du dossier de son organisation.
+    if (!isOwnStoragePath(storagePath, input.organizationId)) {
+      return await markFailed(
+        admin,
+        documentId,
+        fileName,
+        "Le fichier n'a pas pu être récupéré depuis le stockage.",
+      );
+    }
+
     const { data: file, error: downloadError } = await admin.storage
       .from("dce")
       .download(storagePath);
@@ -96,15 +109,24 @@ export async function ingestNextDocument(input: {
       };
     }
 
-    const result = await extractionOf(bytes, fileName);
+    const extracted = await extractionOf(bytes, fileName);
+    let result = extracted;
 
-    if (result.needsOcr) {
-      return await markFailed(
+    // Un PDF scanne n'a pas de texte selectionnable : il est confie a la
+    // reconnaissance du texte, puis suit le meme chemin qu'un PDF natif.
+    if (extracted.needsOcr) {
+      const ocr = await transcribeScannedPdf({
         admin,
-        documentId,
+        organizationId: input.organizationId,
+        projectId: input.projectId,
         fileName,
-        "Ce document est un scan sans texte sélectionnable. La reconnaissance optique n'est pas encore en service : fournissez une version texte de cette pièce.",
-      );
+        bytes,
+        pageCount: extracted.pageCount ?? 0,
+      });
+      if (!ocr.ok) {
+        return await markFailed(admin, documentId, fileName, ocr.message);
+      }
+      result = { ...extracted, units: ocr.units, needsOcr: false };
     }
 
     if (result.units.length === 0) {

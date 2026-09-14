@@ -79,6 +79,7 @@ export async function exportMemory(input: {
     buyer: (project.buyer as string) ?? null,
     lot: (project.lot as string) ?? null,
     deadline: project.deadline ? formatDate(project.deadline as string) : null,
+    issuedOn: formatDate(new Date().toISOString()),
     includeSources: input.includeSources,
     sections: allSections.map((s) => ({
       number: (s.number as string) ?? null,

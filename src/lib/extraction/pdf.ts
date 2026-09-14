@@ -44,7 +44,10 @@ export async function extractPdf(data: Uint8Array): Promise<ExtractionResult> {
   const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
 
   const loadingTask = pdfjs.getDocument({
-    data,
+    // pdfjs transfere (et vide) le tampon qu'on lui confie : il recoit une
+    // copie, pour que le fichier reste disponible, par exemple pour la
+    // reconnaissance du texte d'un scan.
+    data: data.slice(),
     // Aucune police systeme : le traitement reste confine aux ressources
     // fournies, sans dependre de ce qui est installe sur la machine.
     useSystemFonts: false,

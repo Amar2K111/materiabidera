@@ -2,9 +2,17 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { ensureDemoSessionMiddleware } from "@/lib/demo-session-middleware";
 import { getServiceRoleKey, isSupabaseConfigured, supabaseConfig } from "@/lib/env";
+import { isDemoAccessEnabled } from "@/lib/demo-access";
 
-/** Pages auth / onboarding : redirigees vers l'app (pas de login requis). */
-const AUTH_BYPASS_PATHS = ["/login", "/signup", "/onboarding"];
+/** Prefixes reserves aux utilisateurs authentifies. */
+const PROTECTED_PREFIXES = ["/app", "/onboarding"];
+
+/** Pages d'authentification : inutiles une fois connecte. */
+const AUTH_PATHS = ["/login", "/signup"];
+
+function matches(pathname: string, prefixes: string[]) {
+  return prefixes.some((p) => pathname === p || pathname.startsWith(`${p}/`));
+}
 
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request });
@@ -42,7 +50,10 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user && getServiceRoleKey()) {
+  const demo = isDemoAccessEnabled();
+
+  // Mode demo (local, ou active explicitement) : connexion silencieuse.
+  if (!user && demo && getServiceRoleKey()) {
     const ok = await ensureDemoSessionMiddleware(supabase);
     if (ok) {
       ({
@@ -51,11 +62,19 @@ export async function updateSession(request: NextRequest) {
     }
   }
 
-  if (
-    AUTH_BYPASS_PATHS.some(
-      (p) => pathname === p || pathname.startsWith(`${p}/`),
-    )
-  ) {
+  // Hors demo, l'application exige une vraie session.
+  if (!user && matches(pathname, PROTECTED_PREFIXES)) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
+    url.search = "";
+    url.searchParams.set("suite", pathname);
+    return NextResponse.redirect(url);
+  }
+
+  // Connecte (y compris par la demo), les pages de connexion renvoient vers
+  // l'app. Si la connexion demo a echoue, la page de connexion reste
+  // accessible : pas de boucle de redirection.
+  if (user && matches(pathname, AUTH_PATHS)) {
     const url = request.nextUrl.clone();
     url.pathname = "/app";
     url.search = "";

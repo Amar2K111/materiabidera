@@ -1,8 +1,13 @@
 import { NextResponse } from "next/server";
 import { ensureDemoSession } from "@/lib/demo-session";
 import { getServiceRoleKey } from "@/lib/env";
+import { isDemoAccessEnabled } from "@/lib/demo-access";
 
 export async function POST() {
+  if (!isDemoAccessEnabled()) {
+    return NextResponse.json({ error: "Accès démo indisponible." }, { status: 403 });
+  }
+
   if (!getServiceRoleKey()) {
     return NextResponse.json(
       { error: "Supabase non configuré (clé service role manquante)." },

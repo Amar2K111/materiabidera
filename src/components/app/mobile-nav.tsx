@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, Plus, X } from "lucide-react";
@@ -10,11 +10,14 @@ import { SidebarNav } from "@/components/app/sidebar";
 export function MobileNav() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const [openedOn, setOpenedOn] = useState(pathname);
 
-  // Le menu se referme des qu'une page est ouverte.
-  useEffect(() => {
+  // Le menu se referme des qu'une page est ouverte (ajustement pendant le
+  // rendu, sans effet ni rendu supplementaire).
+  if (openedOn !== pathname) {
+    setOpenedOn(pathname);
     setOpen(false);
-  }, [pathname]);
+  }
 
   return (
     <div className="lg:hidden">

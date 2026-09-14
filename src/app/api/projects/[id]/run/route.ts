@@ -15,8 +15,10 @@ const BodySchema = z.object({
   operation: z.enum(["analyze", "go-no-go", "strategy", "plan", "section"]),
   sectionId: z.string().uuid().optional(),
   action: z
-    .enum(["generate", "improve", "shorten", "expand", "concrete"])
+    .enum(["generate", "improve", "shorten", "expand", "concrete", "fix"])
     .optional(),
+  /** Probleme releve par le controle, a corriger dans le chapitre. */
+  instruction: z.string().max(4000).optional(),
 });
 
 /**
@@ -99,6 +101,7 @@ export async function POST(
           ...scope,
           sectionId: parsed.data.sectionId,
           action: parsed.data.action ?? "generate",
+          instruction: parsed.data.instruction,
         });
         return NextResponse.json({ outcome });
       }

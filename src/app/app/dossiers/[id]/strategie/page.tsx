@@ -7,9 +7,18 @@ import { isAiConfigured } from "@/lib/ai";
 import { formatDateTime } from "@/lib/projects";
 import { Sources } from "@/components/app/sources";
 import { OperationButton } from "@/components/app/operation-button";
+import { Badge } from "@/components/ui/badge";
 import { ButtonLink } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Notice } from "@/components/ui/notice";
+import { cn } from "@/lib/utils/cn";
+
+const IMPACT = {
+  HIGH: { label: "Impact fort", tone: "risk" as const },
+  MEDIUM: { label: "Impact moyen", tone: "warn" as const },
+  LOW: { label: "Impact faible", tone: "neutral" as const },
+};
+const IMPACT_ORDER = ["HIGH", "MEDIUM", "LOW"];
 
 /** Pourcentage exploitable pour une barre, ou null si la ponderation est textuelle. */
 function weightPercent(weight: string): number | null {
@@ -109,9 +118,15 @@ export default async function StrategyPage({
                 <li key={`${c.label}-${i}`}>
                   <div className="flex items-baseline justify-between gap-3">
                     <span className="text-[13.5px] font-medium">{c.label}</span>
-                    <span className="tabular text-[16px] font-bold text-brand">
-                      {c.weight}
-                    </span>
+                    {/non (pr[ée]cis|trouv)/i.test(c.weight) || !c.weight ? (
+                      <span className="flex-none text-[12px] text-ink-42 italic">
+                        Pondération non précisée
+                      </span>
+                    ) : (
+                      <span className="tabular text-[16px] font-bold text-brand">
+                        {c.weight}
+                      </span>
+                    )}
                   </div>
                   {pct !== null ? (
                     <span className="app-ui__bar mt-2">
@@ -216,6 +231,49 @@ export default async function StrategyPage({
           </ul>
         )}
       </section>
+
+      {/* --- Informations a obtenir avant de rediger ------------------------ */}
+      {strategy.information_requests && strategy.information_requests.length > 0 ? (
+        <section>
+          <h2 className="text-[17px] font-semibold tracking-[-0.02em]">
+            Informations à obtenir avant de rédiger
+          </h2>
+          <p className="mt-1 mb-3 max-w-[80ch] text-[13px] text-ink-42">
+            Sans ces éléments, les chapitres concernés resteront génériques ou
+            devront signaler un point à confirmer. Ajoutez-les à votre base
+            entreprise, puis reconstruisez la stratégie.
+          </p>
+          <ul className="space-y-2.5">
+            {[...strategy.information_requests]
+              .sort((a, b) => IMPACT_ORDER.indexOf(a.impact) - IMPACT_ORDER.indexOf(b.impact))
+              .map((q, i) => (
+                <li
+                  key={`${q.question}-${i}`}
+                  className={cn(
+                    "flex flex-wrap items-start justify-between gap-3 rounded-[12px] border border-line border-l-[3px] bg-white p-4 shadow-card",
+                    q.impact === "HIGH" && "border-l-risk",
+                    q.impact === "MEDIUM" && "border-l-warn",
+                  )}
+                >
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Badge tone={IMPACT[q.impact].tone}>{IMPACT[q.impact].label}</Badge>
+                      {q.criterion ? (
+                        <span className="text-[12px] text-ink-42">{q.criterion}</span>
+                      ) : null}
+                    </div>
+                    <h3 className="mt-1.5 text-[14px] leading-snug font-semibold">{q.question}</h3>
+                    <p className="mt-1 text-[13px] leading-relaxed text-ink-70">{q.why}</p>
+                    <Sources sources={q.sources} />
+                  </div>
+                  <ButtonLink href="/app/base-entreprise" size="sm" variant="ghost">
+                    Compléter la base
+                  </ButtonLink>
+                </li>
+              ))}
+          </ul>
+        </section>
+      ) : null}
 
       <section className="flex flex-wrap items-center justify-between gap-4 rounded-[14px] border border-line bg-white p-5 shadow-card">
         <div>

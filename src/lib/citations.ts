@@ -9,7 +9,9 @@
  * Module sans dependance serveur : utilisable a l'affichage comme a l'export.
  */
 
-const CITATION_ID = /^[CEKRSV]\d{1,3}$/;
+// C fiche entreprise, L passage de bibliotheque, E extrait du DCE, R exigence,
+// K critere (K1.2 sous-critere), M contrainte, V vigilance, S chapitre.
+const CITATION_ID = /^[CEKLMRSV]\d{1,3}(?:\.\d{1,2})?$/;
 
 /** Normes et recommandations courantes qui ressemblent a un identifiant. */
 const LOOKALIKES = new Set(["R408", "R457", "R486", "R489", "R490"]);
@@ -88,4 +90,66 @@ export function stripCitationCodes(text: string | null | undefined) {
     // garde son espace avant ":", ";", "!" et "?".
     .replace(/[ \t]+([.,])/g, "$1")
     .replace(/[ \t]{2,}/g, " ");
+}
+
+function excerpt(text: string, max = 70) {
+  const clean = text.replace(/\s+/g, " ").trim();
+  if (clean.length <= max) return clean;
+  const cut = clean.slice(0, max);
+  const space = cut.lastIndexOf(" ");
+  return `${space > max * 0.6 ? cut.slice(0, space) : cut}…`;
+}
+
+/**
+ * Remplace les references internes ecrites en toutes lettres par un libelle.
+ *
+ * "la section S2" devient "le chapitre « Moyens humains »" et "l'exigence R4"
+ * devient "l'exigence « Les offres doivent… »". Une reference inconnue est
+ * laissee telle quelle plutot que remplacee par un intitule devine.
+ */
+export function humanizeRefs(
+  text: string,
+  lookup: {
+    section: (ref: string) => string | undefined;
+    requirement: (ref: string) => string | undefined;
+  },
+): string {
+  const section = (ref: string) => {
+    const title = lookup.section(ref);
+    return title ? `« ${excerpt(title)} »` : null;
+  };
+  const requirement = (ref: string) => {
+    const label = lookup.requirement(ref);
+    return label ? `« ${excerpt(label)} »` : null;
+  };
+
+  return (
+    text
+      // "de la section S2" -> "du chapitre « ... »"
+      .replace(
+        /\b([Dd]e\s+(?:la|le)|[Dd]u)\s+(?:section|chapitre)\s+(S\d{1,2})\b/g,
+        (match, lead: string, ref: string) => {
+          const label = section(ref);
+          return label ? `${lead[0] === "D" ? "Du" : "du"} chapitre ${label}` : match;
+        },
+      )
+      // "la section S2" / "section S2" -> "le chapitre « ... »" / "chapitre « ... »"
+      .replace(
+        /\b(?:([Ll]a|[Ll]e)\s+)?(?:[Ss]ection|[Cc]hapitre)\s+(S\d{1,2})\b/g,
+        (match, article: string | undefined, ref: string) => {
+          const label = section(ref);
+          if (!label) return match;
+          const lead = article ? `${article[0] === "L" ? "Le" : "le"} ` : "";
+          return `${lead}chapitre ${label}`;
+        },
+      )
+      // "l'exigence R4" / "exigence R4" -> "l'exigence « ... »"
+      .replace(/\b([Ee]xigence)\s+(R\d{1,3})\b/g, (match, word: string, ref: string) => {
+        const label = requirement(ref);
+        return label ? `${word} ${label}` : match;
+      })
+      // Reference isolee : l'intitule seul, entre guillemets.
+      .replace(/\b(S\d{1,2})\b/g, (match, ref: string) => section(ref) ?? match)
+      .replace(/\b(R\d{1,3})\b/g, (match, ref: string) => requirement(ref) ?? match)
+  );
 }

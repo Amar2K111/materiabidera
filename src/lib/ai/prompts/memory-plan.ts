@@ -12,6 +12,11 @@ export const MemoryPlanSchema = z.object({
         brief: z.string().min(20).max(1200),
         /** References des exigences traitees par ce chapitre. */
         requirementRefs: z.array(z.string()),
+        /**
+         * Critere ou sous-critere de notation auquel repond ce chapitre, avec
+         * son intitule exact ("Valeur technique > Methodologie"), sinon null.
+         */
+        criterion: z.string().max(200).nullable(),
         /** Volume indicatif, en mots. */
         wordTarget: z.number().int().min(150).max(3000),
       }),
@@ -51,7 +56,15 @@ REGLES PROPRES A CETTE TACHE
   exigences fournie. Tu n'inventes aucune reference.
 - Tu repartis les exigences : une exigence importante qui ne serait traitee
   nulle part est une erreur de plan.
-- Le volume indicatif reflete le poids du chapitre dans la notation.
+- "criterion" rattache le chapitre au critere ou sous-critere qu'il sert, avec
+  l'intitule exact du dossier. L'evaluateur doit pouvoir retrouver sans effort :
+  critere -> chapitre -> reponse -> preuve.
+- Si une structure de reponse est imposee, elle prime : ses intitules et son
+  ordre sont repris tels quels.
+- Le volume indicatif reflete le poids du chapitre dans la notation : un
+  sous-critere fortement pondere recoit plus de place. La ponderation est un
+  signal de priorite, pas une regle de remplissage. Si une limite de pages est
+  imposee, le total des volumes doit la respecter (environ 450 mots par page).
 - "rationale" explique en quelques phrases pourquoi le plan est structure
   ainsi pour ce marche.
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   Building2,
@@ -14,7 +15,9 @@ import {
   Trash2,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
-import type { MemorySection, MemorySource } from "@/lib/data/memory";
+import type { MemorySection, MemorySource, SectionVersion } from "@/lib/data/memory";
+import { COVERAGE_LABELS, type CoverageStatus } from "@/lib/requirements";
+import { formatDateTime } from "@/lib/projects";
 import {
   readableCompanyLabel,
   shortDocumentName,
@@ -52,6 +55,31 @@ const STATUS_LABELS: Record<
   VALIDATED: { label: "Validé", tone: "ok" },
 };
 
+export type SectionRequirement = {
+  text: string;
+  mandatory: boolean;
+  /** Statut constate par le dernier controle, si disponible. */
+  coverage: CoverageStatus | null;
+  covered: boolean;
+};
+
+export type SectionAlert = {
+  id: string;
+  severity: "BLOCKING" | "IMPORTANT" | "MINOR";
+  title: string;
+};
+
+/** Ce que la version conservee precedait. */
+const VERSION_ORIGINS: Record<string, string> = {
+  generation: "Avant nouvelle rédaction",
+  improve: "Avant amélioration",
+  shorten: "Avant raccourcissement",
+  expand: "Avant développement",
+  concrete: "Avant « Rendre concret »",
+  fix: "Avant correction du contrôle",
+  restauration: "Avant restauration",
+};
+
 function sourceTitle(source: MemorySource) {
   if (source.origin === "ENTREPRISE") return readableCompanyLabel(source.label);
   // "01_RC_Reglement.pdf, page 2" -> "RC Reglement", "p. 2"
@@ -64,11 +92,17 @@ export function MemoryEditor({
   projectId,
   organizationId,
   sections,
+  requirements,
+  alerts,
+  versionsEnabled,
   initialSectionId,
 }: {
   projectId: string;
   organizationId: string;
   sections: MemorySection[];
+  requirements: Record<string, SectionRequirement>;
+  alerts: Record<string, SectionAlert[]>;
+  versionsEnabled: boolean;
   initialSectionId?: string | null;
 }) {
   const router = useRouter();
@@ -78,7 +112,7 @@ export function MemoryEditor({
       ? initialSectionId
       : sections[0]?.id) ?? "",
   );
-  const [draft, setDraft] = useState("");
+  const [edited, setEdited] = useState("");
   const [dirty, setDirty] = useState(false);
   const [busy, setBusy] = useState<Action | "save" | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -86,18 +120,34 @@ export function MemoryEditor({
   // rafraichissement qui suit la redaction.
   const [toConfirm, setToConfirm] = useState<Record<string, string[]>>({});
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [versions, setVersions] = useState<SectionVersion[] | null>(null);
 
   const selected = useMemo(
     () => sections.find((s) => s.id === selectedId) ?? sections[0] ?? null,
     [sections, selectedId],
   );
 
-  // Le brouillon suit le chapitre affiche, sauf si l'utilisateur a des
-  // modifications non enregistrees : on ne les ecrase jamais.
+  // Historique du chapitre : recharge a chaque changement de texte enregistre.
   useEffect(() => {
-    if (dirty) return;
-    setDraft(selected?.content ?? "");
-  }, [selected?.id, selected?.content, dirty]);
+    if (!versionsEnabled || !selected) return;
+    let cancelled = false;
+    createClient()
+      .from("memory_section_versions")
+      .select("id, content, origin, created_at")
+      .eq("section_id", selected.id)
+      .order("created_at", { ascending: false })
+      .limit(10)
+      .then(({ data }) => {
+        if (!cancelled) setVersions((data ?? []) as SectionVersion[]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [versionsEnabled, selected?.id, selected?.content, selected]);
+
+  // Le texte affiche suit le chapitre enregistre, sauf si l'utilisateur a des
+  // modifications non enregistrees : on ne les ecrase jamais.
+  const draft = dirty ? edited : (selected?.content ?? "");
 
   // La zone de texte grandit avec son contenu : pas de double defilement.
   useEffect(() => {
@@ -213,6 +263,43 @@ export function MemoryEditor({
     router.refresh();
   }
 
+  /** Restaure une version : le texte actuel est lui-meme conserve avant. */
+  async function restore(version: SectionVersion) {
+    if (!selected) return;
+    if (dirty) {
+      setError("Enregistrez ou annulez vos modifications avant de restaurer une version.");
+      return;
+    }
+    setBusy("save");
+    setError(null);
+
+    const supabase = createClient();
+    if ((selected.content ?? "").trim()) {
+      const { error: keepError } = await supabase.from("memory_section_versions").insert({
+        organization_id: organizationId,
+        section_id: selected.id,
+        content: selected.content,
+        origin: "restauration",
+      });
+      if (keepError) {
+        setBusy(null);
+        setError("La version actuelle n'a pas pu être conservée : restauration annulée.");
+        return;
+      }
+    }
+    const { error: updateError } = await supabase
+      .from("memory_sections")
+      .update({ content: version.content, status: "EDITED" })
+      .eq("id", selected.id);
+
+    setBusy(null);
+    if (updateError) {
+      setError("La version n'a pas pu être restaurée.");
+      return;
+    }
+    router.refresh();
+  }
+
   async function addSection() {
     const supabase = createClient();
     const { data } = await supabase
@@ -280,6 +367,10 @@ export function MemoryEditor({
   const dceSources = selected?.memory_sources.filter((s) => s.origin === "DCE") ?? [];
   const companySources =
     selected?.memory_sources.filter((s) => s.origin === "ENTREPRISE") ?? [];
+  const linkedRequirements = (selected?.requirement_ids ?? [])
+    .map((id) => ({ id, ...requirements[id] }))
+    .filter((r) => r.text);
+  const sectionAlerts = selected ? (alerts[selected.id] ?? []) : [];
 
   return (
     <div className="grid gap-5 lg:grid-cols-[250px_minmax(0,1fr)] xl:grid-cols-[250px_minmax(0,1fr)_290px]">
@@ -418,6 +509,88 @@ export function MemoryEditor({
                 </p>
               ) : null}
 
+              {selected.criterion_ref ? (
+                <p className="mt-2 text-[12.5px] text-ink-58">
+                  Critère de notation traité :{" "}
+                  <span className="font-medium text-ink-70">{selected.criterion_ref}</span>
+                </p>
+              ) : null}
+
+              {linkedRequirements.length > 0 ? (
+                <details className="group mt-3 rounded-[10px] border border-line-soft">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-4 py-2.5 text-[12.5px] font-semibold text-ink-70">
+                    Exigences à traiter dans ce chapitre ({linkedRequirements.length})
+                    <ChevronDown
+                      className="h-3.5 w-3.5 text-ink-42 transition-transform group-open:rotate-180"
+                      strokeWidth={2}
+                    />
+                  </summary>
+                  <ul className="divide-y divide-line-soft border-t border-line-soft">
+                    {linkedRequirements.map((r) => {
+                      const coverage = r.coverage
+                        ? COVERAGE_LABELS[r.coverage]
+                        : r.covered
+                          ? COVERAGE_LABELS.covered
+                          : null;
+                      return (
+                        <li key={r.id} className="flex items-start justify-between gap-3 px-4 py-2">
+                          <Link
+                            href={`/app/dossiers/${projectId}/exigences?exigence=${r.id}`}
+                            className="min-w-0 text-[12.5px] leading-snug text-ink-70 hover:text-brand"
+                          >
+                            {r.mandatory ? (
+                              <span className="mr-1.5 font-semibold text-ink">Obligatoire ·</span>
+                            ) : null}
+                            {r.text}
+                          </Link>
+                          {coverage ? (
+                            <Badge tone={coverage.tone} className="flex-none">
+                              {coverage.label}
+                            </Badge>
+                          ) : null}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </details>
+              ) : null}
+
+              {sectionAlerts.length > 0 ? (
+                <div className="mt-3 rounded-[10px] border border-warn/25 bg-warn-wash px-4 py-3">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <p className="text-[12.5px] font-semibold text-warn">
+                      {sectionAlerts.length} point{sectionAlerts.length > 1 ? "s" : ""} relevé
+                      {sectionAlerts.length > 1 ? "s" : ""} par le contrôle
+                    </p>
+                    <Link
+                      href={`/app/dossiers/${projectId}/controle`}
+                      className="text-[12px] font-semibold text-brand"
+                    >
+                      Voir et corriger
+                    </Link>
+                  </div>
+                  <ul className="mt-1.5 space-y-0.5 text-[12.5px] leading-snug text-ink-70">
+                    {sectionAlerts.slice(0, 4).map((a) => (
+                      <li key={a.id}>
+                        <span
+                          className={cn(
+                            "font-semibold",
+                            a.severity === "BLOCKING" ? "text-risk" : "text-ink-58",
+                          )}
+                        >
+                          {a.severity === "BLOCKING"
+                            ? "Critique"
+                            : a.severity === "IMPORTANT"
+                              ? "Important"
+                              : "Amélioration"}
+                        </span>{" "}
+                        · {a.title}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+
               {error ? (
                 <div className="mt-4">
                   <Notice tone="risk">{error}</Notice>
@@ -452,7 +625,7 @@ export function MemoryEditor({
                 ref={textareaRef}
                 value={draft}
                 onChange={(e) => {
-                  setDraft(e.target.value);
+                  setEdited(e.target.value);
                   setDirty(true);
                 }}
                 disabled={busy !== null && busy !== "save"}
@@ -476,7 +649,6 @@ export function MemoryEditor({
                   variant="subtle"
                   onClick={() => {
                     setDirty(false);
-                    setDraft(selected.content ?? "");
                   }}
                   disabled={busy !== null}
                 >
@@ -571,6 +743,47 @@ export function MemoryEditor({
             </div>
           )}
         </div>
+
+        {versionsEnabled && selected ? (
+          <div className="rounded-[12px] border border-line bg-white p-4 shadow-card">
+            <h2 className="text-[13.5px] font-semibold">Historique du chapitre</h2>
+            {versions === null ? (
+              <p className="mt-2 text-[12.5px] text-ink-42">Chargement…</p>
+            ) : versions.length === 0 ? (
+              <p className="mt-2 text-[12.5px] leading-relaxed text-ink-42">
+                Chaque nouvelle rédaction conserve la version précédente ici.
+              </p>
+            ) : (
+              <ul className="mt-2.5 space-y-2">
+                {versions.map((v) => (
+                  <li key={v.id} className="rounded-[8px] border border-line-soft px-3 py-2">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-[12px] font-medium text-ink-70">
+                        {VERSION_ORIGINS[v.origin] ?? "Version précédente"}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => restore(v)}
+                        disabled={busy !== null}
+                        title="Le texte actuel est conservé dans l'historique"
+                        className="rounded-[6px] px-1.5 py-0.5 text-[12px] font-semibold text-brand hover:bg-brand-wash disabled:opacity-45"
+                      >
+                        Restaurer
+                      </button>
+                    </div>
+                    <p className="mt-0.5 text-[11.5px] text-ink-42">
+                      {formatDateTime(v.created_at)} ·{" "}
+                      {v.content.trim().split(/\s+/).length} mots
+                    </p>
+                    <p className="mt-1 line-clamp-2 text-[12px] leading-snug text-ink-58">
+                      {v.content.replace(/[#*|]/g, "").slice(0, 180)}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        ) : null}
       </aside>
     </div>
   );

@@ -1,5 +1,6 @@
 import "server-only";
 import { createClient } from "@/lib/supabase/server";
+import { isEngineSchemaReady } from "@/lib/engine/schema";
 
 export type ChecklistGroup = "ADMINISTRATIF" | "TECHNIQUE" | "CONTROLE";
 
@@ -82,6 +83,7 @@ export async function getChecklist(
   projectId: string,
 ): Promise<ChecklistState> {
   const supabase = await createClient();
+  const engine = await isEngineSchemaReady();
 
   const [
     { data: sections },
@@ -98,11 +100,18 @@ export async function getChecklist(
       .from("memory_sections")
       .select("id, content, requirement_ids, memory_sources (id)")
       .eq("project_id", projectId),
-    supabase.from("requirements").select("id, status").eq("project_id", projectId),
+    supabase
+      .from("requirements")
+      .select(engine ? "id, status, coverage" : "id, status")
+      .eq("project_id", projectId),
     supabase.from("project_documents").select("kind").eq("project_id", projectId),
     supabase
       .from("quality_checks")
-      .select("id, score, quality_issues (severity, resolved_at)")
+      .select(
+        engine
+          ? "id, score, readiness, quality_issues (severity, resolved_at)"
+          : "id, score, quality_issues (severity, resolved_at)",
+      )
       .eq("project_id", projectId)
       .maybeSingle(),
     supabase
@@ -121,27 +130,36 @@ export async function getChecklist(
     (s) => ((s.content as string) ?? "").trim().length > 0,
   );
 
-  const allRequirements = requirements ?? [];
+  // Une exigence n'est comptee couverte que si le controle l'a confirme ou si
+  // l'utilisateur l'a validee : etre rattachee a un chapitre ne suffit pas.
+  const allRequirements = (requirements ?? []) as unknown as Array<{
+    id: string;
+    status: string;
+    coverage?: { status: string } | null;
+  }>;
   const coveredIds = new Set<string>();
-  for (const section of written) {
-    for (const id of (section.requirement_ids ?? []) as string[]) {
-      coveredIds.add(id);
+  for (const r of allRequirements) {
+    if (
+      r.status === "COVERED" ||
+      r.coverage?.status === "covered" ||
+      r.coverage?.status === "not_applicable"
+    ) {
+      coveredIds.add(r.id);
     }
   }
-  for (const r of allRequirements) {
-    if (r.status === "COVERED") coveredIds.add(r.id as string);
-  }
+  const readiness = (check as unknown as { readiness?: { ready: boolean; blockers: string[] } | null } | null)
+    ?.readiness;
 
   const withSources = written.filter(
     (s) => ((s.memory_sources ?? []) as unknown[]).length > 0,
   ).length;
 
-  const blockingOpen = (
-    ((check?.quality_issues ?? []) as Array<{
-      severity: string;
-      resolved_at: string | null;
-    }>) ?? []
-  ).filter((i) => i.severity === "BLOCKING" && !i.resolved_at).length;
+  const checkRow = check as unknown as {
+    quality_issues?: Array<{ severity: string; resolved_at: string | null }>;
+  } | null;
+  const blockingOpen = (checkRow?.quality_issues ?? []).filter(
+    (i) => i.severity === "BLOCKING" && !i.resolved_at,
+  ).length;
 
   const kinds = new Set((documents ?? []).map((d) => d.kind as string));
 
@@ -220,6 +238,20 @@ export async function getChecklist(
       automatic: true,
       passed: Boolean(check) && blockingOpen === 0,
     },
+    ...(readiness
+      ? [
+          {
+            id: "auto_readiness",
+            group: "CONTROLE" as const,
+            label: "Exigences obligatoires, critères, preuves et cohérence validés",
+            detail: readiness.ready
+              ? "Le dernier contrôle ne relève aucun point bloquant pour la remise."
+              : readiness.blockers.join(" ; "),
+            automatic: true,
+            passed: readiness.ready && blockingOpen === 0,
+          },
+        ]
+      : []),
   ];
 
   // --- Points a la charge de l'utilisateur ------------------------------------
