@@ -3,22 +3,33 @@
  *
  * Le texte d'un chapitre reste un texte simple, editable dans l'application.
  * Quelques conventions legeres y sont reconnues :
- *   - une ligne "## Titre" devient un sous-titre ;
+ *   - "## Titre" devient un sous-titre (niveau 2), "### Titre" un niveau 3 ;
  *   - des lignes commencant par "- " forment une liste a puces ;
  *   - "**mot**" est mis en gras ;
- *   - des lignes "| a | b |" suivies de "|---|---|" forment un tableau.
+ *   - des lignes "| a | b |" suivies de "|---|---|" forment un tableau ;
+ *   - une ligne "> **Titre** : texte" forme un encadre.
  * Tout le reste est un paragraphe. Word et PDF partagent cette lecture : les
  * deux documents ont exactement la meme structure.
+ *
+ * Module pur, sans dependance.
  */
 
 export type Run = { text: string; bold: boolean };
 
 export type Block =
-  | { type: "heading"; text: string }
+  | {
+      type: "heading";
+      level: 2 | 3;
+      text: string;
+      /** Numero affiche ("2.1"), attribue par le modele documentaire. */
+      number?: string;
+    }
   | { type: "paragraph"; runs: Run[] }
   | { type: "bullets"; items: Run[][] }
   /** Tableau "| a | b |" : premiere ligne en en-tete, colonnes egalisees. */
-  | { type: "table"; header: Run[][]; rows: Run[][][] };
+  | { type: "table"; header: Run[][]; rows: Run[][][] }
+  /** Encadre : information que l'evaluateur doit retenir. */
+  | { type: "callout"; title: string | null; runs: Run[] };
 
 const TABLE_ROW = /^\|.*\|$/;
 const TABLE_SEPARATOR = /^\|?\s*:?-{2,}:?\s*(\|\s*:?-{2,}:?\s*)*\|?$/;
@@ -61,8 +72,23 @@ export function parseRuns(text: string): Run[] {
   return runs.length > 0 ? runs : [{ text: text.replace(/\*\*/g, ""), bold: false }];
 }
 
+/** "> **Titre** : texte" -> titre et texte ; sans titre en gras, texte seul. */
+function toCallout(text: string): Block {
+  const match = text.match(/^\*\*(.+?)\*\*\s*[:—–-]?\s*(.*)$/);
+  if (match) {
+    const body = match[2].trim();
+    return {
+      type: "callout",
+      title: match[1].trim().replace(/[:.]$/, ""),
+      runs: parseRuns(body.charAt(0).toUpperCase() + body.slice(1)),
+    };
+  }
+  return { type: "callout", title: null, runs: parseRuns(text) };
+}
+
 const BULLET = /^\s*(?:[-•*]|\d+[.)])\s+/;
-const HEADING = /^\s*#{2,4}\s+/;
+const HEADING = /^\s*(#{2,4})\s+/;
+const CALLOUT = /^\s*>\s?/;
 
 export function parseBlocks(content: string | null): Block[] {
   const text = (content ?? "").replace(/\r\n/g, "\n").trim();
@@ -71,6 +97,7 @@ export function parseBlocks(content: string | null): Block[] {
   const blocks: Block[] = [];
   let paragraph: string[] = [];
   let bullets: Run[][] = [];
+  let callout: string[] = [];
 
   const flushParagraph = () => {
     if (paragraph.length > 0) {
@@ -83,6 +110,18 @@ export function parseBlocks(content: string | null): Block[] {
       blocks.push({ type: "bullets", items: bullets });
       bullets = [];
     }
+  };
+  const flushCallout = () => {
+    if (callout.length > 0) {
+      const joined = callout.join(" ").trim();
+      if (joined) blocks.push(toCallout(joined));
+      callout = [];
+    }
+  };
+  const flushAll = () => {
+    flushParagraph();
+    flushBullets();
+    flushCallout();
   };
 
   const lines = text.split("\n");
@@ -98,8 +137,7 @@ export function parseBlocks(content: string | null): Block[] {
       }
       const table = toTable(tableLines);
       if (table) {
-        flushParagraph();
-        flushBullets();
+        flushAll();
         blocks.push(table);
         index = end - 1;
         continue;
@@ -107,16 +145,25 @@ export function parseBlocks(content: string | null): Block[] {
     }
 
     if (!line) {
-      flushParagraph();
-      flushBullets();
+      flushAll();
       continue;
     }
 
-    if (HEADING.test(line)) {
+    if (CALLOUT.test(line)) {
+      flushParagraph();
+      flushBullets();
+      callout.push(line.replace(CALLOUT, ""));
+      continue;
+    }
+    flushCallout();
+
+    const heading = line.match(HEADING);
+    if (heading) {
       flushParagraph();
       flushBullets();
       blocks.push({
         type: "heading",
+        level: heading[1].length === 2 ? 2 : 3,
         text: line.replace(HEADING, "").replace(/\*\*/g, "").trim(),
       });
       continue;
@@ -138,13 +185,6 @@ export function parseBlocks(content: string | null): Block[] {
     paragraph.push(line);
   }
 
-  flushParagraph();
-  flushBullets();
+  flushAll();
   return blocks;
-}
-
-/** Numero de chapitre sur deux chiffres : "1" devient "01". */
-export function chapterNumber(number: string | null, index: number): string {
-  const raw = (number ?? "").trim() || String(index + 1);
-  return /^\d$/.test(raw) ? raw.padStart(2, "0") : raw;
 }

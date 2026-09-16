@@ -7,7 +7,8 @@ export const maxDuration = 300;
 
 const BodySchema = z.object({
   format: z.enum(["DOCX", "PDF"]),
-  includeSources: z.boolean().default(true),
+  includeSources: z.boolean().default(false),
+  includeAnnexes: z.boolean().default(true),
 });
 
 export async function POST(
@@ -36,6 +37,7 @@ export async function POST(
       userId: access.userId,
       format: parsed.data.format,
       includeSources: parsed.data.includeSources,
+      includeAnnexes: parsed.data.includeAnnexes,
     });
     return NextResponse.json({ result });
   } catch (error) {

@@ -1,0 +1,218 @@
+/* Rayon unique cartes / panneaux (aligne spot-card-plum rounded-[30px]) */
+.plumtech-landing {
+  --plumtech-radius: 30px;
+}
+
+.plumtech-section {
+  position: relative;
+  isolation: isolate;
+  background: var(--mb-surface);
+  color: var(--mb-body);
+}
+
+.plumtech-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 20%, rgba(var(--mb-primary-rgb), 0.06) 0%, transparent 72%),
+    radial-gradient(ellipse 65% 50% at 50% 85%, rgba(53, 128, 212, 0.05) 0%, transparent 68%);
+}
+
+.plumtech-section > * {
+  position: relative;
+  z-index: 1;
+}
+
+.plumtech-demo-card,
+.plumtech-step-card,
+.plumtech-compare-table,
+.plumtech-roi-card,
+.plumtech-roi-result,
+.social-proof-cta {
+  border-radius: var(--plumtech-radius) !important;
+}
+
+.plumtech-demo-card,
+.plumtech-step-card,
+.plumtech-compare-table {
+  border: 1px solid rgba(var(--mb-primary-rgb), 0.1);
+  box-shadow: 0 16px 50px rgba(var(--mb-primary-rgb), 0.1);
+}
+
+.plumtech-demo-progress {
+  background: linear-gradient(90deg, var(--mb-primary) 0%, var(--mb-accent) 100%);
+}
+
+.plumtech-compare-table th,
+.plumtech-compare-table td {
+  border-color: rgba(var(--mb-primary-rgb), 0.1);
+}
+
+.plumtech-compare-table thead th:last-child {
+  background: rgba(var(--mb-primary-rgb), 0.06);
+  color: var(--mb-primary-deep);
+}
+
+.plumtech-compare-table tbody td:last-child {
+  background: rgba(var(--mb-primary-rgb), 0.03);
+  color: var(--mb-ink-70);
+}
+
+.plumtech-roi-card {
+  border: 1px solid rgba(var(--mb-primary-rgb), 0.1);
+  box-shadow: 0 20px 60px rgba(var(--mb-primary-rgb), 0.1);
+}
+
+.plumtech-roi-field {
+  padding: 1rem 1.125rem;
+  border-radius: var(--plumtech-radius);
+  background: var(--mb-surface);
+  border: 1px solid rgba(var(--mb-primary-rgb), 0.08);
+}
+
+.plumtech-roi-badge {
+  display: inline-flex;
+  min-width: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  background: rgba(var(--mb-primary-rgb), 0.1);
+  font-family: var(--font-display, inherit);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--mb-primary);
+}
+
+.plumtech-roi-range {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    var(--mb-primary) 0%,
+    var(--mb-primary) var(--roi-fill, 35%),
+    var(--mb-mist) var(--roi-fill, 35%),
+    var(--mb-mist) 100%
+  );
+  cursor: pointer;
+  outline: none;
+}
+
+.plumtech-roi-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--mb-primary);
+  box-shadow: 0 2px 8px rgba(var(--mb-primary-rgb), 0.25);
+  cursor: pointer;
+}
+
+.plumtech-roi-range::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--mb-primary);
+  box-shadow: 0 2px 8px rgba(var(--mb-primary-rgb), 0.25);
+  cursor: pointer;
+}
+
+.plumtech-roi-result {
+  background: linear-gradient(
+    145deg,
+    var(--mb-primary-deep) 0%,
+    var(--mb-primary) 45%,
+    var(--mb-accent) 100%
+  );
+  box-shadow: 0 16px 40px rgba(var(--mb-primary-rgb), 0.28);
+  color: #fff !important;
+}
+
+.plumtech-roi-result .font-display,
+.plumtech-roi-result .font-display span {
+  color: #fff !important;
+}
+
+.plumtech-roi-result p {
+  color: rgba(255, 255, 255, 0.92) !important;
+}
+
+.plumtech-roi-result span.pb-3 {
+  color: rgba(255, 255, 255, 0.55) !important;
+}
+
+.social-proof-cta {
+  background: linear-gradient(
+    135deg,
+    var(--mb-primary-deep) 0%,
+    var(--mb-primary) 50%,
+    var(--mb-accent) 100%
+  );
+  box-shadow: 0 24px 56px rgba(var(--mb-primary-rgb), 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.social-proof-cta .font-display,
+.social-proof-cta .font-display.text-\[var\(--mb-ink\)\] {
+  color: #fff !important;
+}
+
+.social-proof-cta .font-body,
+.social-proof-cta .font-body.text-\[var\(--mb-muted\)\] {
+  color: rgba(255, 255, 255, 0.88) !important;
+}
+
+.social-proof-cta__btn {
+  background: #fff !important;
+  color: var(--mb-primary-deep) !important;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
+}
+
+.social-proof-cta__btn:hover {
+  background: var(--mb-surface) !important;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.22);
+  transform: translateY(-2px);
+}
+
+/* Landing embarquee - header, cartes HTML, mockups */
+.plumtech-landing header .pointer-events-auto {
+  border-radius: var(--plumtech-radius) !important;
+}
+
+.plumtech-landing :is(
+  .rounded-\[10px\],
+  .rounded-\[12px\],
+  .rounded-\[16px\],
+  .rounded-\[18px\],
+  .rounded-\[22px\],
+  .rounded-\[40px\],
+  .rounded-xl,
+  .rounded-2xl,
+  .rounded-3xl,
+  .rounded-\[30px\],
+  .spot-card-plum,
+  article.rounded-\[22px\]
+) {
+  border-radius: var(--plumtech-radius) !important;
+}
+
+.plumtech-landing .hero-materia__photo,
+.plumtech-landing .hero-materia__deco,
+.plumtech-landing .hero-materia .hero-banner-media__frame {
+  border-radius: var(--plumtech-radius) !important;
+}
+
+.plumtech-landing .rounded-\[2\.4rem\] {
+  border-radius: var(--plumtech-radius) !important;
+}
+
+.plumtech-landing .md\:rounded-section {
+  border-radius: var(--plumtech-radius) !important;
+}

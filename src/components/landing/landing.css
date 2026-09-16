@@ -1950,6 +1950,26 @@
   grid-template-columns: 1.4fr repeat(3, 1fr);
   gap: var(--gut);
 }
+.landing .foot-grid--minimal {
+  grid-template-columns: 1fr;
+  max-width: 420px;
+}
+.landing .foot-social {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  margin-top: 20px;
+  border-radius: var(--r-sm);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: #fff;
+  color: var(--blue);
+  transition: background 0.2s ease;
+}
+.landing .foot-social:hover {
+  background: var(--blue-wash);
+}
 .landing .foot-tag {
   font-size: 15px;
   color: rgba(212, 227, 246, 0.72);

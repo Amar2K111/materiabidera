@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -27,6 +27,7 @@ import { Button } from "@/components/ui/button";
 import { ConfirmButton } from "@/components/ui/confirm-button";
 import { Notice } from "@/components/ui/notice";
 import { cn } from "@/lib/utils/cn";
+import { WriteAllProgress, useWriteAll } from "./write-all";
 
 type Action = "generate" | "improve" | "shorten" | "expand" | "concrete";
 
@@ -96,6 +97,7 @@ export function MemoryEditor({
   alerts,
   versionsEnabled,
   initialSectionId,
+  autoWriteAll = false,
 }: {
   projectId: string;
   organizationId: string;
@@ -104,6 +106,8 @@ export function MemoryEditor({
   alerts: Record<string, SectionAlert[]>;
   versionsEnabled: boolean;
   initialSectionId?: string | null;
+  /** Lance la redaction de tout le memoire des l'ouverture (plan tout juste construit). */
+  autoWriteAll?: boolean;
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -119,6 +123,55 @@ export function MemoryEditor({
   // Points a completer, conserves par chapitre : ils ne disparaissent pas au
   // rafraichissement qui suit la redaction.
   const [toConfirm, setToConfirm] = useState<Record<string, string[]>>({});
+
+  // --- Redaction de tout le memoire ------------------------------------------
+  const onChapterWritten = useCallback((sectionId: string, items: string[]) => {
+    setToConfirm((prev) => ({ ...prev, [sectionId]: items }));
+  }, []);
+  const writeAll = useWriteAll({ projectId, onChapterWritten });
+  const writing = writeAll.state.running;
+  const writingId = writing ? writeAll.state.queue[writeAll.state.current]?.id : null;
+  const emptySections = sections.filter((s) => s.status === "EMPTY");
+  // Toute action sur le texte attend la fin de la redaction en cours.
+  const locked = busy !== null || writing;
+
+  function startWriteAll(scope: "remaining" | "all") {
+    if (dirty) {
+      setError("Enregistrez ou annulez vos modifications avant de lancer la rédaction.");
+      return;
+    }
+    const targets = scope === "remaining" ? emptySections : sections;
+    if (
+      scope === "all" &&
+      !window.confirm(
+        versionsEnabled
+          ? `Réécrire les ${sections.length} chapitres ? Le texte actuel de chaque chapitre est conservé dans son historique et peut être restauré.`
+          : `Réécrire les ${sections.length} chapitres ? Le texte actuel sera remplacé.`,
+      )
+    ) {
+      return;
+    }
+    setError(null);
+    void writeAll.start(targets.map((s) => ({ id: s.id, title: s.title })));
+  }
+
+  // Plan tout juste construit depuis « Construire le plan et tout rédiger » :
+  // la redaction demarre seule. Le parametre est retire de l'adresse pour
+  // qu'un rechargement de la page ne la relance pas.
+  const autoStarted = useRef(false);
+  useEffect(() => {
+    if (!autoWriteAll || autoStarted.current) return;
+    const timer = setTimeout(() => {
+      autoStarted.current = true;
+      window.history.replaceState(null, "", window.location.pathname);
+      void writeAll.start(
+        sections.filter((s) => s.status === "EMPTY").map((s) => ({ id: s.id, title: s.title })),
+      );
+    }, 0);
+    return () => clearTimeout(timer);
+    // Une seule fois, a l'ouverture.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [versions, setVersions] = useState<SectionVersion[] | null>(null);
 
@@ -219,7 +272,7 @@ export function MemoryEditor({
   }
 
   async function runAction(action: Action) {
-    if (!selected) return;
+    if (!selected || writing) return;
 
     if (dirty) {
       setError(
@@ -265,7 +318,7 @@ export function MemoryEditor({
 
   /** Restaure une version : le texte actuel est lui-meme conserve avant. */
   async function restore(version: SectionVersion) {
-    if (!selected) return;
+    if (!selected || writing) return;
     if (dirty) {
       setError("Enregistrez ou annulez vos modifications avant de restaurer une version.");
       return;
@@ -301,6 +354,7 @@ export function MemoryEditor({
   }
 
   async function addSection() {
+    if (writing) return;
     const supabase = createClient();
     const { data } = await supabase
       .from("memory_sections")
@@ -322,6 +376,7 @@ export function MemoryEditor({
   }
 
   async function move(section: MemorySection, direction: -1 | 1) {
+    if (writing) return;
     const index = sections.findIndex((s) => s.id === section.id);
     const other = sections[index + direction];
     if (!other) return;
@@ -342,6 +397,7 @@ export function MemoryEditor({
   }
 
   async function removeSection(section: MemorySection) {
+    if (writing) return;
     const supabase = createClient();
     await supabase.from("memory_sections").delete().eq("id", section.id);
     if (selected?.id === section.id) {
@@ -373,6 +429,19 @@ export function MemoryEditor({
   const sectionAlerts = selected ? (alerts[selected.id] ?? []) : [];
 
   return (
+    <div className="space-y-5">
+    <WriteAllProgress
+      projectId={projectId}
+      state={writeAll.state}
+      onStop={writeAll.stop}
+      onDismiss={writeAll.dismiss}
+      onResume={() => startWriteAll("remaining")}
+      // Les chapitres que la file vient d'ecrire comptent avant meme le rafraichissement.
+      memoWritten={
+        sections.filter((s) => s.status !== "EMPTY" || writeAll.state.written.includes(s.id)).length
+      }
+      memoTotal={sections.length}
+    />
     <div className="grid gap-5 lg:grid-cols-[250px_minmax(0,1fr)] xl:grid-cols-[250px_minmax(0,1fr)_290px]">
       {/* ---------- Plan ---------- */}
       <aside className="order-1 lg:sticky lg:top-[72px] lg:order-none lg:self-start">
@@ -386,6 +455,46 @@ export function MemoryEditor({
           <span className="app-ui__bar mx-1.5 mt-2.5 mb-3 !block">
             <i style={{ width: `${progress.pct}%` }} />
           </span>
+
+          <div className="mb-3 px-0.5">
+            {emptySections.length > 0 ? (
+              <Button
+                type="button"
+                className="w-full"
+                onClick={() => startWriteAll("remaining")}
+                disabled={locked}
+              >
+                {writing ? (
+                  <Loader2 className="h-4 w-4 animate-spin" strokeWidth={1.8} />
+                ) : (
+                  <Sparkles className="h-4 w-4" strokeWidth={1.8} />
+                )}
+                {writing
+                  ? "Rédaction en cours…"
+                  : emptySections.length === sections.length
+                    ? "Rédiger tout le mémoire"
+                    : emptySections.length === 1
+                      ? "Rédiger le chapitre restant"
+                      : `Rédiger les ${emptySections.length} chapitres restants`}
+              </Button>
+            ) : (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="w-full"
+                onClick={() => startWriteAll("all")}
+                disabled={locked}
+              >
+                {writing ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" strokeWidth={1.8} />
+                ) : (
+                  <Sparkles className="h-3.5 w-3.5" strokeWidth={1.8} />
+                )}
+                {writing ? "Rédaction en cours…" : "Réécrire tout le mémoire"}
+              </Button>
+            )}
+          </div>
 
           <ol className="space-y-0.5">
             {sections.map((section, index) => {
@@ -406,7 +515,9 @@ export function MemoryEditor({
                     <span
                       className={cn(
                         "mt-px flex h-[18px] w-[18px] flex-none items-center justify-center rounded-full text-[10px] font-bold",
-                        section.status === "EMPTY"
+                        section.id === writingId
+                          ? "border border-brand/30 bg-brand-wash"
+                          : section.status === "EMPTY"
                           ? "border border-line bg-white text-ink-42"
                           : section.status === "VALIDATED"
                             ? "bg-ok text-white"
@@ -414,7 +525,13 @@ export function MemoryEditor({
                       )}
                       aria-hidden
                     >
-                      {section.status === "EMPTY" ? index + 1 : <Check className="h-2.5 w-2.5" strokeWidth={3} />}
+                      {section.id === writingId ? (
+                        <Loader2 className="h-3 w-3 animate-spin text-brand" strokeWidth={2.5} />
+                      ) : section.status === "EMPTY" ? (
+                        index + 1
+                      ) : (
+                        <Check className="h-2.5 w-2.5" strokeWidth={3} />
+                      )}
                     </span>
                     <span className="min-w-0 flex-1 text-[12.5px] leading-snug font-medium">
                       {section.title}
@@ -425,14 +542,14 @@ export function MemoryEditor({
                     <IconAction
                       label="Monter"
                       onClick={() => move(section, -1)}
-                      disabled={index === 0}
+                      disabled={index === 0 || writing}
                     >
                       <ChevronUp className="h-3.5 w-3.5" strokeWidth={2} />
                     </IconAction>
                     <IconAction
                       label="Descendre"
                       onClick={() => move(section, 1)}
-                      disabled={index === sections.length - 1}
+                      disabled={index === sections.length - 1 || writing}
                     >
                       <ChevronDown className="h-3.5 w-3.5" strokeWidth={2} />
                     </IconAction>
@@ -445,7 +562,8 @@ export function MemoryEditor({
           <button
             type="button"
             onClick={addSection}
-            className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-[8px] border border-dashed border-line px-3 py-2 text-[12.5px] font-medium text-ink-58 transition-colors hover:border-brand hover:text-brand"
+            disabled={writing}
+            className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-[8px] border border-dashed border-line px-3 py-2 text-[12.5px] font-medium text-ink-58 transition-colors hover:border-brand hover:text-brand disabled:opacity-45"
           >
             <Plus className="h-3.5 w-3.5" strokeWidth={2} />
             Ajouter un chapitre
@@ -470,6 +588,7 @@ export function MemoryEditor({
               </Badge>
               <div className="ml-auto">
                 <ConfirmButton
+                  disabled={writing}
                   label="Supprimer ce chapitre"
                   confirmLabel="Supprimer le chapitre"
                   onConfirm={() => removeSection(selected)}
@@ -628,7 +747,7 @@ export function MemoryEditor({
                   setEdited(e.target.value);
                   setDirty(true);
                 }}
-                disabled={busy !== null && busy !== "save"}
+                disabled={(busy !== null && busy !== "save") || writing}
                 placeholder="Rédigez ce chapitre, ou lancez une première rédaction avec « Rédiger »."
                 className="mt-5 block w-full resize-none border-0 bg-transparent p-0 text-[15px] leading-[1.8] text-ink placeholder:text-ink-42 focus:outline-none disabled:opacity-60"
               />
@@ -638,7 +757,7 @@ export function MemoryEditor({
               <Button
                 type="button"
                 onClick={() => save()}
-                disabled={!dirty || busy !== null}
+                disabled={!dirty || locked}
               >
                 {busy === "save" ? "Enregistrement…" : "Enregistrer"}
               </Button>
@@ -650,7 +769,7 @@ export function MemoryEditor({
                   onClick={() => {
                     setDirty(false);
                   }}
-                  disabled={busy !== null}
+                  disabled={locked}
                 >
                   Annuler
                 </Button>
@@ -659,7 +778,7 @@ export function MemoryEditor({
                   type="button"
                   variant="ghost"
                   onClick={() => save("VALIDATED")}
-                  disabled={busy !== null}
+                  disabled={locked}
                 >
                   <Check className="h-4 w-4" strokeWidth={2} />
                   Valider le chapitre
@@ -692,7 +811,7 @@ export function MemoryEditor({
             type="button"
             className="mt-3 w-full"
             onClick={() => runAction("generate")}
-            disabled={busy !== null || !selected}
+            disabled={locked || !selected}
           >
             {busy === "generate" ? (
               <Loader2 className="h-4 w-4 animate-spin" strokeWidth={1.8} />
@@ -709,7 +828,7 @@ export function MemoryEditor({
                   key={action.key}
                   type="button"
                   onClick={() => runAction(action.key)}
-                  disabled={busy !== null}
+                  disabled={locked}
                   title={action.hint}
                   className="flex h-9 items-center justify-center gap-1.5 rounded-[8px] border border-line text-[12.5px] font-medium text-ink-70 transition-colors hover:border-brand hover:text-brand disabled:opacity-45"
                 >
@@ -764,7 +883,7 @@ export function MemoryEditor({
                       <button
                         type="button"
                         onClick={() => restore(v)}
-                        disabled={busy !== null}
+                        disabled={locked}
                         title="Le texte actuel est conservé dans l'historique"
                         className="rounded-[6px] px-1.5 py-0.5 text-[12px] font-semibold text-brand hover:bg-brand-wash disabled:opacity-45"
                       >
@@ -785,6 +904,7 @@ export function MemoryEditor({
           </div>
         ) : null}
       </aside>
+    </div>
     </div>
   );
 }

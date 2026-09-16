@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { FileDown } from "lucide-react";
 import { getProject } from "@/lib/data/projects";
 import { listMemorySections } from "@/lib/data/memory";
+import { getDceAnalysis } from "@/lib/data/analysis";
 import { listExports } from "@/lib/data/quality";
 import { getChecklist } from "@/lib/services/checklist";
 import { ButtonLink } from "@/components/ui/button";
@@ -14,11 +15,12 @@ export default async function ExportPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const [project, sections, exports, checklist] = await Promise.all([
+  const [project, sections, exports, checklist, analysis] = await Promise.all([
     getProject(id),
     listMemorySections(id),
     listExports(id),
     getChecklist(id),
+    getDceAnalysis(id),
   ]);
 
   if (!project) notFound();
@@ -45,6 +47,7 @@ export default async function ExportPage({
       writtenCount={written.length}
       totalCount={sections.length}
       remaining={checklist.remaining}
+      responseFormat={analysis?.response_format ?? null}
     />
   );
 }

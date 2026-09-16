@@ -7,10 +7,10 @@ import { getQualityCheck } from "@/lib/data/quality";
 import { isEngineSchemaReady } from "@/lib/engine/schema";
 import { getAppContext } from "@/lib/data/context";
 import { isAiConfigured } from "@/lib/ai";
-import { OperationButton } from "@/components/app/operation-button";
 import { ButtonLink } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Notice } from "@/components/ui/notice";
+import { PlanAndWriteButton } from "./plan-and-write-button";
 import {
   MemoryEditor,
   type SectionAlert,
@@ -25,7 +25,7 @@ export default async function MemoryPage({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const { id } = await params;
-  const { chapitre } = await searchParams;
+  const { chapitre, rediger } = await searchParams;
   const [ctx, project, analysis, sections, requirements, check, engine] = await Promise.all([
     getAppContext(),
     getProject(id),
@@ -65,7 +65,7 @@ export default async function MemoryPage({
 
   if (sections.length === 0) {
     return (
-      <div className="max-w-[640px]">
+      <div className="max-w-[720px]">
         <h2 className="text-[17px] font-bold">Construire le plan</h2>
         <p className="mt-2 text-[13.5px] leading-relaxed text-ink-58">
           Le plan est établi pour cette consultation précise : il suit le cadre
@@ -74,12 +74,7 @@ export default async function MemoryPage({
           n&apos;est appliqué.
         </p>
         <div className="mt-6">
-          <OperationButton
-            projectId={project.id}
-            operation="plan"
-            label="Construire le plan"
-            runningLabel="Construction en cours..."
-          />
+          <PlanAndWriteButton projectId={project.id} />
         </div>
       </div>
     );
@@ -114,6 +109,7 @@ export default async function MemoryPage({
       alerts={alerts}
       versionsEnabled={engine}
       initialSectionId={typeof chapitre === "string" ? chapitre : null}
+      autoWriteAll={rediger === "tout"}
     />
   );
 }

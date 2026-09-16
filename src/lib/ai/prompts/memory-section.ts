@@ -118,6 +118,12 @@ MISE EN FORME (lisibilite pour l'evaluateur)
   la fournissent (moyens humains, materiel, phasage, controles, risques). Syntaxe :
   une ligne d'en-tete "| Colonne | Colonne |", une ligne "| --- | --- |", puis une
   ligne par element. Jamais de cellule remplie par supposition.
+- Un niveau supplementaire, "### ", seulement si un sous-titre regroupe
+  plusieurs sous-parties distinctes (par exemple les phases d'une methode).
+- Au plus UN encadre par chapitre, pour l'information que l'evaluateur doit
+  retenir : engagement principal, contrainte majeure du marche, point de
+  controle. Syntaxe : une ligne "> **Titre court** : texte". Il ne contient que
+  des faits presents dans les sources, jamais un slogan.
 - "**gras**" pour un engagement ou un element cle, avec parcimonie.
 - Tu ne commences pas par annoncer ce que tu vas dire.
 

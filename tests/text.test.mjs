@@ -8,7 +8,7 @@ import { humanizeRefs, stripCitationCodes } from "../src/lib/citations.ts";
 import { validateStructured } from "../src/lib/ai/types.ts";
 import { z } from "zod";
 import { PASSAGE_CHARS, splitIntoPassages } from "../src/lib/extraction/chunk.ts";
-import { chapterNumber, parseBlocks, parseRuns } from "../src/lib/services/export-blocks.ts";
+import { parseBlocks, parseRuns } from "../src/lib/services/export-blocks.ts";
 
 // --- Pertinence -------------------------------------------------------------------
 test("tokenize : sans accents, sans mots vides, racines rapprochees", () => {
@@ -139,8 +139,16 @@ test("parseBlocks : une ligne avec des barres sans separateur reste un paragraph
   assert.equal(blocks[0].type, "paragraph");
 });
 
-test("chapterNumber : numerotation sur deux chiffres", () => {
-  assert.equal(chapterNumber("3", 0), "03");
-  assert.equal(chapterNumber(null, 4), "05");
-  assert.equal(chapterNumber("2.1", 0), "2.1");
+test("parseBlocks : niveaux de titre et encadre", () => {
+  const blocks = parseBlocks(
+    ["## Phasage", "### Phase 1", "Texte.", "", "> **Engagement principal** : aucune zone laissée découverte."].join("\n"),
+  );
+  assert.deepEqual(
+    blocks.map((b) => (b.type === "heading" ? `h${b.level}` : b.type)),
+    ["h2", "h3", "paragraph", "callout"],
+  );
+  const callout = blocks[3];
+  assert.equal(callout.title, "Engagement principal");
+  // Le texte de l'encadre commence par une majuscule apres le titre.
+  assert.equal(callout.runs[0].text, "Aucune zone laissée découverte.");
 });

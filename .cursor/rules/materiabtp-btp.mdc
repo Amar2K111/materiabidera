@@ -1,0 +1,25 @@
+---
+description: Contexte produit MateriaBTP — SaaS appels d'offres BTP (always on)
+alwaysApply: true
+---
+
+# MateriaBTP — contexte produit BTP
+
+Ce repo est **MateriaBTP**, un SaaS français d'aide à la réponse aux appels d'offres pour entreprises du **BTP**.
+
+Avant toute modification de **copy**, **landing**, **UX**, **features produit**, **prompts IA** ou **workflows**, lis et applique `.cursor/skills/btp/SKILL.md`.
+
+## Rappels permanents
+
+- **Workflow** : DCE → Analyse → Go/No-Go → Exigences → Base entreprise → Mémoire → Contrôle → Word/PDF
+- **Vocabulaire** : DCE, RC, CCTP, CCAP, DPGF, mémoire technique, appels d'offres, critères de jugement
+- **Positionnement** : assistant spécialisé BTP, pas un chatbot générique ni un outil RFP généraliste
+- **Contenu** : ne jamais inventer certifications, références, moyens, méthodes ou engagements entreprise
+- **Traçabilité** : relier les exigences et contenus générés à leur source (DCE, base entreprise)
+- **Décision** : l'IA recommande (ex. Go/No-Go) ; l'utilisateur tranche et valide
+
+## Copy et landing
+
+- Parler aux **PME BTP**, chargés d'affaires, conducteurs de travaux, responsables AO
+- Éviter le jargon RFP/Excel/grilles génériques ; privilégier DCE, mémoire technique, chantier, marchés BTP
+- Ton : SaaS B2B français, clair, crédible, orienté confiance et traçabilité
