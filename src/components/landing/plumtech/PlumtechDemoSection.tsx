@@ -61,9 +61,13 @@ export function PlumtechDemoSection() {
             </div>
             <button
               type="button"
-              onClick={runDemo}
+              data-no-calendly
+              onClick={(event) => {
+                event.stopPropagation();
+                void runDemo();
+              }}
               disabled={running}
-              className="btn-calendly mt-4 inline-flex w-full items-center justify-center rounded-full bg-primary px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--mb-accent)] disabled:opacity-70"
+              className="plumtech-demo-run mt-4 inline-flex w-full items-center justify-center rounded-full bg-primary px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--mb-accent)] disabled:opacity-70"
             >
               {running ? "Analyse en cours\u2026" : "Lancer l\u2019analyse \u2192"}
             </button>

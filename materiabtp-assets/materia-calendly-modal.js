@@ -36,6 +36,7 @@
   document.addEventListener("click", (event) => {
     const target = event.target;
     if (!(target instanceof Element)) return;
+    if (target.closest("[data-no-calendly], .plumtech-demo-run")) return;
     if (target.closest(".btn-calendly")) {
       event.preventDefault();
       openModal();

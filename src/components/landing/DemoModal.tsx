@@ -40,6 +40,7 @@ export function DemoModal() {
   useEffect(() => {
     function onClick(e: MouseEvent) {
       const target = e.target as HTMLElement | null;
+      if (target?.closest("[data-no-calendly], .plumtech-demo-run")) return;
       if (target?.closest(".btn-calendly")) {
         e.preventDefault();
         openModal();

@@ -15,7 +15,7 @@ export function PlumtechLandingClient() {
         strategy="afterInteractive"
       />
       <Script
-        src="/materiabtp-assets/materia-calendly-modal.js"
+        src="/materiabtp-assets/materia-calendly-modal.js?v=4"
         strategy="afterInteractive"
       />
     </>
