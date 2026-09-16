@@ -34,13 +34,21 @@
 }
 
 /* ------------------------------------------------------------------ Nav flottante blanche */
-header .pointer-events-auto.rounded-\[18px\] {
+header .pointer-events-auto.rounded-\[18px\],
+header .pointer-events-auto.rounded-\[30px\],
+.plumtech-landing header .pointer-events-auto {
   background: #fff !important;
-  border-color: rgba(0, 0, 0, 0.1) !important;
+  border-color: rgba(var(--mb-primary-rgb), 0.12) !important;
   color: var(--mb-ink) !important;
   box-shadow:
     0 12px 40px rgba(var(--mb-primary-rgb), 0.14),
     0 2px 10px rgba(var(--mb-primary-rgb), 0.08) !important;
+}
+
+header .pointer-events-auto.bg-stone-1200,
+header .pointer-events-auto.text-white {
+  background: #fff !important;
+  color: var(--mb-ink) !important;
 }
 
 header a,
