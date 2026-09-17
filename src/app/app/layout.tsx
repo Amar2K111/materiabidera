@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { BrandLogo, BrandMark } from "@/components/brand/BrandLogo";
-import { LogOut, Plus } from "lucide-react";
+import { BrandMark } from "@/components/brand/BrandLogo";
+import { LogOut } from "lucide-react";
 import { getAppContext } from "@/lib/data/context";
-import { SidebarNav } from "@/components/app/sidebar";
+import { AppSidebar } from "@/components/app/app-sidebar";
 import { MobileNav } from "@/components/app/mobile-nav";
 import { SessionBootstrap } from "@/components/app/session-bootstrap";
+import { SIDEBAR_PREPAINT } from "@/lib/sidebar-preference";
 import "@/components/app/app-ui.css";
 
 /** Page authentifiee : toujours rendue a la demande, jamais prerendue. */
@@ -32,47 +33,16 @@ export default async function AppLayout({
 
   return (
     <div className="app-ui app-ui__shell">
+      {/* Applique la preference de barre laterale avant le premier affichage,
+          pour que la page ne saute pas apres l'hydratation. */}
+      <script dangerouslySetInnerHTML={{ __html: SIDEBAR_PREPAINT }} />
       <SessionBootstrap isGuest={ctx.isGuest} />
-      <aside className="app-ui__sidebar">
-        <Link href="/app" className="app-ui__sidebar-brand" aria-label="MateriaBTP — tableau de bord">
-          <BrandLogo height={28} priority />
-        </Link>
-
-        <Link href="/app/dossiers/nouveau" className="app-ui__sidebar-cta">
-          <Plus strokeWidth={2.2} aria-hidden />
-          Nouveau dossier
-        </Link>
-
-        <div className="app-ui__sidebar-nav">
-          <SidebarNav />
-        </div>
-
-        <div className="app-ui__sidebar-foot">
-          <span className="app-ui__avatar" aria-hidden>
-            {initials}
-          </span>
-          <div className="app-ui__sidebar-id">
-            <p className="app-ui__sidebar-org">{ctx.organization.name}</p>
-            {ctx.email ? (
-              <p className="app-ui__sidebar-email" title={ctx.email}>
-                {ctx.email}
-              </p>
-            ) : null}
-          </div>
-          {!ctx.isGuest ? (
-            <form action="/auth/signout" method="post">
-              <button
-                type="submit"
-                className="app-ui__sidebar-logout"
-                aria-label="Se déconnecter"
-                title="Se déconnecter"
-              >
-                <LogOut className="h-4 w-4" strokeWidth={1.8} />
-              </button>
-            </form>
-          ) : null}
-        </div>
-      </aside>
+      <AppSidebar
+        organizationName={ctx.organization.name}
+        email={ctx.email}
+        initials={initials}
+        isGuest={ctx.isGuest}
+      />
 
       <div className="app-ui__main-col">
         <header className="app-ui__header">

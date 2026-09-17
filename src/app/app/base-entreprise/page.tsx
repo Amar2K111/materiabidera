@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getAppContext } from "@/lib/data/context";
 import { getCompanyCounts } from "@/lib/data/company";
 import { COLLECTIONS } from "@/lib/company";
-import { OrganizationForm } from "@/app/app/parametres/organization-form";
+import { OrganizationForm } from "@/components/app/organization-form";
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default async function BaseEntreprisePresentationPage() {

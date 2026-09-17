@@ -123,6 +123,11 @@ main > section.relative.bg-white.pt-header h1 span.text-stone-900 {
   background-clip: unset !important;
 }
 
+/* Hero H1 — 2e ligne plus claire (style TenderCrunch) */
+main > section.relative.bg-white.pt-header h1 span.text-stone-700 {
+  color: var(--mb-muted) !important;
+}
+
 main > section.relative.bg-white.pt-header .text-stone-800,
 main > section.relative.bg-white.pt-header .text-stone-700,
 main > section.relative.bg-white.pt-header .text-stone-600,
@@ -161,8 +166,20 @@ a.bg-ember-100,
 button.bg-primary,
 a.bg-primary {
   border-radius: 9999px !important;
+  background-color: var(--mb-primary) !important;
+  background-image: none !important;
   box-shadow: 0 8px 28px rgba(var(--mb-primary-rgb), 0.16);
   color: #fff !important;
+  transition: none !important;
+}
+
+button.bg-ember-100:hover,
+a.bg-ember-100:hover,
+button.bg-primary:hover,
+a.bg-primary:hover,
+.hover\:bg-ember-200:hover {
+  background-color: var(--mb-primary-deep) !important;
+  background-image: none !important;
 }
 
 a.bg-ember-100.text-white,
@@ -605,32 +622,20 @@ article .text-caption.uppercase {
   text-transform: uppercase;
 }
 
-/* Panneau visuel feature cards — dégradés Tenderbolt-like */
-article .bg-lazuli-200,
-article div.bg-lazuli-200,
-div.bg-lazuli-200.max-h-\[60vh\] {
-  background: radial-gradient(
-    circle at 30% 20%,
-    var(--mb-accent) 0%,
-    var(--mb-primary) 60%,
-    var(--mb-primary-deep) 100%
-  ) !important;
+/* Panneau visuel feature cards — fond clair + carres decoratifs */
+article.spot-card-plum .spot-card-visual,
+article.spot-card-plum .relative.isolate.flex.items-center.justify-center.overflow-hidden.bg-surface-plum {
+  background: var(--mb-wash) !important;
 }
 
-article .bg-ember-50,
-article div.bg-ember-50,
-div.bg-ember-50.max-h-\[60vh\] {
-  background: radial-gradient(
-    circle at 30% 20%,
-    var(--mb-accent) 0%,
-    var(--mb-primary) 60%,
-    var(--mb-primary-deep) 100%
-  ) !important;
+article.spot-card-plum .spot-card-visual .bg-lazuli-200,
+article.spot-card-plum .spot-card-visual .rounded-\[2\.4rem\].bg-lazuli-200 {
+  background-color: var(--mb-accent) !important;
 }
 
-article.spot-card-plum .bg-lazuli-300,
-article.spot-card-plum .pointer-events-none.absolute.bg-ember-100 {
-  background-color: rgba(91, 163, 232, 0.55) !important;
+article.spot-card-plum .spot-card-visual .bg-ember-50,
+article.spot-card-plum .spot-card-visual .rounded-\[2\.4rem\].bg-ember-50 {
+  background-color: var(--mb-sky) !important;
 }
 
 article.spot-card-plum a.bg-ember-100,

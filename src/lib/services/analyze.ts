@@ -18,6 +18,7 @@ import {
   OVERVIEW_SYSTEM,
   overviewPrompt,
 } from "@/lib/ai/prompts/dce-overview";
+import { syncProjectMetadataFromOverview } from "@/lib/services/project-metadata-sync";
 import {
   REQUIREMENTS_SYSTEM,
   RequirementsSchema,
@@ -85,10 +86,17 @@ export async function analyzeProject(input: {
 
   const { data: before } = await admin
     .from("projects")
-    .select("status")
+    .select("status, name, reference, buyer, lot, deadline")
     .eq("id", input.projectId)
     .single();
   const previousStatus = (before?.status as string | undefined) ?? "DRAFT";
+  const projectRow = before as {
+    name: string;
+    reference: string | null;
+    buyer: string | null;
+    lot: string | null;
+    deadline: string | null;
+  } | null;
 
   await admin
     .from("projects")
@@ -103,6 +111,7 @@ export async function analyzeProject(input: {
       units: units.slice(0, 60),
       byId,
       engine,
+      project: projectRow,
     });
 
     const requirementCount = await runRequirements({
@@ -209,8 +218,15 @@ async function runOverview(args: {
   units: SourceUnit[];
   byId: Map<string, SourceUnit>;
   engine: boolean;
+  project: {
+    name: string;
+    reference: string | null;
+    buyer: string | null;
+    lot: string | null;
+    deadline: string | null;
+  } | null;
 }): Promise<{ vigilance: number; criteriaLabels: string[] }> {
-  const { admin, provider, input, units, byId, engine } = args;
+  const { admin, provider, input, units, byId, engine, project } = args;
 
   const run = await startRun(admin, {
     organizationId: input.organizationId,
@@ -302,6 +318,14 @@ async function runOverview(args: {
       },
       { onConflict: "project_id" },
     );
+
+    if (project) {
+      await syncProjectMetadataFromOverview(admin, {
+        projectId: input.projectId,
+        project,
+        overview: value,
+      });
+    }
 
     await finishRun(admin, run, {
       status: "SUCCEEDED",

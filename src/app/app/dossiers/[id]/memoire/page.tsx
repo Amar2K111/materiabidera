@@ -66,7 +66,9 @@ export default async function MemoryPage({
   if (sections.length === 0) {
     return (
       <div className="max-w-[720px]">
-        <h2 className="text-[17px] font-bold">Construire le plan</h2>
+        <h2 className="text-[19px] font-semibold tracking-[-0.02em]">
+          Construire le plan
+        </h2>
         <p className="mt-2 text-[13.5px] leading-relaxed text-ink-58">
           Le plan est établi pour cette consultation précise : il suit le cadre
           de mémoire s&apos;il en existe un, sinon il se structure sur les

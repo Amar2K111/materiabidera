@@ -1,3 +1,85 @@
+/** Nom provisoire tant que l'utilisateur n'a pas identifie la consultation. */
+export const PLACEHOLDER_PROJECT_NAME = "Nouveau dossier";
+
+export function isPlaceholderProjectName(name: string | null | undefined): boolean {
+  if (!name?.trim()) return true;
+  return name.trim() === PLACEHOLDER_PROJECT_NAME;
+}
+
+const FR_MONTHS: Record<string, number> = {
+  janvier: 0,
+  fevrier: 1,
+  february: 1,
+  mars: 2,
+  march: 2,
+  avril: 3,
+  april: 3,
+  mai: 4,
+  may: 4,
+  juin: 5,
+  june: 5,
+  juillet: 6,
+  july: 6,
+  aout: 7,
+  august: 7,
+  septembre: 8,
+  september: 8,
+  octobre: 9,
+  october: 9,
+  novembre: 10,
+  november: 10,
+  decembre: 11,
+  december: 11,
+};
+
+function normalizeMonthToken(value: string): string {
+  return value
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/\p{M}/gu, "");
+}
+
+/** Tente de convertir une date de remise extraite du RC en ISO (fin de journee). */
+export function parseSubmissionDeadline(text: string): string | null {
+  const trimmed = text.trim();
+  if (!trimmed) return null;
+
+  const iso = trimmed.match(/(\d{4})-(\d{2})-(\d{2})/);
+  if (iso) {
+    const d = new Date(`${iso[1]}-${iso[2]}-${iso[3]}T23:59:59`);
+    return Number.isNaN(d.getTime()) ? null : d.toISOString();
+  }
+
+  const frNumeric = trimmed.match(/(\d{1,2})[/.-](\d{1,2})[/.-](\d{4})/);
+  if (frNumeric) {
+    const d = new Date(
+      `${frNumeric[3]}-${frNumeric[2].padStart(2, "0")}-${frNumeric[1].padStart(2, "0")}T23:59:59`,
+    );
+    return Number.isNaN(d.getTime()) ? null : d.toISOString();
+  }
+
+  const frWords = trimmed.match(/(\d{1,2})\s+([A-Za-zÀ-ÿ]+)\s+(\d{4})/);
+  if (frWords) {
+    const month = FR_MONTHS[normalizeMonthToken(frWords[2])];
+    if (month !== undefined) {
+      const d = new Date(
+        Number(frWords[3]),
+        month,
+        Number(frWords[1]),
+        23,
+        59,
+        59,
+      );
+      return Number.isNaN(d.getTime()) ? null : d.toISOString();
+    }
+  }
+
+  const fallback = new Date(trimmed);
+  if (Number.isNaN(fallback.getTime())) return null;
+  fallback.setHours(23, 59, 59, 999);
+  return fallback.toISOString();
+}
+
 export type ProjectStatus =
   | "DRAFT"
   | "ANALYZING"

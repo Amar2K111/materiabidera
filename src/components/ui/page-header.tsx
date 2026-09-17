@@ -11,13 +11,12 @@ export function PageHeader({
 }) {
   return (
     <header className="flex flex-wrap items-start justify-between gap-4 border-b border-line pb-6">
+      {/* Meme titre que les pages qui n'utilisent pas ce composant : sans cela,
+          "Paramètres" s'affichait en 26px extra-gras et "Dossiers" en 30px gras,
+          au meme niveau de lecture. */}
       <div className="min-w-0">
-        <h1 className="text-[26px] font-extrabold tracking-[-0.035em]">
-          {title}
-        </h1>
-        {subtitle ? (
-          <p className="mt-2 max-w-[70ch] text-[14px] text-ink-58">{subtitle}</p>
-        ) : null}
+        <h1 className="app-ui__page-title">{title}</h1>
+        {subtitle ? <p className="app-ui__page-lead">{subtitle}</p> : null}
       </div>
       {action ? <div className="flex-none">{action}</div> : null}
     </header>

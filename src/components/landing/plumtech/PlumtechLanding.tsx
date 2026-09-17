@@ -1,15 +1,12 @@
-import {
-  PLUMTECH_BODY_HTML,
-  PLUMTECH_INLINE_STYLE,
-  PLUMTECH_MODAL_HTML,
-} from "./landing-markup";
+import { PLUMTECH_BODY_HTML, PLUMTECH_INLINE_STYLE } from "./landing-markup";
+import { DemoModal } from "@/components/landing/DemoModal";
 import { PlumtechCompareSection } from "./PlumtechCompareSection";
 import { PlumtechDemoSection } from "./PlumtechDemoSection";
 import { PlumtechFaqController } from "./PlumtechFaqController";
+import { PlumtechNavScroll } from "./PlumtechNavScroll";
 import { PlumtechFooter } from "./PlumtechFooter";
 import { PlumtechHowItWorks } from "./PlumtechHowItWorks";
 import { PlumtechRoiSection } from "./PlumtechRoiSection";
-import { PlumtechLandingClient } from "./PlumtechLandingClient";
 import { splitLandingHtml } from "./split-landing-html";
 import "./plumtech-landing.css";
 import "./plumtech-sections.css";
@@ -20,7 +17,7 @@ export function PlumtechLanding() {
 
   return (
     <>
-      <PlumtechLandingClient />
+      <DemoModal />
       {PLUMTECH_INLINE_STYLE ? (
         <style dangerouslySetInnerHTML={{ __html: PLUMTECH_INLINE_STYLE }} />
       ) : null}
@@ -36,8 +33,8 @@ export function PlumtechLanding() {
         <div dangerouslySetInnerHTML={{ __html: parts.faqCta }} />
       </div>
       <PlumtechFaqController />
+      <PlumtechNavScroll />
       <PlumtechFooter />
-      <div dangerouslySetInnerHTML={{ __html: PLUMTECH_MODAL_HTML }} />
     </>
   );
 }

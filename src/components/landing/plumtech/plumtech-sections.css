@@ -186,6 +186,13 @@
   border-radius: var(--plumtech-radius) !important;
 }
 
+/* Nav flottante — masquee au scroll bas, visible au scroll haut */
+.plumtech-landing header.is-nav-hidden {
+  --tw-translate-y: calc(-100% - 0.75rem) !important;
+  translate: var(--tw-translate-x) var(--tw-translate-y) !important;
+  transform: translate3d(0, calc(-100% - 0.75rem), 0) !important;
+}
+
 .plumtech-landing :is(
   .rounded-\[10px\],
   .rounded-\[12px\],
@@ -215,4 +222,41 @@
 
 .plumtech-landing .md\:rounded-section {
   border-radius: var(--plumtech-radius) !important;
+}
+
+/* Boutons demo — bleu plein, sans degradé ni fondu */
+.plumtech-landing .btn-calendly.bg-ember-100,
+.plumtech-landing button.btn-calendly.bg-ember-100,
+.plumtech-landing a.btn-calendly.bg-ember-100 {
+  background-color: var(--mb-primary) !important;
+  background-image: none !important;
+  transition: none !important;
+  animation: none !important;
+}
+
+.plumtech-landing .btn-calendly.bg-ember-100:hover,
+.plumtech-landing button.btn-calendly.bg-ember-100:hover,
+.plumtech-landing a.btn-calendly.bg-ember-100:hover,
+.plumtech-landing .btn-calendly.hover\:bg-ember-200:hover {
+  background-color: var(--mb-primary-deep) !important;
+  background-image: none !important;
+}
+
+/* Feature cards — carres decoratifs (comme section confiance) */
+.plumtech-landing article.spot-card-plum .spot-card-visual {
+  background: var(--mb-wash) !important;
+}
+
+.plumtech-landing article.spot-card-plum .spot-card-visual .rounded-\[2\.4rem\] {
+  border-radius: 2.4rem !important;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.plumtech-landing article.spot-card-plum .spot-card-visual .bg-lazuli-200 {
+  background-color: var(--mb-accent) !important;
+}
+
+.plumtech-landing article.spot-card-plum .spot-card-visual .bg-ember-50 {
+  background-color: var(--mb-sky) !important;
 }

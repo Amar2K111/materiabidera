@@ -1,9 +1,10 @@
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { getAppContext } from "@/lib/data/context";
-import { getAiConfig, isStripeConfigured } from "@/lib/env";
+import { isStripeConfigured } from "@/lib/env";
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 import { Badge } from "@/components/ui/badge";
-import { OrganizationForm } from "./organization-form";
 
 const ROLE_LABELS: Record<string, string> = {
   owner: "Propriétaire",
@@ -15,8 +16,6 @@ export default async function ParametresPage() {
   const ctx = await getAppContext();
   if (!ctx?.organization) return null;
 
-  const ai = getAiConfig();
-
   return (
     <div className="space-y-8">
       <PageHeader
@@ -24,7 +23,47 @@ export default async function ParametresPage() {
         subtitle="Informations de votre entreprise, compte utilisateur et état des services connectés."
       />
 
-      <OrganizationForm organization={ctx.organization} />
+      {/* L'identite de l'entreprise se modifie dans la base entreprise, ou elle
+          sert a la redaction. La dupliquer ici creait deux formulaires pour la
+          meme donnee, sans indiquer lequel faisait foi. */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Votre entreprise</CardTitle>
+        </CardHeader>
+        <CardBody className="space-y-3 text-[13.5px]">
+          <div className="flex justify-between gap-4">
+            <span className="text-ink-58">Raison sociale</span>
+            <span className="text-right font-semibold">
+              {ctx.organization.name}
+            </span>
+          </div>
+          <div className="flex justify-between gap-4">
+            <span className="text-ink-58">Activité</span>
+            <span className="text-right font-semibold">
+              {ctx.organization.activity_type ?? (
+                <span className="font-normal text-ink-58">Non renseignée</span>
+              )}
+            </span>
+          </div>
+          <div className="flex justify-between gap-4">
+            <span className="text-ink-58">Zone d&apos;intervention</span>
+            <span className="text-right font-semibold">
+              {ctx.organization.intervention_area ?? (
+                <span className="font-normal text-ink-58">Non renseignée</span>
+              )}
+            </span>
+          </div>
+          <div className="border-t border-line-soft pt-3">
+            <Link
+              href="/app/base-entreprise"
+              className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-brand underline-offset-4 hover:underline"
+            >
+              Modifier dans la base entreprise
+              <ArrowRight className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
+            </Link>
+          </div>
+        </CardBody>
+      </Card>
 
       <Card>
         <CardHeader>
@@ -57,20 +96,6 @@ export default async function ParametresPage() {
               </p>
             </div>
             <Badge tone="ok">Connectée</Badge>
-          </div>
-
-          <div className="flex items-center justify-between gap-4 border-t border-line-soft pt-3">
-            <div>
-              <p className="font-semibold">Moteur d&apos;analyse</p>
-              <p className="text-[12.5px] text-ink-42">
-                {ai.configured
-                  ? `Fournisseur : ${ai.provider}`
-                  : "Requis pour analyser un DCE et rédiger un mémoire"}
-              </p>
-            </div>
-            <Badge tone={ai.configured ? "ok" : "warn"}>
-              {ai.configured ? "Configure" : "Non configuré"}
-            </Badge>
           </div>
 
           <div className="flex items-center justify-between gap-4 border-t border-line-soft pt-3">

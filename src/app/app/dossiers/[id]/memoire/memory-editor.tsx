@@ -442,7 +442,14 @@ export function MemoryEditor({
       }
       memoTotal={sections.length}
     />
-    <div className="grid gap-5 lg:grid-cols-[250px_minmax(0,1fr)] xl:grid-cols-[250px_minmax(0,1fr)_290px]">
+    {/* La troisieme colonne n'apparait qu'a partir de 1536 px. En dessous, elle
+        reduisait la zone de redaction a 314 px : on n'ecrit pas un memoire
+        technique dans une colonne de 45 caracteres. Les outils passent alors
+        sous l'editeur, sans rien perdre. */}
+    <div
+      data-wide
+      className="grid gap-5 lg:grid-cols-[250px_minmax(0,1fr)] 2xl:grid-cols-[250px_minmax(0,1fr)_290px]"
+    >
       {/* ---------- Plan ---------- */}
       <aside className="order-1 lg:sticky lg:top-[72px] lg:order-none lg:self-start">
         <div className="rounded-[12px] border border-line bg-white p-3 shadow-card">
@@ -800,7 +807,7 @@ export function MemoryEditor({
       </section>
 
       {/* ---------- Outils et sources ---------- */}
-      <aside className="order-2 space-y-4 lg:order-none lg:col-start-2 xl:sticky xl:top-[72px] xl:col-start-auto xl:self-start">
+      <aside className="order-2 space-y-4 lg:order-none lg:col-start-2 2xl:sticky 2xl:top-[72px] 2xl:col-start-auto 2xl:self-start">
         <div className="rounded-[12px] border border-line bg-white p-4 shadow-card">
           <h2 className="text-[13.5px] font-semibold">Rédaction assistée</h2>
           <p className="mt-1 text-[12px] leading-relaxed text-ink-42">

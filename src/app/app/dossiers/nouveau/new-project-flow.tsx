@@ -8,6 +8,7 @@ import { Button, ButtonLink } from "@/components/ui/button";
 import { FieldHint, Input, Label } from "@/components/ui/field";
 import { Notice } from "@/components/ui/notice";
 import { DceUploader } from "@/components/app/dce-uploader";
+import { PLACEHOLDER_PROJECT_NAME } from "@/lib/projects";
 
 export function NewProjectFlow({
   organizationId,
@@ -31,8 +32,8 @@ export function NewProjectFlow({
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
-  async function createProject(e: React.FormEvent) {
-    e.preventDefault();
+  async function createProject(e?: React.FormEvent) {
+    e?.preventDefault();
     setPending(true);
     setError(null);
 
@@ -41,7 +42,7 @@ export function NewProjectFlow({
       .from("projects")
       .insert({
         organization_id: organizationId,
-        name: name.trim(),
+        name: name.trim() || PLACEHOLDER_PROJECT_NAME,
         reference: reference.trim() || null,
         buyer: buyer.trim() || null,
         lot: lot.trim() || null,
@@ -99,15 +100,15 @@ export function NewProjectFlow({
             Identifier la consultation
           </h1>
           <p className="mt-2 text-[14px] text-ink-58">
-            Ces informations structurent le dossier et permettent de suivre
-            l&apos;échéance de remise.
+            Facultatif : vous pouvez renseigner ces champs maintenant, ou laisser
+            MateriaBTP les compléter à l&apos;analyse du DCE (objet, acheteur,
+            lot, date limite).
           </p>
 
           <div className="mt-7">
             <Label htmlFor="name">Objet du marché</Label>
             <Input
               id="name"
-              required
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Ex. Réhabilitation du groupe scolaire Jean Moulin"
@@ -160,14 +161,23 @@ export function NewProjectFlow({
             </FieldHint>
           </div>
 
-          <div className="mt-8 flex items-center gap-3">
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
             <ButtonLink href="/app/dossiers" variant="ghost" className="h-11">
-                Annuler
-              </ButtonLink>
+              Annuler
+            </ButtonLink>
+            <Button
+              type="button"
+              variant="ghost"
+              className="h-11 sm:ml-auto"
+              disabled={pending || isGuest}
+              onClick={() => void createProject()}
+            >
+              {pending ? "Création..." : "Passer — compléter à l'analyse"}
+            </Button>
             <Button
               type="submit"
-              className="h-11 flex-1"
-              disabled={pending || isGuest || name.trim().length < 3}
+              className="h-11 sm:flex-1"
+              disabled={pending || isGuest}
             >
               {pending ? "Création..." : "Continuer"}
             </Button>

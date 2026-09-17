@@ -12,7 +12,9 @@ import {
   type StepSegment,
   type StepState,
 } from "@/components/app/project-nav";
+import { ProjectStepFooter } from "@/components/app/project-step-footer";
 import { DeleteProjectButton } from "@/components/app/delete-project-button";
+import { nextStepFor } from "@/lib/next-step";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils/cn";
 
@@ -33,9 +35,12 @@ export default async function ProjectLayout({
 
   const status = PROJECT_STATUS[project.status];
   const due = deadlineLabel(project.deadline);
+  // Meme source que le panneau "Prochaine etape" de la synthese : une seule
+  // definition de ce qu'il reste a faire, quel que soit l'endroit ou on l'affiche.
+  const next = nextStepFor(project.status, progress);
 
   return (
-    <div>
+    <div className="app-ui__project">
       <header className="app-ui__project-head">
         <div className="min-w-0">
           <nav className="app-ui__project-crumb" aria-label="Fil d'Ariane">
@@ -87,6 +92,12 @@ export default async function ProjectLayout({
       <ProjectNav projectId={project.id} steps={buildSteps(progress)} />
 
       {children}
+
+      <ProjectStepFooter
+        projectId={project.id}
+        nextSegment={next.segment}
+        nextLabel={next.label}
+      />
     </div>
   );
 }

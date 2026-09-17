@@ -223,7 +223,7 @@ export function RequirementsMatrix({
         <Notice>Aucune exigence ne correspond à ces filtres.</Notice>
       ) : (
         <div className="overflow-hidden rounded-[12px] border border-line bg-white shadow-card">
-          <div className="hidden grid-cols-[minmax(0,1fr)_120px_190px_90px_110px_20px] gap-4 border-b border-line bg-paper px-4 py-2.5 text-[12px] font-medium text-ink-42 lg:grid">
+          <div className="hidden grid-cols-[minmax(0,1fr)_120px_190px_90px_110px_20px] gap-4 border-b border-line bg-paper px-4 py-2.5 text-[12px] font-medium text-ink-42 xl:grid">
             <span>Exigence</span>
             <span>Catégorie</span>
             <span>Source</span>
@@ -239,7 +239,7 @@ export function RequirementsMatrix({
                   onClick={() => openRequirement(r.id)}
                   className={cn(
                     "grid w-full gap-x-4 gap-y-2 px-4 py-3.5 text-left transition-colors hover:bg-paper",
-                    "grid-cols-[minmax(0,1fr)_auto] lg:grid-cols-[minmax(0,1fr)_120px_190px_90px_110px_20px] lg:items-center",
+                    "grid-cols-[minmax(0,1fr)_auto] xl:grid-cols-[minmax(0,1fr)_120px_190px_90px_110px_20px] xl:items-center",
                     openId === r.id && "bg-brand-wash/60",
                   )}
                 >
@@ -247,7 +247,7 @@ export function RequirementsMatrix({
                     <span className="block text-[13.5px] leading-snug font-medium">
                       {r.text}
                     </span>
-                    <span className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-ink-42 lg:hidden">
+                    <span className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-ink-42 xl:hidden">
                       <span>{CATEGORY_LABELS[r.category]}</span>
                       <span>{shortSource(r.requirement_sources[0])}</span>
                       <span>Priorité {PRIORITY_LABELS[r.priority].toLowerCase()}</span>
@@ -275,30 +275,30 @@ export function RequirementsMatrix({
                       </span>
                     ) : null}
                   </span>
-                  <span className="hidden text-[13px] text-ink-70 lg:block">
+                  <span className="hidden text-[13px] text-ink-70 xl:block">
                     {CATEGORY_LABELS[r.category]}
                   </span>
                   <span
-                    className="hidden truncate text-[12.5px] text-ink-58 lg:block"
+                    className="hidden truncate text-[12.5px] text-ink-58 xl:block"
                     title={r.requirement_sources[0]?.project_documents?.file_name}
                   >
                     {shortSource(r.requirement_sources[0])}
                   </span>
                   <span
                     className={cn(
-                      "hidden text-[13px] lg:block",
+                      "hidden text-[13px] xl:block",
                       r.priority === "HIGH" ? "font-semibold text-ink" : "text-ink-58",
                     )}
                   >
                     {PRIORITY_LABELS[r.priority]}
                   </span>
-                  <span className="col-start-2 row-start-1 self-start lg:col-start-auto lg:row-start-auto lg:self-auto">
+                  <span className="col-start-2 row-start-1 self-start xl:col-start-auto xl:row-start-auto xl:self-auto">
                     <Badge tone={STATUS_LABELS[r.status].tone}>
                       {STATUS_LABELS[r.status].label}
                     </Badge>
                   </span>
                   <ChevronRight
-                    className="hidden h-4 w-4 text-ink-42 lg:block"
+                    className="hidden h-4 w-4 text-ink-42 xl:block"
                     strokeWidth={1.8}
                     aria-hidden
                   />

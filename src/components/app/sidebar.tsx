@@ -39,7 +39,7 @@ const NAV = [
   },
 ] as const;
 
-export function SidebarNav() {
+export function SidebarNav({ collapsed = false }: { collapsed?: boolean }) {
   const pathname = usePathname();
 
   return (
@@ -53,10 +53,16 @@ export function SidebarNav() {
             key={href}
             href={href}
             aria-current={active ? "page" : undefined}
-            className={cn("app-ui__nav-link", active && "is-active")}
+            aria-label={collapsed ? label : undefined}
+            title={collapsed ? label : undefined}
+            className={cn(
+              "app-ui__nav-link",
+              active && "is-active",
+              collapsed && "is-collapsed",
+            )}
           >
             <Icon />
-            {label}
+            <span className="app-ui__sidebar-text">{label}</span>
           </Link>
         );
       })}

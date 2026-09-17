@@ -52,19 +52,39 @@ export function ChecklistPanel({
     setError(null);
 
     const supabase = createClient();
-    const { error: writeError } = await supabase.from("checklist_items").upsert(
-      {
-        organization_id: organizationId,
-        project_id: projectId,
-        group_name: entry.group,
-        auto_key: entry.id,
-        label: entry.label,
-        detail: entry.detail,
-        is_automatic: false,
-        checked: !entry.passed,
-      },
-      { onConflict: "project_id,auto_key" },
-    );
+
+    // L'unicite de (project_id, auto_key) repose sur un index partiel, que
+    // Postgres ne sait pas utiliser pour un upsert : la requete echouait en
+    // 42P10 et la coche n'etait jamais enregistree. On lit donc la ligne avant
+    // d'ecrire.
+    const { data: existing, error: readError } = await supabase
+      .from("checklist_items")
+      .select("id")
+      .eq("project_id", projectId)
+      .eq("auto_key", entry.id)
+      .maybeSingle();
+
+    const writeError = readError
+      ? readError
+      : existing
+        ? (
+            await supabase
+              .from("checklist_items")
+              .update({ checked: !entry.passed })
+              .eq("id", existing.id)
+          ).error
+        : (
+            await supabase.from("checklist_items").insert({
+              organization_id: organizationId,
+              project_id: projectId,
+              group_name: entry.group,
+              auto_key: entry.id,
+              label: entry.label,
+              detail: entry.detail,
+              is_automatic: false,
+              checked: !entry.passed,
+            })
+          ).error;
 
     setBusy(null);
     if (writeError) {
@@ -165,7 +185,11 @@ export function ChecklistPanel({
                               : "Cocher"
                         }
                         className={cn(
-                          "mt-0.5 flex h-5 w-5 flex-none items-center justify-center rounded-[6px] border transition-colors",
+                          // La case reste a 20 px pour rester alignee sur le
+                          // texte, mais la zone cliquable est portee a 32 px :
+                          // on coche ces points une quinzaine de fois par dossier.
+                          "relative mt-0.5 flex h-5 w-5 flex-none items-center justify-center rounded-[6px] border transition-colors",
+                          "before:absolute before:-inset-1.5 before:content-['']",
                           entry.passed
                             ? "border-ok bg-ok text-white"
                             : entry.automatic

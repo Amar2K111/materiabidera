@@ -24,7 +24,10 @@ nextjs-portal,
   --color-ink: #0b1220;
   --color-ink-70: #374151;
   --color-ink-58: #5b6474;
-  --color-ink-42: #8b93a1;
+  /* Contraste : 4,98:1 sur blanc et 4,72:1 sur --color-paper. L ancienne
+     valeur #8b93a1 tombait a 3,09:1, sous le seuil lisible, sur 173 elements
+     de texte reel (libelles, adresses, compteurs). */
+  --color-ink-42: #667085;
 
   --color-line: #e4e8ef;
   --color-line-soft: #eff2f6;
@@ -36,7 +39,8 @@ nextjs-portal,
   --color-ok-wash: #ecfdf3;
   --color-warn: #c2410c;
   --color-warn-wash: #fff7ed;
-  --color-risk: #dc2626;
+  /* 4,71:1 sur --color-risk-wash : le badge "Manquant" restait a 4,41:1. */
+  --color-risk: #d61f1f;
   --color-risk-wash: #fef2f2;
 
   --color-stone-100: #f8fafc;
