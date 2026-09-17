@@ -2,9 +2,26 @@
 
 import { useRef, useState } from "react";
 import Link from "next/link";
+import { ChevronDown } from "lucide-react";
 import { BrandLogo } from "@/components/brand/BrandLogo";
 import { CalendlyDemoLink } from "./CalendlyDemoLink";
 import { DemoAccessButton } from "./DemoAccessButton";
+
+function FlagFr() {
+  return (
+    <svg
+      className="nav-lang-flag"
+      viewBox="0 0 16 16"
+      aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M16 0H0V16H16V0Z" fill="#fff" />
+      <path d="M5.33333 0H0V16H5.33333V0Z" fill="#1035BB" />
+      <path d="M10.6668 0H5.3335V16H10.6668V0Z" fill="#fff" />
+      <path d="M15.9998 0H10.6665V16H15.9998V0Z" fill="#E5283F" />
+    </svg>
+  );
+}
 
 const LINKS = [
   { href: "#produit", label: "Produit" },
