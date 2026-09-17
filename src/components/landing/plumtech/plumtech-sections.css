@@ -224,10 +224,29 @@
   border-radius: var(--plumtech-radius) !important;
 }
 
+/* Hero CTA — au-dessus du fondu trust / decos */
+.plumtech-landing .hero-materia {
+  position: relative;
+  z-index: 2;
+}
+
+.plumtech-landing .hero-materia > .flex.flex-col.items-start {
+  position: relative;
+  z-index: 2;
+}
+
+.plumtech-landing .hero-centered__trust {
+  position: relative;
+  z-index: 1;
+}
+
 /* Boutons demo — bleu plein, sans degradé ni fondu */
 .plumtech-landing .btn-calendly.bg-ember-100,
 .plumtech-landing button.btn-calendly.bg-ember-100,
 .plumtech-landing a.btn-calendly.bg-ember-100 {
+  position: relative;
+  z-index: 3;
+  isolation: isolate;
   background-color: var(--mb-primary) !important;
   background-image: none !important;
   transition: none !important;
