@@ -279,3 +279,13 @@
 .plumtech-landing article.spot-card-plum .spot-card-visual .bg-ember-50 {
   background-color: var(--mb-sky) !important;
 }
+
+/* Hero trust — marquee mobile */
+.plumtech-landing .hero-trust-marquee {
+  width: 100%;
+}
+
+.plumtech-landing .hero-trust-marquee ul {
+  margin: 0;
+  padding: 0;
+}
