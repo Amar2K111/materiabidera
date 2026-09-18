@@ -17,7 +17,7 @@ export default async function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     /*
-     * Assets landing hors de public/ : materiabtp-assets/* (png, svg, css embarqué…).
+     * Assets produit hors de public/ : materiabtp-assets/* (logos, etc.).
      * Le matcher général exclut les extensions image pour éviter le proxy sur public/.
      */
     "/materiabtp-assets/:path*",

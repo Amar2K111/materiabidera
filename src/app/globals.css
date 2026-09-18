@@ -94,6 +94,23 @@ nextjs-portal,
   --color-amber-0: #f8d9c0;
   --color-amber-100: #b96f31;
 
+  /* Marketing site (crunchwrap) */
+  --color-body: #475569;
+  --color-midnight: #001428;
+  --color-night: #000b18;
+  --color-mist: #f4f8fc;
+  --color-iris: #0066cc;
+  --color-iris-hover: #0078e8;
+  --color-iris-deep: #0055b3;
+  --color-iris-glow: #c5dcf5;
+  --color-steel: #4a6178;
+  --color-pewter: #7a8ea3;
+  --color-canvas: #e8eef5;
+  --color-snow: #f6f9fc;
+  --color-success: #1ea35a;
+  --color-ember: #ff6118;
+  --color-periwinkle: #e8f2fc;
+
   --radius-sm: 6px;
   --radius-md: 8px;
   --radius-lg: 12px;

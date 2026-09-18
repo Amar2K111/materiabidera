@@ -16,7 +16,7 @@ export type Metric = {
   tone?: Tone;
 };
 
-/** Bandeau de metriques, repris du vocabulaire visuel de la landing page. */
+/** Bandeau de metriques pour les vues produit. */
 export function MetricRow({ items }: { items: Metric[] }) {
   return (
     <div className="grid grid-cols-2 overflow-hidden rounded-[10px] border border-line sm:grid-cols-3 lg:grid-cols-4">

@@ -32,7 +32,7 @@ function safeRelative(segments: string[]): string | null {
   return ok && segments.length > 0 ? segments.join("/") : null;
 }
 
-/** Sert materiabtp-assets/ pour la landing statique. */
+/** Sert materiabtp-assets/ (logos et assets produit). */
 export async function GET(
   _request: Request,
   context: { params: Promise<{ path: string[] }> },

@@ -70,7 +70,8 @@ des dossiers restent disponibles. Les écrans d'analyse affichent alors un état
 npm run dev
 ```
 
-- `/` sert la landing page.
+- `/` sert le site marketing MateriaBTP (home, produit, blog, tarifs, etc.).
+- `/app` est l'application authentifiée.
 - `/signup` crée un compte, puis l'application démarre sur `/app`.
 
 ---
@@ -126,9 +127,10 @@ Documentation : [Vercel + Git](https://vercel.com/docs/git)
 ## Organisation du code
 
 ```
-src/app/page.tsx             Landing page Next.js (/)
-src/components/landing/      Composants et styles de la landing
-src/app/                     Routes Next.js
+src/app/(marketing)/         Site marketing (/, /blog, /tarifs, …)
+src/components/marketing/    Composants et layouts marketing
+src/app/app/                 Application authentifiée (/app)
+src/app/                     Routes Next.js (API, auth, onboarding)
   app/                       Application authentifiée (/app)
   api/projects/[id]/         Pipeline d'ingestion et d'analyse
 src/components/ui/           Socle d'interface
