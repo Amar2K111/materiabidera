@@ -32,6 +32,8 @@ export function AppSidebar({
     getSidebarCollapsedOnServer,
   );
 
+  const toggleLabel = collapsed ? "D\u00e9velopper le menu" : "Replier le menu";
+
   return (
     <aside className={cn("app-ui__sidebar", collapsed && "is-collapsed")}>
       <div className="app-ui__sidebar-top">
@@ -42,31 +44,26 @@ export function AppSidebar({
           title={collapsed ? "MateriaBTP — tableau de bord" : undefined}
         >
           {collapsed ? (
-            <BrandMark size={28} priority decorative />
+            <span className="app-ui__sidebar-mark-tile">
+              <BrandMark size={36} priority decorative className="app-ui__sidebar-mark" />
+            </span>
           ) : (
             <BrandLogo height={28} priority />
           )}
         </Link>
 
-        <button
-          type="button"
-          className="app-ui__sidebar-toggle"
-          onClick={() => setSidebarCollapsed(!collapsed)}
-          aria-expanded={!collapsed}
-          aria-label={collapsed ? "D\u00e9velopper le menu" : "Replier le menu"}
-          title={collapsed ? "D\u00e9velopper le menu" : "Replier le menu"}
-        >
-          <span className="app-ui__sidebar-toggle-icons" aria-hidden>
-            <PanelLeftClose
-              className="app-ui__sidebar-toggle-icon app-ui__sidebar-toggle-icon--expanded"
-              strokeWidth={1.8}
-            />
-            <PanelLeftOpen
-              className="app-ui__sidebar-toggle-icon app-ui__sidebar-toggle-icon--collapsed"
-              strokeWidth={1.8}
-            />
-          </span>
-        </button>
+        {!collapsed ? (
+          <button
+            type="button"
+            className="app-ui__sidebar-toggle"
+            onClick={() => setSidebarCollapsed(true)}
+            aria-expanded
+            aria-label={toggleLabel}
+            title={toggleLabel}
+          >
+            <PanelLeftClose strokeWidth={1.8} aria-hidden />
+          </button>
+        ) : null}
       </div>
 
       <Link
@@ -83,6 +80,19 @@ export function AppSidebar({
       </div>
 
       <div className="app-ui__sidebar-foot">
+        {collapsed ? (
+          <button
+            type="button"
+            className="app-ui__sidebar-rail-btn app-ui__sidebar-rail-btn--toggle"
+            onClick={() => setSidebarCollapsed(false)}
+            aria-expanded={false}
+            aria-label={toggleLabel}
+            title={toggleLabel}
+          >
+            <PanelLeftOpen strokeWidth={1.8} aria-hidden />
+          </button>
+        ) : null}
+
         <span
           className="app-ui__avatar"
           aria-hidden
@@ -90,19 +100,26 @@ export function AppSidebar({
         >
           {initials}
         </span>
-        <div className="app-ui__sidebar-id app-ui__sidebar-text">
-          <p className="app-ui__sidebar-org">{organizationName}</p>
-          {email ? (
-            <p className="app-ui__sidebar-email" title={email}>
-              {email}
-            </p>
-          ) : null}
-        </div>
+
+        {!collapsed ? (
+          <div className="app-ui__sidebar-id app-ui__sidebar-text">
+            <p className="app-ui__sidebar-org">{organizationName}</p>
+            {email ? (
+              <p className="app-ui__sidebar-email" title={email}>
+                {email}
+              </p>
+            ) : null}
+          </div>
+        ) : null}
+
         {!isGuest ? (
           <form action="/auth/signout" method="post">
             <button
               type="submit"
-              className="app-ui__sidebar-logout"
+              className={cn(
+                "app-ui__sidebar-logout",
+                collapsed && "app-ui__sidebar-rail-btn",
+              )}
               aria-label="Se d\u00e9connecter"
               title="Se d\u00e9connecter"
             >
