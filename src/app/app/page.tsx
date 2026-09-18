@@ -16,6 +16,8 @@ import { ButtonLink } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { TrustPills } from "@/components/app/trust-pills";
 import { cn } from "@/lib/utils/cn";
+import { listProjectOutcomes } from "@/lib/data/outcome";
+import { OUTCOME_LABELS, computePipeline, type ProjectOutcome } from "@/lib/outcome";
 
 const RECOMMENDATION_LABELS: Record<
   "GO" | "VIGILANCE" | "NO_GO",
@@ -27,10 +29,17 @@ const RECOMMENDATION_LABELS: Record<
 };
 
 export default async function DashboardPage() {
-  const [counts, projects] = await Promise.all([
+  const [counts, projects, outcomes] = await Promise.all([
     getDashboardCounts(),
     listProjectsWithProgress(6),
+    listProjectOutcomes(),
   ]);
+
+  // Resultats (migration 0011) : null tant que la fonctionnalite est absente.
+  const pipeline = outcomes ? computePipeline(outcomes) : null;
+  const outcomeById = new Map(
+    (outcomes ?? []).filter((o) => o.outcome).map((o) => [o.id, o.outcome as ProjectOutcome]),
+  );
 
   const metrics = [
     { label: "Dossiers actifs", value: counts.active },
@@ -68,6 +77,41 @@ export default async function DashboardPage() {
         ))}
       </div>
 
+      {pipeline ? (
+        <section className="mt-7" aria-labelledby="resultats">
+          <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
+            <h2 id="resultats" className="text-[15px] font-semibold">
+              Vos résultats
+            </h2>
+            <p className="text-[12.5px] text-ink-58">
+              Hors dossiers exemples · à partir des résultats que vous renseignez
+            </p>
+          </div>
+          <div className="app-ui__metrics app-ui__metrics--4">
+            <div className="app-ui__metric">
+              <b>{pipeline.awaiting}</b>
+              <span>Offres déposées, résultat en attente</span>
+            </div>
+            <div className={cn("app-ui__metric", pipeline.won > 0 && "is-ok")}>
+              <b>{pipeline.won}</b>
+              <span>Marchés gagnés</span>
+            </div>
+            <div className="app-ui__metric">
+              <b>{pipeline.lost}</b>
+              <span>Marchés perdus</span>
+            </div>
+            <div className={cn("app-ui__metric", pipeline.winRate !== null && "is-brand")}>
+              <b>{pipeline.winRate === null ? "—" : `${pipeline.winRate} %`}</b>
+              <span>
+                {pipeline.winRate === null
+                  ? "Taux de réussite · aucun résultat connu"
+                  : `Taux de réussite · sur ${pipeline.won + pipeline.lost} résultat${pipeline.won + pipeline.lost > 1 ? "s" : ""}`}
+              </span>
+            </div>
+          </div>
+        </section>
+      ) : null}
+
       <section className="mt-9">
         <div className="mb-4 flex items-center justify-between gap-4">
           <h2 className="text-[17px] font-semibold tracking-[-0.02em]">
@@ -99,7 +143,7 @@ export default async function DashboardPage() {
           <ul className="app-ui__card-grid">
             {projects.map((project) => (
               <li key={project.id}>
-                <ProjectCard project={project} />
+                <ProjectCard project={project} outcome={outcomeById.get(project.id) ?? null} />
               </li>
             ))}
           </ul>
@@ -111,8 +155,17 @@ export default async function DashboardPage() {
   );
 }
 
-function ProjectCard({ project }: { project: ProjectProgress }) {
-  const status = PROJECT_STATUS[project.status];
+function ProjectCard({
+  project,
+  outcome,
+}: {
+  project: ProjectProgress;
+  outcome: ProjectOutcome | null;
+}) {
+  // Une fois le resultat connu, c est lui qui compte, plus l etape de travail.
+  const status = outcome
+    ? { label: OUTCOME_LABELS[outcome].label, tone: OUTCOME_LABELS[outcome].tone }
+    : PROJECT_STATUS[project.status];
   const due = deadlineLabel(project.deadline);
   const next = NEXT_STEP[project.status];
   const decision = project.recommendation

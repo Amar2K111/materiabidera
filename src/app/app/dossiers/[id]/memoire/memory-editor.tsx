@@ -28,6 +28,7 @@ import { ConfirmButton } from "@/components/ui/confirm-button";
 import { Notice } from "@/components/ui/notice";
 import { cn } from "@/lib/utils/cn";
 import { WriteAllProgress, useWriteAll } from "./write-all";
+import { SaveToMethods } from "./save-to-methods";
 
 type Action = "generate" | "improve" | "shorten" | "expand" | "concrete";
 
@@ -91,6 +92,7 @@ function sourceTitle(source: MemorySource) {
 
 export function MemoryEditor({
   projectId,
+  projectName,
   organizationId,
   sections,
   requirements,
@@ -100,6 +102,7 @@ export function MemoryEditor({
   autoWriteAll = false,
 }: {
   projectId: string;
+  projectName: string;
   organizationId: string;
   sections: MemorySection[];
   requirements: Record<string, SectionRequirement>;
@@ -790,6 +793,16 @@ export function MemoryEditor({
                   <Check className="h-4 w-4" strokeWidth={2} />
                   Valider le chapitre
                 </Button>
+              ) : null}
+
+              {!dirty && selected.status === "VALIDATED" ? (
+                <SaveToMethods
+                  key={selected.id}
+                  organizationId={organizationId}
+                  projectName={projectName}
+                  title={selected.title}
+                  content={selected.content ?? ""}
+                />
               ) : null}
 
               <span className="ml-auto flex items-center gap-2 text-[12.5px] text-ink-42">

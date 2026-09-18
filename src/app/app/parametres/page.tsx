@@ -5,6 +5,9 @@ import { isStripeConfigured } from "@/lib/env";
 import { Card, CardBody, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 import { Badge } from "@/components/ui/badge";
+import { Notice } from "@/components/ui/notice";
+import { getQualificationRules } from "@/lib/data/qualification";
+import { QualificationRulesEditor } from "@/components/app/qualification-rules-editor";
 
 const ROLE_LABELS: Record<string, string> = {
   owner: "Propriétaire",
@@ -15,12 +18,14 @@ const ROLE_LABELS: Record<string, string> = {
 export default async function ParametresPage() {
   const ctx = await getAppContext();
   if (!ctx?.organization) return null;
+  const qualification = await getQualificationRules(ctx.organization.id);
+  const canEdit = ctx.role === "owner" || ctx.role === "admin";
 
   return (
     <div className="space-y-8">
       <PageHeader
         title="Paramètres"
-        subtitle="Informations de votre entreprise, compte utilisateur et état des services connectés."
+        subtitle="Informations de votre entreprise, critères de qualification, compte utilisateur et état des services connectés."
       />
 
       {/* L'identite de l'entreprise se modifie dans la base entreprise, ou elle
@@ -65,6 +70,20 @@ export default async function ParametresPage() {
         </CardBody>
       </Card>
 
+      {qualification.available ? (
+        <QualificationRulesEditor
+          organizationId={ctx.organization.id}
+          interventionArea={ctx.organization.intervention_area ?? null}
+          initialRules={qualification.rules}
+          canEdit={canEdit}
+        />
+      ) : (
+        <Notice tone="info" title="Critères de qualification Go / No-Go">
+          Cette fonctionnalité sera disponible une fois la migration
+          0011_qualification_outcome appliquée à la base de données.
+        </Notice>
+      )}
+
       <Card>
         <CardHeader>
           <CardTitle>Votre compte</CardTitle>
@@ -75,7 +94,7 @@ export default async function ParametresPage() {
             <span className="font-semibold">{ctx.email ?? "Non renseignée"}</span>
           </div>
           <div className="flex justify-between gap-4">
-            <span className="text-ink-58">Role</span>
+            <span className="text-ink-58">Rôle</span>
             <span className="font-semibold">
               {ROLE_LABELS[ctx.role ?? "member"]}
             </span>
@@ -106,7 +125,7 @@ export default async function ParametresPage() {
               </p>
             </div>
             <Badge tone={isStripeConfigured ? "ok" : "neutral"}>
-              {isStripeConfigured ? "Configure" : "Non configuré"}
+              {isStripeConfigured ? "Configuré" : "Non configuré"}
             </Badge>
           </div>
         </CardBody>

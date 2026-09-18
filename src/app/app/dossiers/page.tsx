@@ -3,9 +3,16 @@ import { listProjectsWithProgress } from "@/lib/data/projects";
 import { ButtonLink } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ProjectsTable } from "./projects-table";
+import { listProjectOutcomes } from "@/lib/data/outcome";
 
 export default async function DossiersPage() {
-  const projects = await listProjectsWithProgress(200);
+  const [projects, outcomes] = await Promise.all([
+    listProjectsWithProgress(200),
+    listProjectOutcomes(),
+  ]);
+  const outcomeById = Object.fromEntries(
+    (outcomes ?? []).filter((o) => o.outcome).map((o) => [o.id, o.outcome]),
+  );
 
   return (
     <div className="space-y-6">
@@ -33,7 +40,7 @@ export default async function DossiersPage() {
           }
         />
       ) : (
-        <ProjectsTable projects={projects} />
+        <ProjectsTable projects={projects} outcomes={outcomeById} />
       )}
     </div>
   );

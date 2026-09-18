@@ -19,6 +19,7 @@ import { ProjectsFilters } from "./projects-filters";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils/cn";
+import { OUTCOME_LABELS, type ProjectOutcome } from "@/lib/outcome";
 
 const DECISION = {
   GO: { label: "GO", className: "text-ok" },
@@ -29,7 +30,14 @@ const DECISION = {
 /** Seuil a partir duquel la barre de recherche aide plus qu'elle n'encombre. */
 const FILTERS_FROM = 6;
 
-export function ProjectsTable({ projects }: { projects: ProjectProgress[] }) {
+export function ProjectsTable({
+  projects,
+  outcomes = {},
+}: {
+  projects: ProjectProgress[];
+  /** Resultat connu, par dossier (migration 0011). */
+  outcomes?: Record<string, ProjectOutcome | null>;
+}) {
   const [filter, setFilter] = React.useState<ProjectFilter>(DEFAULT_FILTER);
   const visible = React.useMemo(
     () => applyProjectFilter(projects, filter),
@@ -78,7 +86,10 @@ export function ProjectsTable({ projects }: { projects: ProjectProgress[] }) {
 
           <ul className="divide-y divide-line-soft">
             {visible.map((p) => {
-              const status = PROJECT_STATUS[p.status];
+              const outcome = outcomes[p.id];
+              const status = outcome
+                ? { label: OUTCOME_LABELS[outcome].label, tone: OUTCOME_LABELS[outcome].tone }
+                : PROJECT_STATUS[p.status];
               const due = deadlineLabel(p.deadline);
               const next = NEXT_STEP[p.status];
               const decision = p.recommendation ? DECISION[p.recommendation] : null;

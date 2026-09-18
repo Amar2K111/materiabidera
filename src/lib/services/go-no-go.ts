@@ -17,6 +17,14 @@ import { formatDate } from "@/lib/projects";
 import { buildProjectContext, resolveSources } from "./project-context";
 import { advanceProjectStatus } from "./project-status";
 import { stripCitationCodes } from "@/lib/citations";
+import { isPipelineSchemaReady } from "@/lib/engine/pipeline-schema";
+import {
+  applyRules,
+  checkPrepDays,
+  parseRules,
+  ruleLabel,
+  type RuleCheck,
+} from "@/lib/qualification";
 
 export type GoNoGoOutcome = {
   score: number;
@@ -35,6 +43,24 @@ export async function runGoNoGo(input: {
   if (!context.hasAnalysis) {
     throw new AiError("Le dossier doit d'abord être analysé.", "invalid_output");
   }
+
+  // Criteres de qualification de l'entreprise (migration 0011).
+  const schemaReady = await isPipelineSchemaReady();
+  let rules: ReturnType<typeof parseRules> = [];
+  if (schemaReady) {
+    const { data: org } = await admin
+      .from("organizations")
+      .select("qualification_rules")
+      .eq("id", input.organizationId)
+      .maybeSingle();
+    rules = parseRules(org?.qualification_rules);
+  }
+  // Le modele ne voit que les criteres a interpreter, sous un identifiant court.
+  const textRules = rules.filter((r) => r.kind === "text");
+  const refById = new Map(textRules.map((r, i) => [`Q${i + 1}`, r]));
+  const rulesPrompt = [...refById]
+    .map(([ref, r]) => `${ref}${r.blocking ? " (eliminatoire)" : ""} : ${r.text}`)
+    .join("\n");
 
   const run = await startRun(admin, {
     organizationId: input.organizationId,
@@ -59,6 +85,7 @@ export async function runGoNoGo(input: {
           context.requirementLines.join("\n") ||
           "Aucune exigence n'a été relevée.",
         companyBase: context.companyBase,
+        rules: rulesPrompt,
       }),
       schema: GoNoGoSchema,
       schemaName: "GoNoGo",
@@ -103,6 +130,40 @@ export async function runGoNoGo(input: {
       recommendation = "VIGILANCE";
     }
 
+    // --- Criteres de qualification ------------------------------------------
+    const verdicts = new Map((value.rules ?? []).map((r) => [r.id.trim(), r]));
+    const ruleChecks: RuleCheck[] = rules.map((rule) => {
+      if (rule.kind === "min_prep_days") {
+        return checkPrepDays(rule, context.deadline);
+      }
+      const ref = [...refById].find(([, r]) => r.id === rule.id)?.[0];
+      const verdict = ref ? verdicts.get(ref) : undefined;
+      return {
+        ruleId: rule.id,
+        text: ruleLabel(rule),
+        blocking: rule.blocking,
+        status: verdict?.status ?? "UNKNOWN",
+        justification:
+          stripCitationCodes(verdict?.justification ?? null) ??
+          "Ce critère n'a pas pu être vérifié à partir des pièces disponibles.",
+        sources: resolveSources(verdict?.sourceIds ?? [], context.sourcesById),
+        automatic: false,
+      };
+    });
+    const ruled = applyRules(recommendation, ruleChecks);
+    // Le resume du modele porte sur l'opportunite ; c'est l'application qui
+    // applique les criteres. Quand ils changent la recommandation, la synthese
+    // le dit d'emblee, sans quoi elle conclurait a l'inverse du verdict affiche.
+    const rulePreamble =
+      ruled.recommendation !== recommendation
+        ? `Recommandation ramenée à ${
+            ruled.recommendation === "NO_GO" ? "NO-GO" : "« sous réserve »"
+          } par ${
+            ruled.decisive.length > 1 ? "vos critères de qualification" : "votre critère de qualification"
+          } : ${ruled.decisive.map((c) => `« ${c.text} »`).join(", ")}. `
+        : "";
+    recommendation = ruled.recommendation;
+
     // --- Enregistrement -------------------------------------------------------
     const { data: saved } = await admin
       .from("go_no_go_analyses")
@@ -112,7 +173,8 @@ export async function runGoNoGo(input: {
           project_id: input.projectId,
           score,
           recommendation,
-          summary: stripCitationCodes(value.summary),
+          summary: rulePreamble + (stripCitationCodes(value.summary) ?? ""),
+          ...(schemaReady ? { rule_checks: ruleChecks } : {}),
           provider: provider.id,
           model: provider.model,
           generated_at: new Date().toISOString(),
@@ -161,7 +223,12 @@ export async function runGoNoGo(input: {
 
     await finishRun(admin, run, {
       status: "SUCCEEDED",
-      meta: { score, recommendation, outputTokens: usage.outputTokens ?? 0 },
+      meta: {
+        score,
+        recommendation,
+        rules: ruleChecks.length,
+        outputTokens: usage.outputTokens ?? 0,
+      },
     });
 
     return { score, recommendation, factors: GO_FACTORS.length };

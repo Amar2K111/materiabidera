@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/field";
 import { Notice } from "@/components/ui/notice";
 import { cn } from "@/lib/utils/cn";
+import { RuleChecks } from "./rule-checks";
 
 const RECOMMENDATION_LABELS: Record<
   GoRecommendation,
@@ -32,11 +33,14 @@ export function DecisionPanel({
   decision,
   weights,
   companyItemCount,
+  rulesConfigured,
 }: {
   projectId: string;
   decision: GoNoGoAnalysis | null;
   weights: Record<string, number>;
   companyItemCount: number;
+  /** Criteres de qualification fixes, ou null avant la migration 0011. */
+  rulesConfigured: number | null;
 }) {
   const router = useRouter();
   const [running, setRunning] = useState(false);
@@ -220,6 +224,9 @@ export function DecisionPanel({
         </div>
       </section>
 
+      {/* --- Criteres de qualification de l entreprise ---------------------- */}
+      <RuleChecks checks={decision.rule_checks ?? []} configured={rulesConfigured} />
+
       {/* --- Facteurs ------------------------------------------------------ */}
       <section>
         <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
@@ -366,8 +373,9 @@ export function DecisionPanel({
         <div className="rounded-[14px] border border-line bg-white p-6 shadow-card">
           <h2 className="text-[15px] font-semibold">Relancer l&apos;évaluation</h2>
           <p className="mt-1 text-[13px] leading-relaxed text-ink-58">
-            Utile après avoir complété votre base entreprise ou corrigé des
-            exigences. Votre décision et votre note sont conservées.
+            Utile après avoir complété votre base entreprise, modifié vos
+            critères de qualification ou corrigé des exigences. Votre décision
+            et votre note sont conservées.
           </p>
           <Button
             onClick={evaluate}

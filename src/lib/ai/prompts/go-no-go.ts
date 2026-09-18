@@ -67,6 +67,20 @@ export const GoNoGoSchema = z.object({
     }),
   ),
   summary: z.string().min(20).max(1200),
+  /**
+   * Verdict sur chaque critere de qualification de l entreprise. Vide lorsque
+   * l entreprise n en a fixe aucun.
+   */
+  rules: z
+    .array(
+      z.object({
+        id: z.string(),
+        status: z.enum(["RESPECTED", "VIOLATED", "UNKNOWN"]),
+        justification: z.string().min(10).max(600),
+        sourceIds: z.array(z.string()),
+      }),
+    )
+    .default([]),
 });
 
 export type GoNoGoResult = z.infer<typeof GoNoGoSchema>;
@@ -108,7 +122,22 @@ REGLES PROPRES A CETTE TACHE
   laisses "sourceIds" vide et tu mets une confiance LOW.
 - Le resume expose la decision en quelques phrases : ce qui joue en faveur de
   la candidature, ce qui joue contre, et ce qu'il faudrait verifier.
+- Le resume porte sur l'opportunite. Il ne commente pas les criteres de
+  qualification et ne conclut pas a leur place : c'est l'application qui les
+  applique a la recommandation finale.
 - Tu ne calcules aucun score global : c'est l'application qui s'en charge.
+
+CRITERES DE QUALIFICATION DE L'ENTREPRISE
+- Lorsque l'entreprise a fixe des criteres, tu rends un verdict pour chacun,
+  dans "rules", avec son identifiant exact (Q1, Q2...).
+- RESPECTED : les pieces montrent que le critere est satisfait.
+- VIOLATED : les pieces montrent qu'il ne l'est pas.
+- UNKNOWN : les pieces ne permettent pas de trancher (montant non indique,
+  lieu imprecis...). Tu ne devines jamais : l'absence d'information donne
+  UNKNOWN, pas RESPECTED.
+- La justification cite l'element determinant en une ou deux phrases ; les
+  identifiants des extraits vont dans "sourceIds", jamais dans le texte.
+- Sans critere fixe, "rules" reste vide.
 
 FORMAT DE SORTIE
 Un objet JSON conforme au schema impose, sans texte autour.`;
@@ -119,6 +148,8 @@ export function goNoGoPrompt(input: {
   dceSummary: string;
   requirements: string;
   companyBase: string;
+  /** Criteres a verifier, deja numerotes "Q1 : ...", ou chaine vide. */
+  rules?: string;
 }): string {
   return `Consultation : ${input.projectName}
 Date limite de remise : ${input.deadline}
@@ -132,5 +163,9 @@ ${input.requirements}
 === BASE DE L'ENTREPRISE ===
 ${input.companyBase}
 
-Evalue les huit facteurs et redige le resume de decision.`;
+=== CRITERES DE QUALIFICATION DE L'ENTREPRISE ===
+${input.rules || "Aucun critere fixe par l'entreprise."}
+
+Evalue les huit facteurs, rends un verdict pour chaque critere de
+qualification, puis redige le resume de decision.`;
 }

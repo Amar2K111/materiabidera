@@ -10,6 +10,9 @@ import { listMemorySections } from "@/lib/data/memory";
 import { getQualityCheck } from "@/lib/data/quality";
 import { daysUntil } from "@/lib/projects";
 import { ProjectOverviewPanels } from "@/components/app/project-overview-panels";
+import { OutcomePanel } from "@/components/app/outcome-panel";
+import { getProjectOutcome } from "@/lib/data/outcome";
+import { outcomeRelevant } from "@/lib/outcome";
 
 export default async function ProjectOverviewPage({
   params,
@@ -26,6 +29,7 @@ export default async function ProjectOverviewPage({
     goNoGo,
     memorySections,
     quality,
+    outcome,
   ] = await Promise.all([
     getProject(id),
     getProjectProgressSummary(id),
@@ -35,6 +39,7 @@ export default async function ProjectOverviewPage({
     getGoNoGo(id),
     listMemorySections(id),
     getQualityCheck(id),
+    getProjectOutcome(id),
   ]);
 
   if (!project) notFound();
@@ -75,7 +80,16 @@ export default async function ProjectOverviewPage({
     },
   ];
 
-  return (
+  // Le resultat n a de sens qu une fois l offre prete ou la date limite passee.
+  const showOutcome =
+    outcome !== null &&
+    outcomeRelevant({
+      status: project.status,
+      outcome: outcome.outcome,
+      deadline: project.deadline,
+    });
+
+  const panels = (
     <ProjectOverviewPanels
       projectId={project.id}
       status={project.status}
@@ -88,5 +102,19 @@ export default async function ProjectOverviewPage({
       quality={quality}
       failedCount={failed.length}
     />
+  );
+
+  if (!showOutcome || !outcome) return panels;
+
+  return (
+    <div className="space-y-6">
+      <OutcomePanel
+        projectId={project.id}
+        outcome={outcome.outcome}
+        outcomeAt={outcome.outcome_at}
+        outcomeNote={outcome.outcome_note}
+      />
+      {panels}
+    </div>
   );
 }

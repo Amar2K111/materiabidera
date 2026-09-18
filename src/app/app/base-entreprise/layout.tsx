@@ -1,6 +1,7 @@
 import { COLLECTIONS } from "@/lib/company";
 import { PageHeader } from "@/components/ui/page-header";
 import { TabNav } from "@/components/app/tab-nav";
+import { CompanySearch } from "@/components/app/company-search";
 
 const BASE = "/app/base-entreprise";
 
@@ -23,6 +24,7 @@ export default function BaseEntrepriseLayout({
         title="Base entreprise"
         subtitle="La mémoire permanente de votre entreprise. Plus elle est complète, plus vos réponses sont adaptées et vérifiables."
       />
+      <CompanySearch />
       <TabNav items={items} ariaLabel="Sections de la base entreprise" />
       <div className="pt-2">{children}</div>
     </div>

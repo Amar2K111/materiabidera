@@ -4,6 +4,7 @@ import { getProject } from "@/lib/data/projects";
 import { getDceAnalysis } from "@/lib/data/analysis";
 import { getGoNoGo } from "@/lib/data/decision";
 import { getCompanyCounts } from "@/lib/data/company";
+import { getQualificationRules } from "@/lib/data/qualification";
 import { isAiConfigured } from "@/lib/ai";
 import { FACTOR_WEIGHTS } from "@/lib/decision";
 import { ButtonLink } from "@/components/ui/button";
@@ -25,6 +26,7 @@ export default async function GoNoGoPage({
   ]);
 
   if (!project) notFound();
+  const qualification = await getQualificationRules(project.organization_id);
 
   if (!isAiConfigured()) {
     return (
@@ -59,6 +61,7 @@ export default async function GoNoGoPage({
       decision={decision}
       weights={FACTOR_WEIGHTS}
       companyItemCount={companyTotal}
+      rulesConfigured={qualification.available ? qualification.rules.length : null}
     />
   );
 }

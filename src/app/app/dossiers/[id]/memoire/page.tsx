@@ -105,6 +105,7 @@ export default async function MemoryPage({
   return (
     <MemoryEditor
       projectId={project.id}
+      projectName={project.name}
       organizationId={ctx.organization.id}
       sections={sections}
       requirements={requirementMap}

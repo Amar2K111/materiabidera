@@ -3,6 +3,8 @@ import { createClient } from "@/lib/supabase/server";
 import { stripCitationCodes } from "@/lib/citations";
 import { FACTOR_LABELS } from "@/lib/decision";
 import { dedupeCited, type CitedSource } from "@/lib/requirements";
+import { isPipelineSchemaReady } from "@/lib/engine/pipeline-schema";
+import type { RuleCheck } from "@/lib/qualification";
 
 export type GoRecommendation = "GO" | "VIGILANCE" | "NO_GO";
 
@@ -27,6 +29,8 @@ export type GoNoGoAnalysis = {
   decided_at: string | null;
   generated_at: string;
   go_no_go_factors: GoFactor[];
+  /** Verdicts des criteres de qualification (migration 0011), sinon vide. */
+  rule_checks: RuleCheck[];
 };
 
 export async function getGoNoGo(
@@ -53,6 +57,23 @@ export async function getGoNoGo(
     factor.label = FACTOR_LABELS[factor.key] ?? factor.label;
     factor.justification = stripCitationCodes(factor.justification);
     factor.sources = dedupeCited(factor.sources ?? []);
+  }
+
+  analysis.rule_checks = [];
+  if (await isPipelineSchemaReady()) {
+    const { data: checks } = await supabase
+      .from("go_no_go_analyses")
+      .select("rule_checks")
+      .eq("id", analysis.id)
+      .maybeSingle();
+    const raw = (checks?.rule_checks ?? []) as RuleCheck[];
+    analysis.rule_checks = Array.isArray(raw)
+      ? raw.map((c) => ({
+          ...c,
+          justification: stripCitationCodes(c.justification) ?? "",
+          sources: dedupeCited(c.sources ?? []),
+        }))
+      : [];
   }
   return analysis;
 }

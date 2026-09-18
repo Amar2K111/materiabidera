@@ -3,7 +3,7 @@ import { ScanSearch } from "lucide-react";
 import { getProject, listProjectDocuments } from "@/lib/data/projects";
 import { getDceAnalysis } from "@/lib/data/analysis";
 import { isAiConfigured } from "@/lib/ai";
-import { formatDateTime } from "@/lib/projects";
+import { formatDate, formatDateTime } from "@/lib/projects";
 import { CONSTRAINT_LABELS } from "@/lib/requirements";
 import { AnalysisRunner } from "@/components/app/analysis-runner";
 import { Sources } from "@/components/app/sources";
@@ -92,6 +92,12 @@ export default async function ProjectAnalysisPage({
     );
   }
 
+  // Une information absente des pieces mais connue par ailleurs est affichee
+  // avec son origine : on ne la fait pas passer pour un extrait du DCE.
+  const fallbacks: Record<string, string | undefined> = {
+    "Date limite de remise": project.deadline ? formatDate(project.deadline) : undefined,
+  };
+
   const keyInfo: Array<[string, string | null]> = [
     ["Objet du marché", analysis.subject],
     ["Acheteur", analysis.buyer],
@@ -141,6 +147,7 @@ export default async function ProjectAnalysisPage({
               key={label}
               label={label}
               value={value}
+              fallback={fallbacks[label]}
               wide={label === "Objet du marché"}
             />
           ))}
@@ -353,13 +360,30 @@ function Weight({ value, small }: { value: string; small?: boolean }) {
 function Field({
   label,
   value,
+  fallback,
   wide,
 }: {
   label: string;
   value: string | null;
+  /** Valeur saisie sur le dossier, montree seulement si les pieces se taisent. */
+  fallback?: string;
   wide?: boolean;
 }) {
   const missing = !value || /^information non trouv/i.test(value);
+
+  if (missing && fallback) {
+    return (
+      <div className={cn(wide && "sm:col-span-2")}>
+        <dt className="text-[12px] font-medium text-ink-42">{label}</dt>
+        <dd className="mt-1 text-[13.5px] leading-relaxed font-medium text-ink">
+          {fallback}
+          <span className="mt-0.5 block text-[12px] font-normal text-ink-58">
+            Saisie sur le dossier · absente des pièces, à confirmer
+          </span>
+        </dd>
+      </div>
+    );
+  }
 
   return (
     <div className={cn(wide && "sm:col-span-2")}>

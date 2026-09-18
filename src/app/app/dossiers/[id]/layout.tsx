@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Building2, CalendarClock, ChevronRight, Layers } from "lucide-react";
+import { Building2, ChevronRight, Layers } from "lucide-react";
 import {
   getProject,
   getProjectProgressSummary,
   type ProjectProgressSummary,
 } from "@/lib/data/projects";
-import { PROJECT_STATUS, deadlineLabel, formatDate } from "@/lib/projects";
+import { PROJECT_STATUS } from "@/lib/projects";
 import {
   ProjectNav,
   type StepSegment,
@@ -14,9 +14,9 @@ import {
 } from "@/components/app/project-nav";
 import { ProjectStepFooter } from "@/components/app/project-step-footer";
 import { DeleteProjectButton } from "@/components/app/delete-project-button";
+import { DeadlineEditor } from "@/components/app/deadline-editor";
 import { nextStepFor } from "@/lib/next-step";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils/cn";
 
 export default async function ProjectLayout({
   children,
@@ -34,7 +34,6 @@ export default async function ProjectLayout({
   if (!project) notFound();
 
   const status = PROJECT_STATUS[project.status];
-  const due = deadlineLabel(project.deadline);
   // Meme source que le panneau "Prochaine etape" de la synthese : une seule
   // definition de ce qu'il reste a faire, quel que soit l'endroit ou on l'affiche.
   const next = nextStepFor(project.status, progress);
@@ -62,22 +61,7 @@ export default async function ProjectLayout({
                 {project.lot}
               </span>
             ) : null}
-            <span>
-              <CalendarClock strokeWidth={1.8} aria-hidden />
-              {project.deadline ? formatDate(project.deadline) : "Sans date limite"}
-              {project.deadline ? (
-                <b
-                  className={cn(
-                    "font-semibold",
-                    due.tone === "risk" && "text-risk",
-                    due.tone === "warn" && "text-warn",
-                    due.tone === "neutral" && "text-ink-70",
-                  )}
-                >
-                  · {due.text}
-                </b>
-              ) : null}
-            </span>
+            <DeadlineEditor projectId={project.id} deadline={project.deadline} />
           </div>
         </div>
         <div className="flex flex-none items-center gap-2">
