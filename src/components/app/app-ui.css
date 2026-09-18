@@ -1356,3 +1356,52 @@ html[data-sidebar="collapsed"] .app-ui__sidebar .app-ui__nav-link svg,
     max-width: 1480px;
   }
 }
+
+/* ── Navigation : bulle de la barre repliee ─────────────────────────────── */
+/* Nom de l'icone survolee ou focalisee. Fixe, pour ne pas etre coupee par le
+   defilement de la barre ; sans interaction, pour ne jamais gener le clic. */
+.app-ui__rail-tip {
+  position: fixed;
+  z-index: 60;
+  transform: translateY(-50%);
+  pointer-events: none;
+  white-space: nowrap;
+  border-radius: 8px;
+  background: var(--ui-ink);
+  padding: 6px 10px;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(11, 18, 32, 0.18);
+  animation: app-ui-fade-in 120ms var(--ui-ease) both;
+}
+
+.app-ui__rail-tip::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: -4px;
+  width: 8px;
+  height: 8px;
+  transform: translateY(-50%) rotate(45deg);
+  border-radius: 1px;
+  background: inherit;
+}
+
+/* ── Navigation mobile ──────────────────────────────────────────────────── */
+/* Au doigt, 38 px par ligne faisaient manquer l'entree voisine. */
+.app-ui__mobile-drawer .app-ui__nav-link {
+  min-height: 44px;
+}
+
+.app-ui__mobile-drawer .app-ui__sidebar-cta {
+  height: 44px;
+}
+
+/* Le logo de l'en-tete mobile ne faisait que 22 px de cote au toucher. */
+.app-ui__header-brand {
+  min-width: 36px;
+  min-height: 36px;
+  justify-content: center;
+}

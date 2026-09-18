@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, Plus, X } from "lucide-react";
@@ -11,6 +11,8 @@ export function MobileNav() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const [openedOn, setOpenedOn] = useState(pathname);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const drawerRef = useRef<HTMLDivElement>(null);
 
   // Le menu se referme des qu'une page est ouverte (ajustement pendant le
   // rendu, sans effet ni rendu supplementaire).
@@ -19,12 +21,41 @@ export function MobileNav() {
     setOpen(false);
   }
 
+  function close(restoreFocus: boolean) {
+    setOpen(false);
+    if (restoreFocus) buttonRef.current?.focus();
+  }
+
+  // Menu ouvert : le focus entre dans le menu, Echap le referme, et la page
+  // derriere ne defile plus sous le doigt.
+  useEffect(() => {
+    if (!open) return;
+    drawerRef.current?.querySelector<HTMLElement>("a")?.focus();
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      setOpen(false);
+      buttonRef.current?.focus();
+    };
+    document.addEventListener("keydown", onKey);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
   return (
     <div className="lg:hidden">
       <button
+        ref={buttonRef}
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => (open ? close(false) : setOpen(true))}
         aria-expanded={open}
+        aria-controls="app-mobile-menu"
         aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
         className="flex h-9 w-9 items-center justify-center rounded-lg border border-line bg-white text-ink-70"
       >
@@ -38,11 +69,15 @@ export function MobileNav() {
       {open ? (
         <>
           <div
-            className="fixed inset-0 top-14 z-40 bg-ink/20"
-            onClick={() => setOpen(false)}
+            className="fixed inset-0 top-14 z-40 bg-ink/30"
+            onClick={() => close(true)}
             aria-hidden
           />
-          <div className="app-ui__mobile-drawer fixed inset-x-0 top-14 z-50 p-3">
+          <div
+            ref={drawerRef}
+            id="app-mobile-menu"
+            className="app-ui__mobile-drawer fixed inset-x-0 top-14 z-50 p-3"
+          >
             <Link href="/app/dossiers/nouveau" className="app-ui__sidebar-cta">
               <Plus strokeWidth={2.2} aria-hidden />
               Nouveau dossier

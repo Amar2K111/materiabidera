@@ -54,7 +54,8 @@ export function SidebarNav({ collapsed = false }: { collapsed?: boolean }) {
             href={href}
             aria-current={active ? "page" : undefined}
             aria-label={collapsed ? label : undefined}
-            title={collapsed ? label : undefined}
+            // Libelle affiche par la barre repliee au survol et au focus.
+            data-rail-label={collapsed ? label : undefined}
             className={cn(
               "app-ui__nav-link",
               active && "is-active",
