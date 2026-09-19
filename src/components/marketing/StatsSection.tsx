@@ -1,10 +1,10 @@
 import { Container } from "@/components/marketing/ui/Container";
 
 const stats = [
-  { value: "Quelques min", label: "pour synthétiser un DCE (RC, CCAP, CCTP)" },
-  { value: "48 h", label: "pour structurer votre base et générer une 1re réponse" },
-  { value: "100 %", label: "des données hébergées en France · SecNumCloud" },
-  { value: "0", label: "entraînement de modèles tiers sur vos documents" },
+  { value: "8", label: "facteurs notés et justifiés à chaque Go/No-Go, sources à l'appui" },
+  { value: "2", label: "sources de vérité : les pièces du DCE et votre base entreprise" },
+  { value: "1 clic", label: "pour lancer la rédaction de l'ensemble du mémoire technique" },
+  { value: "0", label: "entraînement de modèle sur vos documents par MateriaBTP" },
 ];
 
 export function StatsSection() {
@@ -22,7 +22,7 @@ export function StatsSection() {
           ))}
         </dl>
         <p className="mt-10 text-[13px] leading-relaxed text-pewter">
-          Chiffres liés au produit et à notre engagement souveraineté — pas des résultats clients. Le ROI se chiffre sur votre propre DCE, en démo de 30 minutes.
+          Caractéristiques produit, pas promesses marketing : MateriaBTP est en lancement. Jugez sur l&apos;un de vos propres DCE, en démonstration de 30 minutes.
         </p>
       </Container>
     </section>

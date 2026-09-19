@@ -1,30 +1,36 @@
 import type { StaticPage } from "./types";
-import { CONTACT_EMAIL } from "@/lib/marketing/config/contact";
+import { CONTACT_EMAIL, CONTACT_NAME, CONTACT_ROLE } from "@/lib/marketing/config/contact";
 
+/**
+ * Pages fixes du site.
+ *
+ * Regle : n'affirmer que ce qui est verifiable aujourd'hui. Hebergement,
+ * sous-traitants, fonctions, delais : chaque mention doit correspondre a la
+ * realite du service. Les sous-traitants techniques cites ici sont ceux que
+ * l'application utilise effectivement (voir .env et vercel.json).
+ */
 export const staticPages: Record<string, StaticPage> = {
   "logiciel-reponse-appels-offres": {
     slug: "logiciel-reponse-appels-offres",
-    title: "Logiciel de réponse aux appels d'offres",
+    title: "Logiciel de réponse aux appels d'offres BTP",
     description:
-      "MateriaBTP est le logiciel IA de réponse aux appels d'offres : analyse DCE, Go/No-Go, mémoire technique et questionnaires, sourcés depuis votre base de connaissances.",
+      "MateriaBTP aide les entreprises de travaux à répondre aux appels d'offres : analyse du DCE, évaluation Go/No-Go, mémoire technique sourcé, contrôle avant dépôt et export Word ou PDF.",
     eyebrow: "Produit",
     sections: [
       {
         type: "prose",
         content: [
-          "MateriaBTP est la plateforme d'AI Bid Intelligence qui transforme vos appels d'offres en levier de croissance. L'IA analyse vos DCE, fiabilise vos Go/No-Go et rédige vos mémoires techniques à partir de votre savoir-faire : elle produit, vos experts décident.",
-          "De l'analyse du règlement de consultation à l'export Word du mémoire technique, chaque étape de la réponse est couverte par des agents IA spécialisés, orchestrés dans un workflow que vos équipes pilotent.",
+          "MateriaBTP accompagne une réponse à un appel d'offres de bout en bout : lecture des pièces du DCE, décision de répondre, construction et rédaction du mémoire technique, contrôle, puis export du document à déposer.",
+          "L'outil s'appuie sur deux sources seulement : les pièces de la consultation et la base de votre entreprise. Chaque élément produit indique d'où il vient, et ce qui manque est signalé plutôt que complété au hasard. Vos équipes relisent, ajustent et décident.",
         ],
       },
       {
         type: "cards",
-        title: "Les modules MateriaBTP",
+        title: "Ce que fait MateriaBTP",
         items: [
-          { title: "Analyse & Go/No-Go", description: "Synthèse du DCE et décision fiable en quelques minutes.", href: "/produit/analyse-go-no-go" },
-          { title: "Mémoire technique", description: "Rédaction structurée sur les critères de l'AO.", href: "/produit/memoire-technique" },
-          { title: "Questionnaires & DDQ", description: "RFP, RFI, sécurité, RSE, RGPD : répondus en heures.", href: "/produit/questionnaires" },
-          { title: "Base de connaissances", description: "Votre savoir-faire centralisé, retrouvé en un clic.", href: "/produit/base-de-connaissances" },
-          { title: "Collaboration & pilotage", description: "Assignation, suivi temps réel, dépôt à l'heure.", href: "/produit/collaboration" },
+          { title: "Analyse & Go/No-Go", description: "Exigences, critères, points de vigilance et évaluation de l'opportunité, sources à l'appui.", href: "/produit/analyse-go-no-go" },
+          { title: "Mémoire technique", description: "Plan sur les critères de l'acheteur, rédaction à partir de votre base, contrôle et export.", href: "/produit/memoire-technique" },
+          { title: "Base entreprise", description: "Références, moyens, certifications, méthodes et anciens mémoires, avec une recherche par le sens.", href: "/produit/base-de-connaissances" },
         ],
       },
     ],
@@ -32,52 +38,32 @@ export const staticPages: Record<string, StaticPage> = {
   tarifs: {
     slug: "tarifs",
     title: "Tarifs",
-    description: "Licence annuelle SaaS. La démo chiffre le ROI sur vos propres appels d'offres avant tout engagement.",
+    description: "MateriaBTP est en phase de lancement. Les conditions sont établies sur devis, après une démonstration sur l'un de vos dossiers.",
     sections: [
       {
         type: "prose",
         content: [
-          "MateriaBTP est proposé en licence annuelle, adaptée à la taille de votre équipe bid et au volume de consultations traitées. Pas de surprise : la démo de 30 minutes sur l'un de vos vrais AO chiffre le ROI avant tout engagement.",
+          "MateriaBTP est en phase de lancement, ouvert à un programme pilote. Le tarif est établi sur devis, selon le nombre de dossiers que vous traitez, après une démonstration de 30 minutes sur l'un de vos appels d'offres.",
+          "Le devis détaille ce qui est inclus. Aucune formule n'est engagée avant que vous l'ayez acceptée.",
         ],
       },
       {
         type: "pricing",
         plans: [
           {
-            name: "Essentiel",
+            name: "Programme pilote",
             price: "Sur devis",
-            description: "Pour les équipes qui démarrent l'industrialisation de leurs réponses.",
+            description: "L'ensemble des fonctions disponibles aujourd'hui, pour les entreprises de travaux.",
             features: [
-              "Analyse DCE et Fiche Synthèse GoNoGo",
-              "Mémoire technique (5 réponses / mois)",
-              "Base de connaissances (50 Go)",
-              "Support email",
-            ],
-          },
-          {
-            name: "Pro",
-            price: "Sur devis",
-            description: "Pour les équipes bid qui traitent plusieurs dossiers en parallèle.",
-            features: [
-              "Tous les modules Essentiel",
-              "Questionnaires & DDQ illimités",
-              "Collaboration multi-contributeurs",
-              "Base de connaissances illimitée",
-              "Customer Success dédié",
+              "Analyse du DCE : exigences, critères, points de vigilance",
+              "Évaluation Go/No-Go et critères de qualification",
+              "Mémoire technique rédigé à partir de votre base",
+              "Contrôle qualité et checklist avant dépôt",
+              "Export Word et PDF",
+              "Base entreprise et recherche",
+              "Échanges directs avec le fondateur",
             ],
             highlighted: true,
-          },
-          {
-            name: "Entreprise",
-            price: "Sur devis",
-            description: "Pour les groupes multi-entités et les volumes importants.",
-            features: [
-              "Tous les modules Pro",
-              "Multi-entités et droits avancés",
-              "SSO et API",
-              "SLA prioritaire",
-              "Accompagnement onboarding sur mesure",
-            ],
           },
         ],
       },
@@ -86,12 +72,12 @@ export const staticPages: Record<string, StaticPage> = {
   contact: {
     slug: "contact",
     title: "Contact",
-    description: `Parlez à un humain. Nous répondons vite : ${CONTACT_EMAIL}`,
+    description: `Une question sur MateriaBTP ? Écrivez-nous : ${CONTACT_EMAIL}`,
     sections: [
       {
         type: "prose",
         content: [
-          "Une question sur MateriaBTP, un projet de déploiement, un partenariat ? Écrivez-nous ou réservez directement une démo de 30 minutes sur l'un de vos appels d'offres.",
+          "Une question sur MateriaBTP, un dossier à tester, une demande de devis ? Écrivez-nous, ou réservez directement une démonstration de 30 minutes sur l'un de vos appels d'offres.",
         ],
       },
       { type: "form", form: "contact" },
@@ -100,82 +86,52 @@ export const staticPages: Record<string, StaticPage> = {
   "a-propos": {
     slug: "a-propos",
     title: "À propos de MateriaBTP",
-    description: "MateriaBTP, l'AI Bid Intelligence qui fait des appels d'offres un levier de croissance.",
+    description: "MateriaBTP aide les entreprises de travaux à répondre aux appels d'offres avec méthode, à partir de leur savoir-faire réel.",
     sections: [
       {
         type: "prose",
         content: [
-          "MateriaBTP est née d'un constat simple : les équipes qui répondent aux appels d'offres passent 70 % de leur temps à chercher de l'information et à réécrire ce qu'elles ont déjà produit. L'IA peut éliminer cette friction — à condition de s'appuyer sur le savoir-faire réel de l'entreprise, pas sur du contenu générique.",
-          "Notre mission : faire des appels d'offres un levier de croissance pour les entreprises du BTP et des travaux publics, sans sacrifier la qualité technique des mémoires.",
-          "Conçu, développé et hébergé en France. Données sur serveurs SecNumCloud, conformes RGPD, jamais utilisées pour entraîner des modèles tiers.",
-        ],
-      },
-      {
-        type: "team",
-        members: [
-          { name: "Équipe Produit", role: "Agents IA & expérience utilisateur", bio: "Des agents spécialisés pour chaque étape de la réponse : analyse, extraction, structuration, rédaction, relecture, conformité." },
-          { name: "Équipe Customer Success", role: "Onboarding & accompagnement", bio: "Structuration de votre base de connaissances en 48 heures, formation de vos équipes, suivi des premiers dossiers." },
-          { name: "Équipe Sécurité", role: "Infrastructure & conformité", bio: "Hébergement souverain, qualification SecNumCloud, audits réguliers et conformité RGPD par conception." },
-        ],
-      },
-    ],
-  },
-  recrutement: {
-    slug: "recrutement",
-    title: "Recrutement",
-    description: "Rejoignez l'aventure MateriaBTP. Nous recrutons des talents passionnés par l'IA appliquée aux appels d'offres.",
-    sections: [
-      {
-        type: "prose",
-        content: [
-          "MateriaBTP grandit. Nous cherchons des profils qui veulent transformer un métier exigeant avec l'IA — en gardant l'humain au centre de la décision.",
-        ],
-      },
-      {
-        type: "jobs",
-        items: [
-          {
-            title: "Ingénieur IA / LLM",
-            location: "Lille / Remote",
-            type: "CDI",
-            description: "Concevoir et améliorer les agents IA spécialisés dans l'analyse documentaire et la rédaction de mémoires techniques.",
-          },
-          {
-            title: "Customer Success Manager",
-            location: "France",
-            type: "CDI",
-            description: "Accompagner les clients dans le déploiement de MateriaBTP : structuration de la base, formation, suivi des premiers dossiers.",
-          },
-          {
-            title: "Business Developer",
-            location: "France",
-            type: "CDI",
-            description: "Développer le portefeuille clients auprès des entreprises qui répondent aux appels d'offres publics et privés.",
-          },
+          "Répondre à un appel d'offres de travaux, c'est lire un DCE volumineux, décider vite, puis rédiger un mémoire précis, souvent avec une petite équipe et une échéance fixe. Une grande partie de ce temps passe à chercher l'information et à réécrire ce qui a déjà été écrit.",
+          "MateriaBTP prend en charge cette part : lire les pièces, retrouver la bonne preuve dans votre base, préparer un premier jet et le contrôler. Avec une règle constante : rien n'est affirmé sans source, et la décision reste celle de vos équipes.",
+          `MateriaBTP est en phase de lancement. ${CONTACT_NAME}, ${CONTACT_ROLE}, échange directement avec les entreprises du programme pilote : ${CONTACT_EMAIL}.`,
         ],
       },
     ],
   },
   securite: {
     slug: "securite",
-    title: "Sécurité & souveraineté",
-    description: "Hébergement en France, qualifié SecNumCloud, conforme RGPD.",
+    title: "Sécurité et confidentialité",
+    description: "Comment MateriaBTP isole et protège les données de chaque entreprise, et quels prestataires techniques interviennent.",
     sections: [
       {
         type: "prose",
         content: [
-          "Méthodologies, références, prix, organisation : ce que vous confiez à MateriaBTP est ce que vos concurrents aimeraient lire. Notre infrastructure est conçue pour que cela n'arrive jamais.",
+          "Méthodes, références, prix : ce que vous déposez dans MateriaBTP est sensible. Voici, concrètement, comment ces données sont traitées. Cette page décrit l'état actuel du service ; elle n'annonce pas de certification que nous ne détenons pas.",
         ],
       },
       {
         type: "security",
         items: [
-          { title: "Hébergement 100 % en France", description: "Vos données restent sur le territoire, dans des datacenters souverains." },
-          { title: "Serveurs qualifiés SecNumCloud", description: "Le référentiel de sécurité le plus exigeant de l'ANSSI." },
-          { title: "Conforme RGPD, par conception", description: "Vos documents n'entraînent jamais de modèles tiers. Jamais." },
-          { title: "Chiffrement et contrôle d'accès", description: "Données chiffrées au repos et en transit. Droits d'accès granulaires par équipe et par dossier." },
-          { title: "Traçabilité des accès", description: "Journalisation des accès et des modifications pour audit et conformité." },
-          { title: "Sauvegardes et continuité", description: "Sauvegardes régulières et plan de continuité d'activité testé." },
+          {
+            title: "Isolation par entreprise",
+            description:
+              "Chaque entreprise ne voit que ses propres dossiers, documents et base. Ce cloisonnement est appliqué directement dans la base de données, et testé.",
+          },
+          {
+            title: "Chiffrement en transit et au repos",
+            description:
+              "Les échanges passent par HTTPS. La base de données et les fichiers sont stockés chez Supabase, qui les chiffre au repos.",
+          },
+          {
+            title: "Traitement par un fournisseur d'IA",
+            description:
+              "Pour être analysés, les documents sont transmis au fournisseur d'IA utilisé par le service (Google Gemini ou Anthropic). MateriaBTP n'entraîne aucun modèle sur vos documents.",
+          },
+          {
+            title: "Vos documents restent les vôtres",
+            description:
+              "Vous pouvez supprimer un dossier et ses fichiers à tout moment depuis l'application. Nous ne revendons aucune donnée.",
+          },
         ],
       },
     ],
@@ -183,58 +139,8 @@ export const staticPages: Record<string, StaticPage> = {
   glossaire: {
     slug: "glossaire",
     title: "Glossaire des appels d'offres",
-    description: "Définitions des termes clés des appels d'offres et marchés publics : DCE, RC, CCAP, CCTP, RFP, RFI, DDQ, MAPA, DUME…",
+    description: "Définitions des termes clés des appels d'offres et marchés publics : DCE, RC, CCAP, CCTP, MAPA, DUME…",
     sections: [{ type: "glossary", entries: [] }],
-  },
-  "calculateur-roi": {
-    slug: "calculateur-roi",
-    title: "Calculateur ROI",
-    description: "Estimez le coût réel de vos réponses aux appels d'offres et le gain potentiel avec MateriaBTP.",
-    sections: [
-      {
-        type: "prose",
-        content: [
-          "Combien vous coûte réellement chaque réponse à un appel d'offres ? Temps des commerciaux, des experts techniques, des relectures de dernière minute… Le calculateur ci-dessous estime votre coût actuel et le gain potentiel avec MateriaBTP.",
-        ],
-      },
-      { type: "roi-calculator" },
-    ],
-  },
-  podcast: {
-    slug: "podcast",
-    title: "Masters of Tenders",
-    description: "Le podcast MateriaBTP sur les appels d'offres : méthodes, retours de terrain et interviews d'experts.",
-    sections: [
-      {
-        type: "prose",
-        content: [
-          "Masters of Tenders explore les coulisses des appels d'offres : stratégies de réponse, erreurs à éviter, retours d'expérience de dirigeants et responsables commerciaux.",
-        ],
-      },
-      {
-        type: "podcast",
-        episodes: [
-          {
-            title: "Comment industrialiser ses réponses aux AO sans perdre en qualité",
-            guest: "Thomas D., BSE Ambulances",
-            date: "Août 2026",
-            description: "Retour d'expérience sur la réduction de 50 % du temps de traitement et l'automatisation de 70 % des mémoires techniques.",
-          },
-          {
-            title: "Go/No-Go : arrêter de répondre au feeling",
-            guest: "Équipe MateriaBTP",
-            date: "Juillet 2026",
-            description: "Les 17 critères d'une décision Go/No-Go fiable, et comment l'IA accélère l'analyse du DCE.",
-          },
-          {
-            title: "BTP et marchés publics : le formalisme comme avantage compétitif",
-            guest: "Directeur travaux, PME BTP",
-            date: "Juin 2026",
-            description: "Comment les dérogations au CCAG et les points de vigilance du DCE conditionnent la rentabilité du marché.",
-          },
-        ],
-      },
-    ],
   },
   "cas-clients": {
     slug: "cas-clients",
@@ -244,18 +150,18 @@ export const staticPages: Record<string, StaticPage> = {
       {
         type: "prose",
         content: [
-          "Nous n'avons pas encore d'études de cas publiées — MateriaBTP est en phase de lancement. C'est normal, et c'est honnête.",
-          "Nous ouvrons un programme pilote avec des entreprises du BTP qui veulent tester l'analyse DCE, le Go/No-Go et la rédaction de mémoires techniques sur leurs propres dossiers. En échange, vous bénéficiez d'un accompagnement renforcé et d'une influence directe sur la roadmap produit.",
-          "Les premières études de cas seront publiées ici dès que nos partenaires pilotes auront validé le partage de leurs résultats.",
+          "Nous n'avons pas encore d'études de cas publiées : MateriaBTP est en phase de lancement.",
+          "Nous ouvrons un programme pilote avec des entreprises du BTP qui veulent tester l'analyse du DCE, l'évaluation Go/No-Go et la rédaction de mémoires techniques sur leurs propres dossiers, avec un échange direct sur les évolutions de l'outil.",
+          "Des études de cas seront publiées ici uniquement avec l'accord écrit des entreprises concernées, et avec des chiffres qu'elles auront mesurés elles-mêmes.",
         ],
       },
       {
         type: "cards",
         title: "Ce que nous mesurerons ensemble",
         items: [
-          { title: "Temps gagné sur l'analyse du DCE", description: "De la réception du RC à la Fiche Synthèse GoNoGo prête pour arbitrage." },
-          { title: "Temps gagné sur le mémoire technique", description: "Du sommaire calé sur les critères du RC au premier jet sourcé depuis votre base." },
-          { title: "Dossiers traités à effectif constant", description: "Capacité à répondre à plus d'AO sans embaucher ni sacrifier la qualité." },
+          { title: "Temps passé sur l'analyse du DCE", description: "De la réception des pièces à la décision de répondre." },
+          { title: "Temps passé sur le mémoire technique", description: "Du plan calé sur les critères au document prêt à relire." },
+          { title: "Dossiers traités à effectif constant", description: "La capacité à répondre à plus de consultations sans dégrader la qualité." },
         ],
       },
     ],
@@ -268,10 +174,13 @@ export const staticPages: Record<string, StaticPage> = {
       {
         type: "prose",
         content: [
-          `Éditeur du site : MateriaBTP. Contact : ${CONTACT_EMAIL}`,
-          "Directeur de la publication : MateriaBTP.",
-          "Hébergement : infrastructure hébergée en France, serveurs qualifiés SecNumCloud.",
-          "Propriété intellectuelle : l'ensemble du contenu de ce site (textes, images, logos) est protégé par le droit d'auteur. Toute reproduction est interdite sans autorisation préalable.",
+          // A COMPLETER avant la mise en ligne : forme juridique, adresse du siege,
+          // SIREN / RCS et, le cas echeant, capital social (loi du 21 juin 2004, art. 6).
+          `Éditeur du site : MateriaBTP. Responsable : ${CONTACT_NAME}, ${CONTACT_ROLE}. Contact : ${CONTACT_EMAIL}.`,
+          `Directeur de la publication : ${CONTACT_NAME}.`,
+          "Hébergement du site : Vercel Inc., 440 N Barranca Avenue #4133, Covina, CA 91723, États-Unis.",
+          "Base de données et fichiers de l'application : Supabase Inc.",
+          "Propriété intellectuelle : les textes et visuels propres à MateriaBTP sont protégés par le droit d'auteur. Les marques et sigles cités appartiennent à leurs titulaires respectifs.",
         ],
       },
     ],
@@ -284,11 +193,12 @@ export const staticPages: Record<string, StaticPage> = {
       {
         type: "prose",
         content: [
-          "MateriaBTP s'engage à protéger vos données personnelles conformément au Règlement Général sur la Protection des Données (RGPD).",
-          "Données collectées : lors de l'utilisation du site (formulaires de contact, démo), nous collectons les informations que vous nous communiquez volontairement (nom, email, entreprise, message).",
-          "Finalité : ces données sont utilisées pour répondre à vos demandes, organiser des démonstrations et vous informer de nos services si vous y avez consenti.",
-          "Hébergement : vos données sont hébergées en France sur des serveurs qualifiés SecNumCloud. Elles ne sont jamais vendues ni utilisées pour entraîner des modèles tiers.",
-          `Vos droits : vous disposez d'un droit d'accès, de rectification, de suppression et de portabilité de vos données. Contact : ${CONTACT_EMAIL}`,
+          "MateriaBTP traite vos données personnelles conformément au Règlement général sur la protection des données (RGPD).",
+          "Données collectées sur le site : les informations que vous nous transmettez volontairement par e-mail ou lors de la réservation d'une démonstration (nom, e-mail, entreprise, message). La réservation de démonstration passe par le service Calendly.",
+          "Données de l'application : les informations de votre compte et les documents que vous déposez, utilisés uniquement pour fournir le service.",
+          "Prestataires techniques : Vercel (hébergement du site), Supabase (base de données et fichiers) et le fournisseur d'IA utilisé pour l'analyse des documents (Google Gemini ou Anthropic). Certains de ces prestataires peuvent traiter des données hors de l'Union européenne, dans le cadre de garanties contractuelles.",
+          "MateriaBTP ne vend aucune donnée et n'entraîne aucun modèle d'IA sur vos documents.",
+          `Vos droits : vous disposez d'un droit d'accès, de rectification, d'effacement, d'opposition et de portabilité. Pour les exercer : ${CONTACT_EMAIL}. Vous pouvez également saisir la CNIL.`,
         ],
       },
     ],
@@ -302,10 +212,10 @@ export const staticPages: Record<string, StaticPage> = {
         type: "prose",
         content: [
           "Les présentes conditions générales d'utilisation (CGU) régissent l'accès et l'utilisation de la plateforme MateriaBTP.",
-          "Accès au service : l'accès à MateriaBTP est réservé aux clients disposant d'un contrat de licence en cours de validité. Les identifiants sont personnels et ne doivent pas être partagés.",
-          "Utilisation des données : les documents que vous déposez sur MateriaBTP restent votre propriété. MateriaBTP ne les utilise pas pour entraîner des modèles tiers.",
-          "Responsabilité : MateriaBTP produit des premiers jets assistés par IA que vos experts doivent relire et valider avant tout dépôt. La responsabilité du contenu final déposé reste celle du client.",
-          `Pour toute question : ${CONTACT_EMAIL}`,
+          "Accès au service : l'accès est réservé aux entreprises ayant un accord en cours avec MateriaBTP. Les identifiants sont personnels et ne doivent pas être partagés.",
+          "Vos documents : les documents que vous déposez restent votre propriété. Ils sont traités par le fournisseur d'IA du service pour produire les analyses, et ne servent pas à entraîner de modèle pour MateriaBTP.",
+          "Responsabilité : MateriaBTP produit des analyses et des premiers jets assistés par l'IA, qui peuvent comporter des erreurs. Vos équipes doivent les relire et les valider avant tout dépôt. La responsabilité du contenu déposé reste celle du client.",
+          `Pour toute question : ${CONTACT_EMAIL}.`,
         ],
       },
     ],

@@ -1,20 +1,7 @@
 :root {
-  --banner-h: 3.25rem;
-  --nav-h: 4rem;
-}
-
-@media (min-width: 640px) {
-  :root {
-    --banner-h: 2.5rem;
-  }
-}
-
-html.banner-off {
+  /* Aucun bandeau d annonce : la variable reste pour les calculs de position. */
   --banner-h: 0px;
-}
-
-html.banner-off .banner {
-  display: none;
+  --nav-h: 4rem;
 }
 
 html {

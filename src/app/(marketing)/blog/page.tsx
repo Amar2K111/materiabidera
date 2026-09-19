@@ -22,7 +22,7 @@ export default function BlogIndexPage() {
     <IndexGrid
       eyebrow="Le blog"
       title="Méthodes et guides pour gagner vos appels d'offres"
-      description="Marchés publics, RFP, mémoires techniques : nos articles décryptent le vocabulaire et les bonnes pratiques."
+      description="Marchés publics et mémoires techniques : les pièces d'un appel d'offres et leur vocabulaire, expliqués."
       items={items}
     />
   );

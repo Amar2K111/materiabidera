@@ -75,7 +75,7 @@ export const blogArticles: Record<string, BlogArticle> = {
       "Le Cahier des Clauses Techniques Particulières (CCTP) décrit le besoin technique du marché : prestations attendues, exigences de qualité, contraintes d'exécution, normes applicables.",
       "C'est la matière première du mémoire technique. Chaque exigence du CCTP appelle une réponse dans votre offre : méthodologie, moyens, références, planning.",
       "Le CCTP se lit en parallèle du CCAP (clauses administratives) et du RC (règles de consultation). Les trois pièces forment le cœur décisionnel du DCE.",
-      "Une bonne pratique : extraire les exigences du CCTP une par une et les confronter à vos capacités avant de décider du Go. C'est exactement ce que fait la Fiche Synthèse GoNoGo de MateriaBTP.",
+      "Une bonne pratique : extraire les exigences du CCTP une par une et les confronter à vos capacités avant de décider du Go. C'est ce que fait MateriaBTP : chaque exigence est relevée avec sa page, puis confrontée à votre base entreprise.",
     ],
   ),
   "ccap-clauses-administratives": article(
@@ -89,7 +89,7 @@ export const blogArticles: Record<string, BlogArticle> = {
       "Le Cahier des Clauses Administratives Particulières (CCAP) fixe les règles administratives propres au marché : pénalités de retard, garanties, conditions de paiement, sous-traitance, résiliation.",
       "C'est là que se cachent la plupart des risques contractuels. Les dérogations au CCAG sont récapitulées en fin de CCAP et méritent une attention particulière.",
       "Les pénalités de retard, les délais de paiement dérogatoires, les avances sans garantie : autant de points qui doivent être identifiés avant d'engager vos équipes sur la réponse.",
-      "MateriaBTP extrait automatiquement ces clauses et les confronte à vos critères de qualification internes dans la Fiche Synthèse GoNoGo.",
+      "MateriaBTP relève ces clauses comme points de vigilance, avec leur article, et vérifie vos critères de qualification à chaque évaluation.",
     ],
   ),
   "dce-definition-telecharger": article(

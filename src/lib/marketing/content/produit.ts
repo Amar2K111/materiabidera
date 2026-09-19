@@ -1,264 +1,171 @@
 import type { ModulePage } from "./types";
 
+/**
+ * Pages produit du site.
+ *
+ * Chaque phrase decrit une fonction qui existe dans l'application a ce jour.
+ * Avant d'ajouter une promesse ici, verifier qu'elle est disponible pour un
+ * client : une fonction annoncee mais absente est une pratique commerciale
+ * trompeuse.
+ */
 export const produitPages: Record<string, ModulePage> = {
   "analyse-go-no-go": {
     slug: "analyse-go-no-go",
     eyebrow: "Analyse & Go/No-Go",
-    title: "Fiabilisez chaque Go/No-Go, en quelques minutes",
+    title: "Décidez de répondre sur pièces, pas à l'intuition",
     description:
-      "MateriaBTP lit le RC, le CCAP et le CCTP : dates clés, pénalités, garanties et points de vigilance dans une Fiche Synthèse GoNoGo éditable.",
+      "MateriaBTP lit les pièces de votre DCE, relève les exigences, les critères de jugement et les points de vigilance, puis évalue l'opportunité face à votre base entreprise et à vos propres critères.",
     intro:
-      "Déposez les pièces du DCE. MateriaBTP en extrait l'essentiel — dates clés, pénalités, garanties, points de vigilance — et le confronte à vos critères de qualification. Vous décidez de répondre en connaissance de cause, plus au feeling.",
+      "Déposez le règlement de consultation, le CCAP, le CCTP et les annexes. MateriaBTP en tire les informations qui comptent pour décider, chacune rattachée à la pièce et à la page d'où elle vient, puis confronte le dossier à ce que votre entreprise sait réellement faire.",
     benefits: [
       {
-        title: "Une synthèse complète du DCE",
+        title: "L'essentiel du dossier, sourcé",
         description:
-          "RC, CCAP, CCTP et annexes sont analysés en profondeur : date limite de remise, début d'exécution, durée du marché, pénalités, garanties demandées et critères d'attribution remontent automatiquement.",
+          "Objet, acheteur, lot, montant, durée d'exécution, date limite, variantes, visite de site, critères d'attribution et leur pondération : chaque élément indique sa pièce et sa page. Ce que les pièces ne disent pas est signalé comme tel, jamais deviné.",
       },
       {
-        title: "Les pièges détectés avant d'engager vos équipes",
+        title: "Les points de vigilance, avant d'engager l'équipe",
         description:
-          "Clauses de pénalités atypiques, garanties inhabituelles, visite obligatoire, variante autorisée : les points de vigilance sont signalés explicitement, pièce par pièce.",
+          "Pénalités, garanties, contraintes de chantier, pièces exigées : les points à surveiller sont relevés avec leur niveau de criticité et l'extrait qui les fonde.",
       },
       {
-        title: "Vos critères de qualification, appliqués systématiquement",
+        title: "Une évaluation justifiée, que vous tranchez",
         description:
-          "Seuils de montant, secteurs, zones géographiques, certifications requises : vos règles internes de Go/No-Go sont paramétrées une fois et appliquées à chaque consultation.",
+          "Huit facteurs sont notés et justifiés à partir de vos références, moyens et qualifications : adéquation technique, capacités, expérience, critères, délai, risques contractuels, exigences administratives, contraintes de chantier. La note est calculée par l'application ; la décision reste la vôtre.",
       },
       {
-        title: "Une traçabilité totale",
+        title: "Vos propres règles, appliquées à chaque dossier",
         description:
-          "Chaque information reconstituée par l'IA — un montant estimé, une durée implicite — est marquée d'une étoile. Vous savez toujours ce qui vient du document et ce qui a été déduit.",
+          "Zone d'intervention, montant, qualifications, délai de préparation : vous fixez vos critères de qualification, simples ou éliminatoires. Chacun reçoit un verdict sourcé à chaque évaluation.",
       },
     ],
     features: [
-      "Analyse du RC, CCAP, CCTP et des annexes du DCE",
-      "Extraction des dates clés : remise des offres, démarrage, durée du marché",
-      "Extraction des clauses de pénalités et des garanties demandées",
-      "Mention « variante autorisée » remontée dans la synthèse",
-      "Règles de qualification paramétrables par entreprise",
-      "Fiche Synthèse GoNoGo éditable et partageable",
-      "Marquage ⭐ des montants et durées reconstitués par l'IA",
+      "Lecture des pièces PDF, Word, Excel et ZIP, y compris les PDF scannés (jusqu'à 40 pages)",
+      "Exigences extraites avec leur catégorie, leur priorité et leur source",
+      "Critères et sous-critères d'attribution avec leur pondération",
+      "Points de vigilance classés par criticité",
+      "Évaluation Go/No-Go sur huit facteurs justifiés et sourcés",
+      "Critères de qualification de l'entreprise, simples ou éliminatoires",
+      "Décision et note de l'utilisateur, qui priment sur la recommandation",
     ],
     faq: [
       {
-        q: "Quels documents puis-je analyser ?",
-        a: "Toutes les pièces d'un DCE : règlement de consultation (RC), CCAP, CCTP, annexes techniques et administratives, au format PDF ou Word. MateriaBTP couvre les marchés publics comme les consultations privées.",
+        q: "Quels documents puis-je déposer ?",
+        a: "Les pièces du DCE aux formats PDF, Word, Excel ou dans une archive ZIP. Les PDF scannés sont lus par reconnaissance de caractères, jusqu'à 40 pages par document.",
       },
       {
-        q: "Comment être sûr de la fiabilité des informations extraites ?",
-        a: "Chaque élément de la Fiche Synthèse GoNoGo est relié à sa source dans le document. Les informations reconstituées par l'IA sont signalées par une étoile pour que votre relecture se concentre dessus.",
+        q: "Comment vérifier ce que l'outil a extrait ?",
+        a: "Chaque exigence, critère ou point de vigilance est rattaché à sa pièce et à sa page, avec l'extrait concerné. Quand une information ne figure pas dans les pièces, l'outil l'indique plutôt que de la reconstituer.",
       },
       {
-        q: "Peut-on adapter l'analyse à nos critères internes ?",
-        a: "Oui. Vos règles de qualification — seuils, certifications exigées, zones d'intervention, typologies de marché — sont paramétrées avec notre équipe et appliquées automatiquement à chaque nouvelle consultation.",
+        q: "Peut-on appliquer nos règles internes de décision ?",
+        a: "Oui. Vous saisissez vous-même vos critères de qualification dans les paramètres, et vous choisissez lesquels sont éliminatoires. Ils sont vérifiés à chaque évaluation.",
       },
     ],
   },
   "memoire-technique": {
     slug: "memoire-technique",
     eyebrow: "Mémoire technique",
-    title: "Des mémoires techniques convaincants, sans page blanche",
+    title: "Un mémoire construit sur les critères de l'acheteur, à partir de votre matière",
     description:
-      "Générez un mémoire technique structuré sur les critères de l'AO, à partir de votre base de connaissances. Vos équipes affinent au lieu de partir de zéro.",
+      "Plan établi sur les critères de jugement ou le cadre imposé, rédaction chapitre par chapitre à partir de votre base entreprise, contrôle avant dépôt et export Word ou PDF.",
     intro:
-      "MateriaBTP analyse les critères d'évaluation de l'AO, construit le sommaire qui y répond point par point, puis rédige chaque section à partir de votre savoir-faire : méthodologies, références, certifications, moyens. Vos rédacteurs partent d'un premier jet solide, pas d'une page blanche.",
+      "MateriaBTP construit le plan du mémoire à partir du cadre imposé par l'acheteur quand il existe, sinon des critères de jugement et des exigences relevées. Chaque chapitre est ensuite rédigé à partir de vos références, de vos moyens et de vos méthodes. Vos rédacteurs relisent, ajustent et valident.",
     benefits: [
       {
-        title: "Structuré sur les critères de l'acheteur",
+        title: "Un plan qui suit la notation",
         description:
-          "Le sommaire est construit à partir de la pondération et des attentes du règlement de consultation. Chaque exigence trouve sa réponse, rien n'est oublié, rien n'est hors sujet.",
+          "Chaque chapitre est rattaché au critère qu'il traite et aux exigences qu'il doit couvrir. Aucun plan type n'est plaqué sur la consultation.",
       },
       {
-        title: "Rédigé avec votre matière, pas du générique",
+        title: "Rédigé avec vos éléments réels",
         description:
-          "Les sections s'appuient sur votre base de connaissances : vos méthodologies, vos chantiers de référence, vos certifications. Le résultat vous ressemble et reste différenciant.",
+          "La rédaction s'appuie sur votre base entreprise et sur les pièces du DCE. Les sources de chaque chapitre sont affichées ; l'outil n'attribue à votre entreprise ni référence ni moyen qui n'y figure pas.",
       },
       {
-        title: "Un premier jet en minutes, pas en jours",
+        title: "Tout le mémoire, ou un chapitre à la fois",
         description:
-          "La première version d'une réponse est générée en quelques minutes. Vos équipes consacrent leur temps à ce qui fait gagner : l'ajustement au contexte, les variantes, la relecture critique.",
+          "Lancez la rédaction de l'ensemble du mémoire en une fois, ou chapitre par chapitre. Améliorer, rendre concret, développer, raccourcir : chaque action conserve la version précédente.",
       },
       {
-        title: "Sources vérifiables en un clic",
+        title: "Contrôlé avant le dépôt",
         description:
-          "Chaque passage rédigé pointe vers les documents de votre base qui l'ont alimenté. La relecture est rapide et le risque d'approximation maîtrisé.",
+          "Le contrôle qualité signale les exigences non couvertes, les affirmations sans source et les contradictions entre chapitres, avec un score de préparation — pas une probabilité de gagner.",
       },
     ],
     features: [
-      "Sommaire généré à partir des critères d'évaluation et de leur pondération",
-      "Rédaction section par section à partir de votre base de connaissances",
-      "Édition collaborative : chaque section peut être affinée, réécrite, validée",
-      "Traçabilité des sources pour chaque passage généré",
-      "Export Word et PDF conforme à vos gabarits",
-      "Couvre mémoires techniques, RFP, RFI, DDQ et questionnaires de sécurité",
+      "Plan fondé sur le cadre imposé ou sur les critères de jugement",
+      "Rédaction de tout le mémoire en un clic, ou chapitre par chapitre",
+      "Sources affichées pour chaque chapitre (DCE et base entreprise)",
+      "Historique des versions de chaque chapitre",
+      "Contrôle qualité et checklist avant dépôt",
+      "Export Word et PDF mis en page : page de garde, sommaire, chapitres numérotés",
     ],
     faq: [
       {
-        q: "Le mémoire généré est-il prêt à déposer ?",
-        a: "Non, et c'est volontaire : MateriaBTP produit un premier jet structuré et documenté que vos experts affinent. L'outil assiste vos équipes, il ne remplace pas leur expertise.",
+        q: "Le mémoire rédigé est-il prêt à déposer ?",
+        a: "Non. C'est un premier jet documenté que vos équipes relisent, complètent et valident. La responsabilité du contenu déposé reste la vôtre.",
       },
       {
         q: "Comment l'outil évite-t-il les réponses génériques ?",
-        a: "La rédaction s'appuie exclusivement sur votre base de connaissances : vos méthodologies, vos références chantiers ou projets, vos moyens humains et matériels.",
+        a: "Il rédige à partir de votre base entreprise : références, équipe, matériel, certifications, qualifications, méthodes et anciens mémoires. Plus votre base est complète, plus le texte est précis. Ce qui manque est signalé comme point à compléter.",
       },
       {
-        q: "Gérez-vous aussi les questionnaires type RFP ou DDQ ?",
-        a: "Oui. Les questionnaires sont traités question par question, avec réponses sourcées depuis votre base et suivi du taux de couverture.",
-      },
-    ],
-  },
-  questionnaires: {
-    slug: "questionnaires",
-    eyebrow: "Questionnaires & DDQ",
-    title: "Vos questionnaires de 400 lignes, traités en heures",
-    description:
-      "Répondez aux questionnaires RFP, RFI, DDQ, sécurité, RSE et RGPD : réponses sourcées depuis votre base, suivi du taux de couverture, export Excel.",
-    intro:
-      "RFP grands comptes, RFI, due diligence, questionnaires de sécurité, RSE ou RGPD : des centaines de questions, largement récurrentes d'un client à l'autre. MateriaBTP propose une réponse sourcée pour chaque ligne à partir de votre base de connaissances. Vos experts vérifient au lieu de réécrire.",
-    benefits: [
-      {
-        title: "Une réponse proposée pour chaque question",
-        description:
-          "À partir de vos questionnaires passés et de votre documentation, PSSI, politiques, certifications, procédures, l'IA propose une réponse sourcée à chaque ligne.",
-      },
-      {
-        title: "Le taux de couverture en temps réel",
-        description:
-          "Sur une grille de 400 lignes, vous savez à tout moment ce qui est traité, sourcé, validé, et ce qui attend un expert.",
-      },
-      {
-        title: "Les experts sollicités au bon moment",
-        description:
-          "Les questions sans réponse fiable sont assignées au bon profil : RSSI, juridique, RSE. Sa réponse validée enrichit la base.",
-      },
-      {
-        title: "Une mémoire qui se consolide",
-        description:
-          "Chaque campagne enrichit votre base de connaissances. Le prochain DDQ part de plus haut.",
-      },
-    ],
-    features: [
-      "Réponse sourcée à chaque question, vérifiable en un clic",
-      "Couvre RFP, RFI, DDQ, questionnaires de sécurité, RSE et conformité RGPD",
-      "Import des grilles au format Excel et restitution au même format",
-      "Suivi du taux de couverture : traité, sourcé, validé, manquant",
-      "Assignation des questions ouvertes aux bons experts",
-      "Enrichissement continu de la base à partir des réponses validées",
-    ],
-    faq: [
-      {
-        q: "Quels types de questionnaires sont couverts ?",
-        a: "RFP, RFI, DDQ, questionnaires de sécurité, évaluations fournisseurs, questionnaires RSE et conformité RGPD, au format Excel comme en document structuré.",
-      },
-      {
-        q: "Comment garantir l'exactitude sur des sujets sensibles ?",
-        a: "Chaque réponse proposée cite le document source de votre base. Rien ne part sans la validation de vos experts.",
-      },
-      {
-        q: "Nos politiques évoluent, comment rester à jour ?",
-        a: "Votre base de connaissances est la source unique : mettez à jour la politique une fois, et toutes les prochaines réponses s'appuient sur la version à jour.",
+        q: "Peut-on réutiliser un chapitre d'un dossier à l'autre ?",
+        a: "Oui. Un chapitre validé peut être ajouté à vos méthodes, avec la mention du dossier d'origine, pour servir aux prochains mémoires.",
       },
     ],
   },
   "base-de-connaissances": {
     slug: "base-de-connaissances",
-    eyebrow: "Base de connaissances",
-    title: "Votre savoir-faire, centralisé et retrouvé en un clic",
+    eyebrow: "Base entreprise",
+    title: "Votre savoir-faire, rangé une fois, réutilisé à chaque réponse",
     description:
-      "Centralisez méthodologies, références, certifications et anciennes réponses dans une base unique, interrogeable par recherche sémantique en un clic.",
+      "Références, équipe, matériel, certifications, qualifications, méthodes et anciens mémoires : la base qui alimente chaque analyse et chaque mémoire, avec une recherche par le sens.",
     intro:
-      "Mémoires passés, méthodologies, fiches techniques, certifications, questions-réponses : tout ce que votre entreprise a déjà produit devient une base vivante, organisée et interrogeable. C'est elle qui alimente chaque nouvelle réponse.",
+      "Tout ce que votre entreprise sait prouver est réuni au même endroit : vos chantiers de référence, vos moyens humains et matériels, vos certifications et qualifications, vos méthodes et vos anciens mémoires. C'est cette base que MateriaBTP mobilise pour évaluer une opportunité et rédiger un mémoire.",
     benefits: [
       {
-        title: "Une source unique de vérité",
-        description: "Fini les réponses dispersées entre serveurs, boîtes mail et disques personnels. Toute la matière de l'entreprise est réunie.",
-      },
-      {
-        title: "La recherche qui comprend la question",
+        title: "Des fiches structurées",
         description:
-          "La recherche sémantique retrouve le bon paragraphe même formulé autrement : posez la question comme un acheteur la poserait.",
+          "Références, équipe, matériel, certifications, qualifications et méthodes sont saisis sous forme de fiches, pour être cités précisément dans vos réponses.",
       },
       {
-        title: "Une base qui s'enrichit à chaque réponse",
-        description: "Chaque nouvelle réponse validée vient nourrir la base. Plus vous répondez, plus la qualité augmente.",
+        title: "Vos documents existants exploités",
+        description:
+          "Déposez vos anciens mémoires, CV, fiches de référence, documents QSE : leur texte est extrait et devient citable.",
       },
       {
-        title: "Opérationnelle en 48 heures",
-        description: "Déposez vos documents dans tous les formats, notre équipe structure la base avec vous.",
+        title: "Une recherche qui comprend la question",
+        description:
+          "Cherchez « travaux en site occupé » ou « Qualibat » : la recherche combine les mots et le sens, et renvoie la fiche ou le passage d'origine.",
+      },
+      {
+        title: "Une base qui s'enrichit",
+        description:
+          "Un chapitre de mémoire validé peut rejoindre vos méthodes en un clic. Les dossiers suivants partent de plus haut.",
       },
     ],
     features: [
-      "Dossiers et sous-dossiers personnalisables selon votre organisation",
-      "Import de tous formats : Word, PDF, Excel, anciennes réponses complètes",
-      "Recherche sémantique avec remontée de la source exacte",
-      "Centralisation des certifications, méthodologies, références et Q/R",
-      "Alimentation continue à partir des réponses validées",
-      "Droits d'accès par équipe et par dossier",
+      "Présentation de l'entreprise et zone d'intervention",
+      "Fiches : références, équipe, matériel, certifications, qualifications, méthodes",
+      "Bibliothèque de documents : anciens mémoires, CV, QSE, certifications",
+      "Recherche par les mots et par le sens, avec la source",
+      "Chapitres validés réutilisables comme méthodes",
+      "Base propre à votre entreprise, isolée des autres comptes",
     ],
     faq: [
       {
-        q: "Combien de temps faut-il pour structurer notre base ?",
-        a: "Deux jours dans la plupart des cas. Jour 1 : dépôt et structuration. Jour 2 : première réponse générée.",
+        q: "Combien de temps pour être opérationnel ?",
+        a: "Le temps de renseigner l'essentiel : quelques références, votre équipe, vos qualifications. Vous pouvez aussi déposer vos anciens mémoires. Une base incomplète fonctionne, mais l'évaluation et la rédaction le signalent.",
       },
       {
-        q: "Quels types de documents peut-on importer ?",
-        a: "Mémoires techniques passés, réponses à questionnaires, méthodologies, fiches techniques, attestations et certifications, politiques RSE.",
+        q: "Quels documents peut-on déposer dans la bibliothèque ?",
+        a: "Des fichiers PDF, Word (DOCX) ou Excel (XLSX) : anciens mémoires, fiches de référence, CV, certifications, documents QSE, fiches matériel.",
       },
       {
-        q: "Où sont hébergées nos données ?",
-        a: "En France, sur des serveurs qualifiés SecNumCloud, 100 % conformes RGPD et souverains.",
-      },
-    ],
-  },
-  collaboration: {
-    slug: "collaboration",
-    eyebrow: "Collaboration & pilotage",
-    title: "Pilotez chaque réponse, du Go/No-Go au dépôt",
-    description:
-      "Assignez les sections, suivez l'avancement par appel d'offres et par contributeur en temps réel, et déposez chaque dossier à l'heure, complet et conforme.",
-    intro:
-      "Une réponse à un AO mobilise toujours plusieurs personnes, internes et parfois externes. MateriaBTP orchestre ce travail : chacun sait ce qu'il doit produire, vous voyez où en est chaque dossier, et plus rien ne part à la dernière minute.",
-    benefits: [
-      {
-        title: "Chaque section a un responsable",
-        description:
-          "Assignez les sections du mémoire ou les questions du RFP à des contributeurs internes ou externes.",
-      },
-      {
-        title: "L'avancement visible en temps réel",
-        description:
-          "Le dashboard montre l'état de chaque réponse en cours : sections rédigées, en attente, validées, taux de couverture.",
-      },
-      {
-        title: "Le suivi par exigence",
-        description: "Chaque exigence du cahier des charges est tracée individuellement jusqu'à sa réponse.",
-      },
-      {
-        title: "Des échéances tenues",
-        description: "Dates limites, jalons internes de relecture, alertes sur les sections en retard.",
-      },
-    ],
-    features: [
-      "Assignation de sections à des contributeurs internes ou externes",
-      "Accès restreint pour les intervenants extérieurs",
-      "Dashboard temps réel : avancement par AO, RFP, RFI et par contributeur",
-      "Suivi exigence par exigence avec taux de couverture",
-      "Commentaires et validation section par section",
-      "Historique des versions et des contributions",
-    ],
-    faq: [
-      {
-        q: "Peut-on faire intervenir un sous-traitant ou un partenaire ?",
-        a: "Oui. Vous pouvez inviter un contributeur externe sur une ou plusieurs sections précises : il ne voit que ce qui lui est assigné.",
-      },
-      {
-        q: "Comment suivre plusieurs réponses en parallèle ?",
-        a: "Le dashboard agrège toutes les consultations en cours : échéances, avancement, contributeurs mobilisés.",
-      },
-      {
-        q: "Est-ce adapté à une petite équipe ?",
-        a: "Oui. Même à deux ou trois, le suivi par exigence évite les oublis et les doubles saisies.",
+        q: "Qui peut voir notre base ?",
+        a: "Uniquement les membres de votre entreprise. Chaque compte entreprise est isolé des autres, au niveau de la base de données.",
       },
     ],
   },

@@ -6,33 +6,33 @@ import { ArrowLink } from "@/components/marketing/ui/ArrowLink";
 const rows = [
   {
     label: "Vos sources",
-    llm: "Plausible, mais invérifiable, à vous de tout relire",
-    tc: "Chaque passage relié à un document de votre base",
+    llm: "Texte plausible, mais sans lien vers la pièce ou la fiche d'origine",
+    tc: "Chaque passage cite sa source : page du DCE ou fiche de la base entreprise",
   },
   {
     label: "Votre savoir-faire",
-    llm: "Ne connaît ni vos références, ni vos méthodes",
-    tc: "Rédige à partir de vos mémoires, méthodologies et certifications",
+    llm: "Ne connaît ni vos chantiers passés, ni vos méthodes de phasage",
+    tc: "S'appuie sur vos références, certifications et fiches méthodes enregistrées",
   },
   {
     label: "Conformité au DCE",
-    llm: "Ignore le règlement de consultation et la pondération",
-    tc: "Sommaire construit sur les critères, suivi exigence par exigence",
+    llm: "Structure libre, sans lien avec les critères pondérés du RC",
+    tc: "Sommaire calé sur la pondération, exigences suivies une par une",
   },
   {
     label: "Pièges contractuels",
-    llm: "Ne sait pas ce qu'il faut chercher dans un CCAP",
-    tc: "Dates clés, pénalités et points de vigilance extraits du DCE",
+    llm: "Passe à côté des pénalités, dérogations CCAG et visites obligatoires",
+    tc: "Dates, pénalités et points de vigilance relevés dans RC, CCAP et CCTP",
   },
   {
     label: "Confidentialité",
-    llm: "Variable selon l'offre et le paramétrage",
-    tc: "Hébergement France SecNumCloud, jamais d'entraînement sur vos données",
+    llm: "Données envoyées à un service tiers, usage flou",
+    tc: "Données isolées par entreprise, aucun entraînement sur vos documents",
   },
   {
-    label: "Pilotage d'équipe",
-    llm: "Un chat individuel, pas un process",
-    tc: "Assignation, avancement temps réel, dépôt à l'heure",
+    label: "Avant le dépôt",
+    llm: "Aucune alerte sur les exigences oubliées ou les contradictions",
+    tc: "Contrôle qualité : exigences manquantes, sources absentes, incohérences",
   },
 ];
 
@@ -46,7 +46,7 @@ export function ComparisonSection() {
             « Et pourquoi pas ChatGPT ? »
           </h2>
           <p className="mt-5 text-pretty text-lg leading-relaxed text-steel">
-            Bonne question. Un LLM généraliste est un brillant stagiaire qui ne connaît ni votre entreprise, ni les marchés. Voici la différence, point par point.
+            Bonne question. Un LLM généraliste rédige vite, mais ne lit pas votre CCAP ni ne connaît vos références chantiers. Voici la différence, point par point.
           </p>
         </Reveal>
 
@@ -82,7 +82,7 @@ export function ComparisonSection() {
           </div>
 
           <p className="mt-8 text-pretty text-[17px] font-medium text-midnight">
-            Pour un email, un LLM suffit. Pour un marché à 2 M€, il y a{" "}
+            Pour un mail, un LLM suffit. Pour un marché de travaux à plusieurs centaines de milliers d&apos;euros, il y a{" "}
             <Link
               href="/logiciel-reponse-appels-offres"
               className="text-iris underline decoration-iris/30 underline-offset-4 transition-colors hover:decoration-iris"

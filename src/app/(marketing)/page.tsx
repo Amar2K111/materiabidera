@@ -11,7 +11,6 @@ import { SectorsSection } from "@/components/marketing/SectorsSection";
 import { SecuritySection } from "@/components/marketing/SecuritySection";
 import { BlogSection } from "@/components/marketing/BlogSection";
 import { GlossaryStrip } from "@/components/marketing/GlossaryStrip";
-import { ResourcesSection } from "@/components/marketing/ResourcesSection";
 import { FaqSection } from "@/components/marketing/FaqSection";
 import { CtaSection } from "@/components/marketing/CtaSection";
 
@@ -31,7 +30,6 @@ export default function Home() {
       <SecuritySection />
       <BlogSection />
       <GlossaryStrip />
-      <ResourcesSection />
       <FaqSection />
       <CtaSection />
     </>

@@ -7,29 +7,21 @@ const productLinks = [
   { href: "/logiciel-reponse-appels-offres", label: "Logiciel de réponse aux appels d'offres" },
   { href: "/produit/analyse-go-no-go", label: "Analyse & Go/No-Go" },
   { href: "/produit/memoire-technique", label: "Mémoire technique" },
-  { href: "/produit/questionnaires", label: "Questionnaires & DDQ" },
-  { href: "/produit/base-de-connaissances", label: "Base de connaissances" },
-  { href: "/produit/collaboration", label: "Collaboration & pilotage" },
+  { href: "/produit/base-de-connaissances", label: "Base entreprise" },
   { href: "/tarifs", label: "Tarifs" },
 ];
 
 const solutionLinks = [
   { href: "/secteurs/btp-travaux-publics", label: "BTP & Travaux publics" },
-  { href: "/solutions/marches-publics", label: "Marchés publics" },
-  { href: "/solutions/rfp-consultations-privees", label: "RFP & consultations privées" },
-  { href: "/solutions/questionnaires-rfi-ddq", label: "Questionnaires RFI, DDQ & sécurité" },
-  { href: "/calculateur-roi", label: "Calculateur ROI" },
+  { href: "/solutions/marches-publics", label: "Marchés publics de travaux" },
   { href: "/glossaire", label: "Glossaire des appels d'offres" },
   { href: "/blog", label: "Blog" },
 ];
 
 const companyLinks = [
   { href: "/a-propos", label: "À propos" },
-  { href: "/recrutement", label: "Recrutement" },
-  { href: "/cas-clients", label: "Cas clients" },
-  { href: "/podcast", label: "Podcast" },
-  { href: "/ressources", label: "Ressources" },
-  { href: "/securite", label: "Sécurité & souveraineté" },
+  { href: "/cas-clients", label: "Programme pilote" },
+  { href: "/securite", label: "Sécurité & confidentialité" },
   { href: "/contact", label: "Contact" },
   { href: "/demo", label: "Testez sur un de vos AO" },
   { href: "/login", label: "Connexion" },
@@ -50,7 +42,7 @@ export function Footer() {
             </p>
             <p className="mt-6 inline-flex items-center gap-2 rounded border border-line px-3.5 py-1.5 text-[13px] font-medium text-steel">
               <ShieldIcon />
-              Données hébergées en France · SecNumCloud · RGPD
+              Données isolées par entreprise · RGPD
             </p>
             <div className="mt-6 flex items-center gap-4 text-sm text-pewter">
               <a href={`mailto:${CONTACT_EMAIL}`} className="hover:text-midnight">
@@ -75,7 +67,7 @@ export function Footer() {
 
         <div className="mt-14 flex flex-col gap-4 border-t border-line pt-8 text-sm text-pewter sm:flex-row sm:items-center sm:justify-between">
           <p>
-            © {new Date().getFullYear()} MateriaBTP, Tous droits réservés · EuraTechnologies, Lille, France
+            © {new Date().getFullYear()} MateriaBTP, Tous droits réservés · Tours, France
           </p>
           <ul className="flex flex-wrap gap-x-6 gap-y-2">
             <li>

@@ -1,11 +1,14 @@
 import { Lock, Server, ShieldCheck, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 
+// Uniquement des engagements verifiables. La region d'hebergement des donnees
+// n'est pas affichee tant qu'elle n'a pas ete confirmee dans la console
+// Supabase ; le chiffrement au repos est celui de Supabase (AES-256).
 const TRUST_ITEMS = [
-  { label: "Hébergement UE", icon: Server },
   { label: "Isolation par entreprise", icon: ShieldCheck },
-  { label: "Chiffrement AES-256", icon: Lock },
-  { label: "Pas d'entraînement IA sur vos données", icon: Sparkles },
+  { label: "Chiffrement en transit et au repos", icon: Lock },
+  { label: "Sources citées", icon: Server },
+  { label: "Aucun entraînement par MateriaBTP sur vos documents", icon: Sparkles },
 ] as const;
 
 /** Rappel discret des engagements de confidentialite. */

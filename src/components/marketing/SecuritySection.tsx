@@ -4,18 +4,18 @@ import { ArrowLink } from "@/components/marketing/ui/ArrowLink";
 
 const features = [
   {
-    title: "Hébergement 100 % en France",
-    desc: "Vos données restent sur le territoire, dans des datacenters souverains.",
+    title: "Isolation par entreprise",
+    desc: "Chaque entreprise ne voit que ses dossiers et sa base. Le cloisonnement est appliqué dans la base de données elle-même.",
     icon: ServerIcon,
   },
   {
-    title: "Serveurs qualifiés SecNumCloud",
-    desc: "Le référentiel de sécurité le plus exigeant de l'ANSSI.",
+    title: "Chiffrement en transit et au repos",
+    desc: "Échanges en HTTPS ; base de données et fichiers chiffrés au repos par notre hébergeur de données.",
     icon: ShieldIcon,
   },
   {
-    title: "Conforme RGPD, par conception",
-    desc: "Vos documents n'entraînent jamais de modèles tiers. Jamais.",
+    title: "Aucun entraînement par MateriaBTP",
+    desc: "Vos documents servent à vos analyses, pas à entraîner un modèle. Les prestataires techniques sont listés sur la page sécurité.",
     icon: LockIcon,
   },
 ];
@@ -27,18 +27,12 @@ export function SecuritySection() {
       <Container className="relative">
         <div className="grid items-center gap-14 lg:grid-cols-2 lg:gap-20">
           <Reveal>
-            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-pewter">Sécurité & souveraineté</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-pewter">Sécurité & confidentialité</p>
             <h2 className="mt-3 text-balance text-3xl font-medium tracking-[-0.02em] text-midnight lg:text-[2.5rem] lg:leading-[1.15]">
               Votre savoir-faire est un actif stratégique. Il est traité comme tel.
             </h2>
             <p className="mt-5 text-lg leading-relaxed text-steel">
-              Méthodologies, références, prix, organisation : ce que vous confiez à MateriaBTP est ce que vos concurrents aimeraient lire. Notre infrastructure est conçue pour que cela n&apos;arrive jamais.
-            </p>
-            <p className="mt-7 inline-flex items-center gap-2 rounded border border-line bg-periwinkle/40 px-4 py-2 text-sm font-medium text-midnight">
-              <span className="text-base" aria-hidden="true">
-                🇫🇷
-              </span>
-              Conçu, développé et hébergé en France
+              Méthodes de phasage, références chantiers, prix : ce que vous confiez à MateriaBTP est ce que vos concurrents aimeraient lire. Voici comment ces données sont protégées.
             </p>
             <p className="mt-6">
               <ArrowLink href="/securite" className="text-[15px] font-semibold text-iris hover:text-iris-hover">

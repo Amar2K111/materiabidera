@@ -10,46 +10,31 @@ import { NavIcon } from "@/components/marketing/layout/nav-icons";
 const dropdownPanelClass = "rounded bg-white p-2.5 shadow-dropdown ring-1 ring-midnight/10";
 
 const productModules = [
-  { href: "/produit/analyse-go-no-go", label: "Analyse & Go/No-Go", description: "Synthèse du DCE et décision fiable en quelques minutes", icon: "analyse" },
-  { href: "/produit/memoire-technique", label: "Mémoire technique", description: "Rédaction structurée sur les critères de l'AO", icon: "memoire" },
-  { href: "/produit/questionnaires", label: "Questionnaires & DDQ", description: "RFP, RFI, sécurité, RSE, RGPD : répondus en heures", icon: "questionnaires" },
-  { href: "/produit/base-de-connaissances", label: "Base de connaissances", description: "Votre savoir-faire centralisé, retrouvé en un clic", icon: "knowledge" },
-  { href: "/produit/collaboration", label: "Collaboration & pilotage", description: "Assignation, suivi temps réel, dépôt à l'heure", icon: "collaboration" },
+  { href: "/produit/analyse-go-no-go", label: "Analyse & Go/No-Go", description: "Exigences, critères et vigilance du DCE, évaluation sourcée", icon: "analyse" },
+  { href: "/produit/memoire-technique", label: "Mémoire technique", description: "Plan sur les critères, rédaction depuis votre base, contrôle", icon: "memoire" },
+  { href: "/produit/base-de-connaissances", label: "Base entreprise", description: "Références, moyens, méthodes et anciens mémoires", icon: "knowledge" },
 ];
 
 const solutionLinks = [
-  { href: "/solutions/marches-publics", label: "Marchés publics", description: "DCE, CCAG, mémoire noté : le formalisme maîtrisé" },
-  { href: "/solutions/rfp-consultations-privees", label: "RFP & consultations privées", description: "Grands comptes, grilles d'évaluation, avant-vente" },
-  { href: "/solutions/questionnaires-rfi-ddq", label: "Questionnaires RFI, DDQ & sécurité", description: "Due diligence, cyber, RSE : répondre vite et juste" },
+  { href: "/solutions/marches-publics", label: "Marchés publics de travaux", description: "DCE, critères pondérés, mémoire noté" },
 ];
 
 const btpSectorLink = {
   href: "/secteurs/btp-travaux-publics",
   label: "BTP & Travaux publics",
-  description: "DCE, CCAG Travaux, mémoires techniques et références chantiers",
+  description: "Pensé pour les entreprises de travaux",
 };
 
-const resourceTemplates = [
-  { href: "/ressources/grille-go-no-go", label: "Grille Go/No-Go", icon: "grille" },
-  { href: "/ressources/matrice-conformite", label: "Matrice de conformité", icon: "matrice" },
-  { href: "/ressources/trame-memoire-technique", label: "Trame de mémoire technique", icon: "trame" },
-  { href: "/ressources/exemple-memoire-technique", label: "Exemple de mémoire technique", icon: "trame" },
-  { href: "/ressources/checklist-candidature", label: "Checklist candidature", icon: "checklist" },
-  { href: "/ressources/bibliotheque-prompts-ia", label: "56 prompts IA pour les AO", icon: "prompts" },
-];
-
 const resourceDiscover = [
-  { href: "/blog", label: "Blog", description: "Guides, méthodes et retours de terrain" },
-  { href: "/cas-clients", label: "Cas clients", description: "Résultats chiffrés et études de cas" },
-  { href: "/glossaire", label: "Glossaire", description: "Tous les termes des appels d'offres" },
-  { href: "/calculateur-roi", label: "Calculateur ROI", description: "Le coût réel de vos réponses aux AO" },
-  { href: "/podcast", label: "Podcast", description: "Masters of Tenders, par Ayoub Ennih" },
+  { href: "/blog", label: "Blog", description: "Les pièces d'un appel d'offres expliquées" },
+  { href: "/glossaire", label: "Glossaire", description: "Les termes des marchés publics" },
+  { href: "/cas-clients", label: "Programme pilote", description: "Tester MateriaBTP sur vos dossiers" },
 ];
 
 const companyLinks = [
-  { href: "/a-propos", label: "À propos", description: "L'équipe et la mission" },
-  { href: "/recrutement", label: "Recrutement", description: "Rejoignez l'aventure", badge: "On recrute" },
-  { href: "/contact", label: "Contact", description: "Parler à un humain" },
+  { href: "/a-propos", label: "À propos", description: "Pourquoi MateriaBTP" },
+  { href: "/securite", label: "Sécurité", description: "Comment vos données sont traitées" },
+  { href: "/contact", label: "Contact", description: "Écrire au fondateur" },
 ];
 
 const topLinks = [{ href: "/tarifs", label: "Tarifs" }];
@@ -92,13 +77,22 @@ export function Navbar() {
     };
   }, [pathname]);
 
-  useEffect(() => {
+  // Changement de page : le menu mobile se referme et les sous-menus restent
+  // fermes le temps que le pointeur bouge. Ajustement pendant le rendu plutot
+  // que dans un effet, pour eviter un second rendu.
+  const [renderedPath, setRenderedPath] = useState(pathname);
+  if (renderedPath !== pathname) {
+    setRenderedPath(pathname);
     setMobileOpen(false);
+    setDropdownLocked(true);
+  }
+
+  // Le focus qui reste sur un lien du menu garderait son sous-menu ouvert.
+  useEffect(() => {
     if (isFirstPathRender.current) {
       isFirstPathRender.current = false;
       return;
     }
-    setDropdownLocked(true);
     const active = document.activeElement;
     if (active instanceof HTMLElement && active.closest("header")) {
       active.blur();
@@ -166,10 +160,10 @@ export function Navbar() {
                   <Link className="group/sec block rounded p-3.5 transition-colors hover:bg-white" href="/securite">
                     <span className="flex items-center gap-2 text-[15px] font-semibold text-midnight">
                       <NavIcon name="shield" className="h-4 w-4 text-iris" />
-                      Sécurité & souveraineté
+                      Sécurité & confidentialité
                     </span>
                     <span className="mt-1 block text-sm leading-relaxed text-pewter">
-                      Hébergement en France, SecNumCloud, RGPD. Vos données ne servent jamais à entraîner des modèles tiers.
+                      Isolation par entreprise, chiffrement, prestataires techniques : ce qui arrive à vos documents.
                     </span>
                   </Link>
                   <ArrowLink href="/demo" className="arrow-link mt-auto flex items-center gap-1.5 rounded p-3.5 text-[14px] font-semibold text-iris transition-colors hover:bg-white">
@@ -207,20 +201,8 @@ export function Navbar() {
             ))}
 
             <NavDropdown label="Ressources" align="center" linkClass={linkClass} visibilityClass={dropdownVisibilityClass}>
-              <div className={`grid w-[640px] grid-cols-2 gap-2 ${dropdownPanelClass}`}>
-                <div className="flex flex-col">
-                  <p className="px-3.5 pb-1 pt-2.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-pewter">Modèles à télécharger</p>
-                  {resourceTemplates.map((item) => (
-                    <Link key={item.href} className="flex items-center gap-3.5 rounded p-3.5 transition-colors hover:bg-snow" href={item.href}>
-                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded bg-iris text-white">
-                        <NavIcon name={item.icon} />
-                      </span>
-                      <span className="text-[15px] font-semibold text-midnight">{item.label}</span>
-                    </Link>
-                  ))}
-                </div>
-                <div className="rounded bg-snow p-1.5">
-                  <p className="px-3.5 pb-1 pt-2.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-pewter">Découvrir</p>
+              <div className={`w-[320px] ${dropdownPanelClass}`}>
+                <div>
                   {resourceDiscover.map((item) => (
                     <Link key={item.href} className="block rounded px-3.5 py-2.5 transition-colors hover:bg-white" href={item.href}>
                       <span className="block text-[15px] font-semibold text-midnight">{item.label}</span>
@@ -239,9 +221,6 @@ export function Navbar() {
                       <span className="block text-[15px] font-semibold text-midnight">{item.label}</span>
                       <span className="mt-0.5 block text-sm text-pewter">{item.description}</span>
                     </span>
-                    {"badge" in item && item.badge ? (
-                      <span className="shrink-0 rounded bg-periwinkle px-2 py-0.5 text-[11px] font-bold text-iris">{item.badge}</span>
-                    ) : null}
                   </Link>
                 ))}
               </div>
@@ -313,18 +292,6 @@ export function Navbar() {
             </Link>
           </div>
 
-          <p className="px-1 pb-2 pt-5 text-xs font-semibold uppercase tracking-[0.14em] text-pewter">Modèles à télécharger</p>
-          <div className="space-y-1">
-            {resourceTemplates.map((item) => (
-              <Link key={item.href} href={item.href} className="flex items-center gap-3 rounded p-3 hover:bg-snow" onClick={() => setMobileOpen(false)}>
-                <span className="flex h-9 w-9 items-center justify-center rounded bg-iris text-white">
-                  <NavIcon name={item.icon} />
-                </span>
-                <span className="text-[15px] font-semibold text-midnight">{item.label}</span>
-              </Link>
-            ))}
-          </div>
-
           <p className="px-1 pb-2 pt-5 text-xs font-semibold uppercase tracking-[0.14em] text-pewter">Ressources</p>
           <div className="space-y-1">
             {resourceDiscover.map((item) => (
@@ -339,13 +306,10 @@ export function Navbar() {
             {companyLinks.map((item) => (
               <Link key={item.href} href={item.href} className="flex items-center justify-between rounded p-3 text-[15px] font-semibold text-midnight hover:bg-snow" onClick={() => setMobileOpen(false)}>
                 {item.label}
-                {"badge" in item && item.badge ? (
-                  <span className="rounded bg-periwinkle px-2 py-0.5 text-[11px] font-bold text-iris">{item.badge}</span>
-                ) : null}
               </Link>
             ))}
             <Link href="/securite" className="block rounded p-3 text-[15px] font-semibold text-midnight hover:bg-snow" onClick={() => setMobileOpen(false)}>
-              Sécurité & souveraineté
+              Sécurité & confidentialité
             </Link>
           </div>
 

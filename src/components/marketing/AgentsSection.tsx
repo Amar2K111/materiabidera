@@ -4,32 +4,32 @@ import { Reveal } from "@/components/marketing/ui/Reveal";
 const agents = [
   {
     title: "Agent d'analyse documentaire",
-    desc: "Lit l'intégralité du DCE, RC, CCAP, CCTP, annexes, et en extrait les informations décisives.",
+    desc: "Parcourt RC, CCAP, CCTP et annexes pour en extraire dates, montants, contraintes et pièges contractuels.",
     icon: SearchIcon,
   },
   {
-    title: "Agent d'extraction des critères",
-    desc: "Identifie les critères d'évaluation, leur pondération et chaque exigence à couvrir.",
+    title: "Agent d'extraction des exigences",
+    desc: "Relève chaque exigence à traiter dans le mémoire, avec sa catégorie, sa priorité et sa page source.",
     icon: TargetIcon,
   },
   {
     title: "Agent de structuration",
-    desc: "Construit un sommaire qui répond point par point aux attentes de l'acheteur.",
+    desc: "Construit le plan du mémoire technique à partir des critères de jugement et de leur pondération.",
     icon: DatabaseIcon,
   },
   {
     title: "Agent de rédaction",
-    desc: "Rédige chaque section à partir de votre base de connaissances, avec ses sources.",
+    desc: "Produit un premier jet par chapitre en s'appuyant uniquement sur votre base entreprise, sources citées.",
     icon: DocIcon,
   },
   {
     title: "Agent de relecture",
-    desc: "Évalue la qualité de chaque réponse face au critère visé et suggère des renforts.",
+    desc: "Compare chaque section au critère visé et signale les passages faibles ou trop génériques.",
     icon: ChartIcon,
   },
   {
     title: "Agent de conformité",
-    desc: "Vérifie que chaque exigence du règlement est couverte avant le dépôt.",
+    desc: "Contrôle avant export : exigences non couvertes, affirmations sans source, contradictions entre chapitres.",
     icon: CheckIcon,
   },
 ];
@@ -47,7 +47,7 @@ export function AgentsSection() {
                 Chaque étape de la réponse a son spécialiste IA
               </h2>
               <p className="mt-5 text-lg leading-relaxed text-steel">
-                Analyse, extraction, structuration, rédaction, relecture, conformité : les agents se passent le relais dans cet ordre, et vous gardez la main sur le résultat.
+                De la lecture du DCE au contrôle final, chaque étape du workflow a son module dédié. Vous validez à chaque palier : analyse, Go/No-Go, exigences, mémoire, export.
               </p>
             </div>
           </Reveal>

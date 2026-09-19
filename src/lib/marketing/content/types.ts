@@ -19,16 +19,6 @@ export type ModulePage = {
   faq?: FaqItem[];
 };
 
-export type ResourcePage = {
-  slug: string;
-  title: string;
-  description: string;
-  format: "Excel" | "Word" | "PDF";
-  intro: string;
-  highlights: string[];
-  cta: string;
-};
-
 export type BlogArticle = {
   slug: string;
   title: string;
@@ -59,11 +49,6 @@ export type StaticSection =
   | { type: "pricing"; plans: PricingPlan[] }
   | { type: "form"; form: "demo" | "contact" }
   | { type: "glossary"; entries: GlossaryEntry[] }
-  | { type: "roi-calculator" }
-  | { type: "case-studies"; items: CaseStudy[] }
-  | { type: "team"; members: TeamMember[] }
-  | { type: "jobs"; items: JobOpening[] }
-  | { type: "podcast"; episodes: PodcastEpisode[] }
   | { type: "security"; items: CardItem[] };
 
 export type PricingPlan = {
@@ -72,33 +57,4 @@ export type PricingPlan = {
   description: string;
   features: string[];
   highlighted?: boolean;
-};
-
-export type CaseStudy = {
-  company: string;
-  quote: string;
-  author: string;
-  role: string;
-  stat: string;
-  statLabel: string;
-};
-
-export type TeamMember = {
-  name: string;
-  role: string;
-  bio: string;
-};
-
-export type JobOpening = {
-  title: string;
-  location: string;
-  type: string;
-  description: string;
-};
-
-export type PodcastEpisode = {
-  title: string;
-  guest: string;
-  date: string;
-  description: string;
 };

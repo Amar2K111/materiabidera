@@ -12,7 +12,7 @@ const benefits = [
   },
   {
     title: "Sur l'un de VOS appels d'offres",
-    description: "Apportez un DCE : vous repartez avec sa Fiche Synthèse GoNoGo.",
+    description: "Apportez un DCE : nous l'analysons ensemble, en direct.",
   },
   {
     title: "Sans engagement",
@@ -25,13 +25,13 @@ const beforeDemoLinks = [
     href: "/produit/analyse-go-no-go",
     label: "Produit",
     title: "Analyse du DCE et Go/No-Go en quelques minutes",
-    description: "RC, CCAP, CCTP : dates clés, pénalités et points de vigilance dans une Fiche Synthèse GoNoGo.",
+    description: "Exigences, critères pondérés et points de vigilance, chacun avec sa pièce et sa page.",
   },
   {
     href: "/securite",
     label: "Sécurité",
     title: "Où vivent vos données",
-    description: "Hébergement en France, cloisonnement par client, aucun entraînement de modèle sur vos documents.",
+    description: "Cloisonnement par entreprise, prestataires techniques, aucun entraînement par MateriaBTP sur vos documents.",
   },
   {
     href: "/logiciel-reponse-appels-offres",
@@ -58,7 +58,7 @@ export function DemoPageLayout() {
                 Voyez MateriaBTP à l&apos;œuvre sur l&apos;un de <span className="text-iris-gradient">vos</span> appels d&apos;offres
               </h1>
               <p className="mt-6 max-w-xl text-pretty text-lg leading-relaxed text-steel">
-                La meilleure façon de juger : votre propre DCE, analysé en direct. Concret, chiffré, sans slides.
+                La meilleure façon de juger : votre propre DCE, analysé en direct, sur l&apos;écran.
               </p>
 
               <ul className="mt-9 space-y-5">

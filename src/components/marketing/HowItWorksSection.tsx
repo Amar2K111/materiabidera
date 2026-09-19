@@ -4,30 +4,30 @@ import { Reveal } from "@/components/marketing/ui/Reveal";
 const steps = [
   {
     num: "01",
-    title: "Déposez vos documents",
-    desc: "Mémoires passés, méthodologies, certifications, politiques RSE, dans tous les formats, sans préparation préalable.",
+    title: "Renseignez votre base",
+    desc: "Références chantiers, équipe, matériel, certifications, qualifications, méthodes. Vos anciens mémoires deviennent une matière réutilisable et citable.",
   },
   {
     num: "02",
-    title: "Nous structurons votre base",
-    desc: "Notre équipe organise votre base de connaissances avec vous. Pas de migration complexe, pas de projet IT.",
+    title: "Déposez le DCE",
+    desc: "RC, CCAP, CCTP, annexes : exigences, critères pondérés et points de vigilance relevés avec pièce et page.",
   },
   {
     num: "03",
-    title: "L'IA analyse et rédige",
-    desc: "Les agents lisent le DCE, construisent le sommaire sur les critères de l'acheteur et rédigent un premier jet sourcé.",
+    title: "Tranchez le Go/No-Go",
+    desc: "Huit facteurs notés, critères de qualification vérifiés, sources à l'appui. MateriaBTP recommande ; vous décidez.",
   },
   {
     num: "04",
-    title: "Vos experts affinent",
-    desc: "Relecture, ajustement au contexte, variantes : vos équipes consacrent leur temps à ce qui fait la différence.",
+    title: "Rédigez, contrôlez, exportez",
+    desc: "Sommaire calé sur le RC, rédaction depuis votre base, contrôle qualité, export Word ou PDF — prêt pour la relecture finale.",
   },
 ];
 
 const timeline = [
-  { when: "Jour 1", label: "Votre base de connaissances est structurée" },
-  { when: "Jour 2", label: "Votre première réponse est générée" },
-  { when: "Semaine 2", label: "Vos équipes sont autonomes" },
+  { when: "Jour 1", label: "Votre base entreprise est renseignée — références, moyens, qualifications" },
+  { when: "Jour 2", label: "Votre premier DCE est analysé et votre mémoire amorcé" },
+  { when: "Semaine 2", label: "Vos équipes sont autonomes sur le workflow complet" },
 ];
 
 export function HowItWorksSection() {
@@ -37,10 +37,10 @@ export function HowItWorksSection() {
         <Reveal className="max-w-2xl">
           <p className="text-sm font-semibold uppercase tracking-[0.14em] text-pewter">Comment ça marche</p>
           <h2 className="mt-3 text-balance text-3xl font-medium tracking-[-0.02em] text-midnight lg:text-[2.5rem] lg:leading-[1.15]">
-            Opérationnel en 48 heures, pas en six mois
+            Opérationnel dès le premier dossier, pas après six mois
           </h2>
           <p className="mt-5 text-lg leading-relaxed text-steel">
-            Pas de longue conduite du changement : vous déposez votre matière, on structure, et votre première réponse sort dès le deuxième jour.
+            Pas de migration complexe : vous renseignez votre base entreprise, vous déposez le DCE, et la réponse suit le même chemin — analyse, décision, mémoire, contrôle, export.
           </p>
         </Reveal>
 

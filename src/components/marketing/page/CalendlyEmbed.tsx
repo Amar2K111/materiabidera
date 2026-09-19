@@ -1,16 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { calendlyEmbedSrc } from "@/lib/marketing/config/calendly";
 
-export function CalendlyEmbed() {
-  const [month, setMonth] = useState<string>();
-  const [loaded, setLoaded] = useState(false);
+const noSubscription = () => () => {};
 
-  useEffect(() => {
-    const now = new Date();
-    setMonth(`${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`);
-  }, []);
+function currentMonth(): string {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+}
+
+export function CalendlyEmbed() {
+  // Le mois vient de l'horloge du visiteur : inconnu au rendu serveur (squelette
+  // affiche), lu directement ensuite, sans passer par un effet.
+  const month = useSyncExternalStore(noSubscription, currentMonth, () => undefined);
+  const [loaded, setLoaded] = useState(false);
 
   if (!month) {
     return <CalendarSkeleton />;

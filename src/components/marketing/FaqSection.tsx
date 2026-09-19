@@ -4,28 +4,28 @@ import { CONTACT_EMAIL } from "@/lib/marketing/config/contact";
 
 const faqs = [
   {
-    q: "Combien de temps faut-il pour être opérationnel ?",
-    a: "48 heures. Jour 1 : vous déposez vos documents et notre équipe structure votre base de connaissances. Jour 2 : vous générez votre première réponse. Dès la deuxième semaine, vos équipes sont autonomes, sans migration complexe ni projet IT.",
+    q: "Combien de temps faut-il pour démarrer ?",
+    a: "Le temps de renseigner l'essentiel de votre base : quelques références chantiers, votre équipe, vos qualifications, ou vos anciens mémoires. L'analyse d'un DCE prend ensuite quelques minutes. Une base incomplète fonctionne — l'outil signale simplement ce qui manque.",
   },
   {
     q: "MateriaBTP remplace-t-il mes équipes ?",
-    a: "Non, et ce n'est pas l'objectif. MateriaBTP élimine la page blanche, la recherche d'informations et les tâches répétitives. Vos experts gardent la main sur ce qui fait gagner : la stratégie de réponse, l'ajustement au contexte et la relecture critique.",
+    a: "Non, et ce n'est pas l'objectif. MateriaBTP élimine la page blanche, la recherche d'information et les tâches répétitives. Vos experts gardent la stratégie de réponse, l'ajustement au contexte et la relecture critique.",
   },
   {
     q: "Quels types de consultations couvrez-vous ?",
-    a: "Les appels d'offres publics et privés, les RFP, les RFI, les DDQ (questionnaires de due diligence) et les questionnaires de sécurité : au format mémoire technique Word/PDF comme au format questionnaire Excel.",
+    a: "Les appels d'offres de travaux, publics ou privés, dès lors que vous disposez des pièces (règlement de consultation, CCAP, CCTP, annexes). Le mémoire s'exporte en Word et en PDF. Les questionnaires de type RFP ou DDQ ne sont pas traités.",
   },
   {
     q: "Comment l'IA connaît-elle notre entreprise ?",
-    a: "Tout part de votre base de connaissances : vos mémoires passés, méthodologies, références, certifications et réponses antérieures. La rédaction s'appuie exclusivement sur cette matière, avec les sources citées, jamais sur du contenu générique.",
+    a: "Par votre base entreprise : références, équipe, matériel, certifications, qualifications, méthodes et anciens mémoires. L'outil ne vous attribue rien qui n'y figure pas, et chaque chapitre affiche ses sources.",
   },
   {
-    q: "Mes données sont-elles en sécurité ?",
-    a: "Vos données sont hébergées en France sur des serveurs qualifiés SecNumCloud, 100 % conformes RGPD et souverains. Elles ne servent jamais à entraîner des modèles tiers.",
+    q: "Où vont mes documents ?",
+    a: "Ils sont stockés chez notre hébergeur de données (Supabase), isolés par entreprise, et transmis au fournisseur d'IA du service pour être analysés. MateriaBTP n'entraîne aucun modèle dessus. Le détail est sur la page sécurité.",
   },
   {
-    q: "Êtes-vous compatibles avec nos outils de veille ?",
-    a: "Oui. MateriaBTP intervient en aval de la veille : dès que votre outil de veille détecte une consultation, vous déposez le DCE chez nous pour l'analyse Go/No-Go puis la rédaction. Les deux sont complémentaires.",
+    q: "Faites-vous de la veille des appels d'offres ?",
+    a: "Non. MateriaBTP intervient une fois la consultation repérée : vous déposez le DCE, puis l'outil vous aide à décider et à répondre. Il se combine avec l'outil de veille que vous utilisez déjà.",
   },
 ];
 

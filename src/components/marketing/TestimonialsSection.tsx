@@ -4,16 +4,16 @@ import { ArrowLink } from "@/components/marketing/ui/ArrowLink";
 
 const pains = [
   {
-    title: "Des DCE lus dans l'urgence",
-    description: "Dates clés, pénalités et dérogations au CCAG passent parfois inaperçues avant d'engager le bureau d'études.",
+    title: "Le CCAP lu la veille du dépôt",
+    description: "Pénalités sans plafond, visites obligatoires, dérogations au CCAG Travaux : les points qui coûtent cher passent souvent inaperçus dans l'urgence.",
   },
   {
     title: "La même matière réécrite à chaque AO",
-    description: "Méthodologies, références chantiers et certifications sont dispersées entre serveurs, mails et disques personnels.",
+    description: "Méthodes de phasage, références scolaires, certifications Qualibat : tout existe déjà, mais éparpillé entre serveurs, mails et anciens mémoires.",
   },
   {
-    title: "Des dépôts sous tension",
-    description: "Plusieurs contributeurs, une échéance fixe : le mémoire part dans l'urgence, au détriment de la note technique.",
+    title: "Le mémoire monté dans l'urgence",
+    description: "Conducteur de travaux, chargé d'affaires, direction : plusieurs mains, une date limite — la note technique en pâtit.",
   },
 ];
 
@@ -24,10 +24,10 @@ export function TestimonialsSection() {
         <Reveal className="max-w-2xl">
           <p className="text-sm font-semibold uppercase tracking-[0.14em] text-pewter">Le constat</p>
           <h2 className="mt-3 text-balance text-3xl font-medium tracking-[-0.02em] text-midnight lg:text-4xl">
-            Répondre aux AO ne devrait pas mobiliser des semaines entières
+            Répondre aux AO ne devrait pas mobiliser toute l&apos;entreprise
           </h2>
           <p className="mt-5 text-lg leading-relaxed text-steel">
-            MateriaBTP est en phase de lancement. Nous ouvrons un programme pilote avec des entreprises du BTP prêtes à tester l&apos;outil sur leurs vrais dossiers.
+            MateriaBTP est en phase de lancement. Nous recrutons des entreprises de travaux prêtes à tester l&apos;outil sur leurs vrais dossiers — pas sur des exemples génériques.
           </p>
         </Reveal>
 

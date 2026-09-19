@@ -203,6 +203,60 @@ export const CAPTURE_HERO = {
   ] satisfies CaptureHeroProject[],
 };
 
+export const CAPTURE_GO_NO_GO: {
+  score: number;
+  recommendation: "GO" | "VIGILANCE" | "NO_GO";
+  summary: string;
+  factors: Array<{
+    key: string;
+    label: string;
+    score: number;
+    weight: number;
+    justification: string;
+  }>;
+} = {
+  score: 78,
+  recommendation: "GO",
+  summary:
+    "Dossier cohérent avec votre expérience en milieu scolaire occupé. Les références et moyens sont couverts ; le planning détaillé reste à finaliser avant dépôt.",
+  factors: [
+    {
+      key: "experience",
+      label: "Expérience comparable",
+      score: 85,
+      weight: 16,
+      justification: "Deux références scolaires récentes dans la base entreprise.",
+    },
+    {
+      key: "technical_fit",
+      label: "Adéquation technique",
+      score: 80,
+      weight: 18,
+      justification: "Méthode « chantier occupé » alignée avec le CCTP.",
+    },
+    {
+      key: "criteria",
+      label: "Critères gagnables",
+      score: 76,
+      weight: 14,
+      justification: "Valeur technique majoritaire (60 %).",
+    },
+    {
+      key: "contract_risk",
+      label: "Risques contractuels",
+      score: 62,
+      weight: 10,
+      justification: "Visite obligatoire et planning détaillé exigés.",
+    },
+  ],
+};
+
+export const CAPTURE_DOCUMENTS = [
+  { name: "RC.pdf", status: "done" as const },
+  { name: "CCAP.pdf", status: "done" as const, vigilance: 1 },
+  { name: "CCTP.pdf", status: "done" as const },
+];
+
 export const CAPTURE_MEMORY = {
   progress: 62,
   selected: {

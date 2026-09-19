@@ -5,16 +5,16 @@ import { Container } from "@/components/marketing/ui/Container";
 import { ArrowLink } from "@/components/marketing/ui/ArrowLink";
 
 const headlineWords = [
-  { text: "Remportez", className: "" },
+  { text: "Gagnez", className: "" },
   { text: "plus", className: "" },
   { text: "d'appels", className: "" },
   { text: "d'offres.", className: "" },
-  { text: "Sans", className: "text-steel", i: 5 },
-  { text: "y", className: "text-steel", i: 6 },
-  { text: "laisser", className: "text-steel", i: 7 },
-  { text: "vos", className: "text-steel", i: 8 },
-  { text: "semaines.", className: "text-steel", i: 9 },
-];
+  { text: "Sans", className: "text-steel", i: 4 },
+  { text: "y", className: "text-steel", i: 5 },
+  { text: "laisser", className: "text-steel", i: 6 },
+  { text: "vos", className: "text-steel", i: 7 },
+  { text: "semaines.", className: "text-steel", i: 8 },
+]
 
 export function HeroSection() {
   return (
@@ -41,7 +41,7 @@ export function HeroSection() {
               className="inline-flex items-center gap-2 rounded border border-iris-glow bg-periwinkle/50 py-1.5 pl-2 pr-3.5 text-[13px] font-medium text-midnight transition-colors hover:border-iris/40"
             >
               <span className="rounded bg-iris px-2 py-0.5 text-[11px] font-semibold text-white">Nouveau</span>
-              Analyse du DCE et Go/No-Go en quelques minutes
+              Critères de qualification intégrés à chaque Go/No-Go
             </ArrowLink>
           </div>
 
@@ -93,7 +93,7 @@ export function HeroSection() {
                 100 % BTP
               </span>
               <span className="h-4 w-px bg-line" aria-hidden="true" />
-              <span className="text-[12.5px] font-medium text-steel">Programme pilote · Données hébergées en France</span>
+              <span className="text-[12.5px] font-medium text-steel">Programme pilote ouvert · Sources citées</span>
             </div>
           </div>
         </div>

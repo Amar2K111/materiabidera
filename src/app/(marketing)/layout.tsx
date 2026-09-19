@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
-import { Banner } from "@/components/marketing/layout/Banner";
 import { Navbar } from "@/components/marketing/layout/Navbar";
 import { Footer } from "@/components/marketing/layout/Footer";
 import "../marketing.css";
@@ -11,9 +10,9 @@ const geist = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "MateriaBTP : l'IA qui fait gagner vos appels d'offres BTP",
+  title: "MateriaBTP : répondre aux appels d'offres BTP, sources à l'appui",
   description:
-    "Le logiciel IA de reponse aux appels d'offres pour le BTP : analysez vos DCE, fiabilisez vos Go/No-Go et redigez vos memoires techniques depuis vos references chantiers.",
+    "Logiciel de réponse aux appels d'offres BTP : analyse du DCE, Go/No-Go sur pièces, mémoire technique rédigé depuis vos références chantiers — chaque passage sourcé. L'IA prépare, vos équipes tranchent.",
   applicationName: "MateriaBTP",
   keywords: [
     "appel d'offres",
@@ -36,7 +35,6 @@ export default function MarketingLayout({
 }) {
   return (
     <div className={`${geist.variable} marketing-site min-h-dvh flex flex-col bg-white font-sans text-body antialiased`}>
-      <Banner />
       <Navbar />
       <main className="flex-1">{children}</main>
       <Footer />

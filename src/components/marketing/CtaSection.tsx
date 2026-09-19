@@ -10,10 +10,10 @@ export function CtaSection() {
       <Container className="relative text-center">
         <Reveal>
           <h2 className="mx-auto max-w-3xl text-balance text-3xl font-medium tracking-[-0.02em] text-midnight lg:text-5xl lg:leading-[1.12]">
-            Apportez un DCE. Repartez avec sa synthèse.
+            Apportez un DCE. Repartez avec votre synthèse.
           </h2>
           <p className="mx-auto mt-5 max-w-xl text-pretty text-lg leading-relaxed text-steel">
-            30 minutes sur votre vrai dossier. Pas de slides, pas d&apos;engagement, juste votre prochain Go/No-Go, fiabilisé.
+            30 minutes sur votre vrai dossier. Pas de slides, pas d&apos;engagement — juste votre prochain Go/No-Go, fiabilisé.
           </p>
           <div className="mt-9 flex flex-wrap items-center justify-center gap-4">
             <ArrowLink

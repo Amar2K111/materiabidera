@@ -22,7 +22,7 @@ export function SectorsSection() {
             100 % pensé pour les entreprises de travaux
           </h2>
           <p className="mt-5 text-lg leading-relaxed text-steel">
-            MateriaBTP parle le langage du BTP : RC, CCAP, CCTP, dérogations au CCAG Travaux, références chantiers, Qualibat et mémoires techniques notés.
+            Pas de grilles RFP génériques : MateriaBTP parle RC, CCAP, CCTP, CCAG Travaux, mémoire technique noté, Qualibat et références de chantiers.
           </p>
         </Reveal>
 
